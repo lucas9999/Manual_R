@@ -1,0 +1,63 @@
+---
+title: "Untitled"
+author: "Ewelina"
+date: "March 10, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r, results='asis'}
+require(formattable)
+
+p <- data.frame(
+  id      = c(1, 2, 3, 4, 5),
+  name    = c("A1", "A2", "B1", "B2", "C1"),
+  balance = accounting(c(52500, 36150, 25000, 18300, 7600), format = "f", digits = 5  ),
+  growth  = percent(c(0.3, 0.3, 0.1, 0.15, 0.1555555)
+                    , format = "G" # d - liczba calkowita; e format naukowy; f - ulamet - domyslnie dwa miejsca po przecinku (regulowane przez digit) ;
+                    # , digits = 5
+                    , flag='+'),
+  ready   = formattable(c(TRUE, TRUE, FALSE, FALSE, TRUE), "yes", "no"))
+p
+
+
+formattable(  
+    df
+  , list(
+        age   = color_tile("white", "orange")
+      , grade = formatter( "span"
+                          , style = x ~ ifelse(  x == "A"
+                                               , style(color = "green", font.weight = "bold")
+                                               , NA))
+      , area(col = c(test1_score, test2_score)) ~ normalize_bar("pink", 0.2)
+      , final_score = formatter( "span" # span is a html tag
+                                 # x represents column of data.frame we want to stylize
+                                , style = x ~ style(color = ifelse(rank(-x) <= 3, "green", "gray"))
+                                , x ~ sprintf("%.2f (rank: %02d)", x, rank(-x)))
+      , registered = formatter(  "span"
+                               , style = x ~ style(color = ifelse(x, "green", "red"))
+                                # adding icons
+                               , x ~ icontext(  ifelse(x, "ok", "remove") # icon name
+                                              , ifelse(x, "Yes", "No")))  # values in column (converted from TRUE/FALSE)
+  )
+)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

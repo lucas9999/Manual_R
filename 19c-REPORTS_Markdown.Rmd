@@ -1,0 +1,362 @@
+# REPORTS Markdown
+
+## Chunk options
+
+### list of basic options
+
+
+* echo
+* eval - if evaluate code
+* background
+* results
+* fig.width
+* fig.height
+* fig.align
+* fig.keep
+* warning
+* message
+* error
+* ref.label
+* R.options
+* autodep
+* cache
+* cache.path
+* cache.lazy
+* engine
+* engine.path
+
+### Conditional values of options
+
+```{r}
+#If variable 'cook' > 1 then run child file "outlier.Rnw"
+'''{r, child=if(any(cook>1)) "outlier.Rnw" }
+
+'''
+
+```
+
+
+### Shortcuts for options names
+ 
+
+```{r}
+
+set_alias(w='fig.width', h='fig.height')
+
+```
+
+
+
+### Changing chunk default settings
+
+
+```{r}
+
+'''r{setup, include=FALSE}
+  opts_chunk$set(fig.path='figure/beamer-',fig.align='center',fig.show='hold',size='footnotesize')
+options(replace.assign=TRUE,width=90)
+'''
+
+```
+
+
+
+### Creating list of setting
+
+
+```{r}
+
+require(knitr)
+
+#list
+'''{r}
+opts_template$set(
+k=list(eval=FALSE, echo=TRUE), #sam kod
+kot=list(eval=TRUE, echo=TRUE) #zwykły output i kod z thumbnail
+)
+'''
+
+#how to refer to the list
+'''{r, opts.label="kot"}
+
+'''
+
+```
+
+
+### Function execution after/before chunk
+```{r}
+
+# this function if set TRUE displays writing before chunk
+require(knitr)
+'''{r setup, eval=TRUE}
+require(knitr)
+knit_hooks$set(play = function(before, options, envir) {
+    if(before) '.>>>>'
+})
+
+'''
+
+
+'''{r, play=TRUE}
+#dafasf
+'''
+
+```
+
+
+
+## Chunks names and references
+
+
+### Rules for names
+
+R gives the numers to chunks automatically. We can also specify names for chuns ourselves. **Names must be unique**.
+
+
+
+### Cross-references
+
+
+```{r}
+
+
+'''{r A}
+x<-100
+'''
+'''{r B}
+y<-200
+'''
+
+
+#first type of cross-reference
+'''{r}
+<<A>>
+<<B>>
+'''
+
+#second type of cross-referense
+
+'''{r, ref.label=c("A","B")}
+
+'''
+
+```
+
+Cross reference to all chunks
+```{r}
+
+#reference to all chunks except the first one.
+'''{r, ref.label=all_labels()[-1]}
+
+'''
+
+```
+
+## Splitting file (child files)
+
+```
+'''{r, child='sciezka.Rmd'}
+
+'''
+```
+Note: If we use relative path the point of reference is a file directory you work with(not working directory).
+
+
+
+
+
+## depenencies between chunks
+Default auto dependency is used. For more details see 'Dynamic Documents with R and knitr', p.71 (chapter 8). 
+
+
+## Creating chunks dinamically
+
+See: example in directory
+
+
+
+## Cache
+
+If document rendering becomes time consuming due to long computations or plots that are expensive to generate you can use knitr caching to improve performance. The documentation knitr chunk and package options describe how caching works and the cache examples (https://yihui.name/knitr/demo/cache/) provide additional details.
+
+If you want to enable caching globally for a document you can include a code chunk like this **at the top of the document**:
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(cache=TRUE)
+```
+For individual chunks use *cache*,  *cache.path*, *chache.vars*, *cache.lazy* options.
+
+When `cache=TRUE`, the chunk will only be evaluated in the following scenarios:
+
+1. There are no cached results (either this is the first time running or the results were moved/deleted)
+2. The code chunk has been modifed rustuling in a new MD5 digest. For clearnig cache you can use button 
+
+```{r, eval=TRUE, echo=FALSE, fig.cap='Clearning cache', out.width='500px'}
+knitr::include_graphics('figures/markdown_clearnig_cache.png')
+```
+
+<br><lfr>Warning!</lfr>
+<div class="btn-danger"> When you use cache depemdencies between chaunks are very imporatnt. </div><br>
+
+*dependson* option (NULL; character or numeric): a character vector of chunk labels to specify which other chunks this chunk depends on; this option applies to cached chunks only – sometimes the objects in a cached chunk may depend on other cached chunks, so when other chunks are changed, this chunk must be updated accordingly.
+
+*autodepth* option (FALSE; logical): whether to figure out the dependencies among chunks automatically by analyzing the global variables in the code (may not be reliable) so that dependson does not need to be set explicitly  
+
+
+
+## Extractind R code from chunks of markdown document
+
+```{r}
+require(knitr)
+purl(  file_path = ...
+     , documentation = 1) # 0 for pure code, 1 code with chunk headers, 2 add to code text chunks as roxygen
+```
+The results will be R file in working directory with extracted R code.
+
+
+
+## How to change position of TOC
+
+The position of the TOC is fixed in the R Markdown default HTML template. If you want to change its position in the document, you'll need to modify the template:
+
+Make a copy of the R Markdown HTML template to use as a starting point. You can find it by running this R command: system.file("rmd/h/default.html", package="rmarkdown")
+Move the $toc section to where you want the table of contents to appear.
+Save the modified template in the same folder as the document you're rendering as e.g. lowertitle.html
+Add template: lowertitle.html to the html_document settings.
+From the standpoint of the template, all of the document's content is an atomic unit, so it might be necessary to put any content you want to appear before the TOC in the template itself.
+
+
+
+## Other programming languages
+
+If you have installed p:reticulate you can use this code:
+
+```{r}
+
+# python, engine.path='C:/Users/memy/Anaconda3/python.exe'
+
+100
+
+```
+
+
+
+## tables
+
+
+### p:formattable
+
+
+
+**First step: formatting numbers**
+```{r}
+require(formattable)
+
+p <- data.frame(
+  id      = c(1, 2, 3, 4, 5),
+  name    = c("A1", "A2", "B1", "B2", "C1"),
+  balance = accounting(c(52500, 36150, 25000, 18300, 7600), format = "f", digits = 5  ),
+  growth  = percent(c(0.3, 0.3, 0.1, 0.15, 0.1555555)
+                    , format = "G" # d - liczba calkowita; e format naukowy; f - ulamet - domyslnie dwa miejsca po przecinku (regulowane przez digit) ;
+                    # , digits = 5
+                    , flag='+'),
+  ready   = formattable(c(TRUE, TRUE, FALSE, FALSE, TRUE), "yes", "no"))
+p
+
+```
+
+
+
+
+**Second step: formatting colors and adding icons**
+```{r}
+
+df <- data.frame(
+   id               = 1:10
+  ,name             = c("Bob", "Ashley", "James", "David", "Jenny", "Hans", "Leo", "John", "Emily", "Lee")
+  ,age              = c(28, 27, 30, 28, 29, 29, 27, 27, 31, 30)
+  ,grade            = c("C", "A", "A", "C", "B", "B", "B", "A", "C", "C")
+  ,test1_score      = c(8.9, 9.5, 9.6, 8.9, 9.1, 9.3, 9.3, 9.9, 8.5, 8.6)
+  ,test2_score      = c(9.1, 9.1, 9.2, 9.1, 8.9, 8.5, 9.2, 9.3, 9.1, 8.8)
+  ,final_score      = c(9, 9.3, 9.4, 9, 9, 8.9, 9.25, 9.6, 8.8, 8.7)
+  ,registered       = c(TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, FALSE)
+  ,stringsAsFactors = FALSE
+  )
+
+
+formattable(  
+    df
+  , list(
+        age   = color_tile("white", "orange")
+      , grade = formatter( "span"
+                          , style = x ~ ifelse(  x == "A"
+                                               , style(color = "green", font.weight = "bold")
+                                               , NA))
+      , area(col = c(test1_score, test2_score)) ~ normalize_bar("pink", 0.2)
+      , final_score = formatter( "span" # span is a html tag
+                                 # x represents column of data.frame we want to stylize
+                                , style = x ~ style(color = ifelse(rank(-x) <= 3, "green", "gray"))
+                                , x ~ sprintf("%.2f (rank: %02d)", x, rank(-x)))
+      , registered = formatter(  "span"
+                               , style = x ~ style(color = ifelse(x, "green", "red"))
+                                # adding icons
+                               , x ~ icontext(  ifelse(x, "ok", "remove") # icon name
+                                              , ifelse(x, "Yes", "No")))  # values in column (converted from TRUE/FALSE)
+  )
+)
+
+```
+
+
+
+### p:pivottabler
+
+```{r}
+
+require(ggplot2) # zaby byl zbior 'diamonds' dostepny
+require(pivottabler)
+
+# tutaj bedzie output w koncoli R-a
+qpvt( dataFrame    = diamonds #zbior diamonds z pakietu ggplot2
+      ,rows         = c('cut', 'color') # zmienne grupujace po wierszach
+      ,columns      = c('clarity') #zmianna grupujaca kolumnowa (oczywiscie moze byc wiecej niz jedna)
+      # ponizej dwa pola obliczeniowe
+      ,calculations = c(  'suma'='sum(price, na.rm=TRUE)' 
+                          , 'min'='min(price, na.rm=TRUE)') # c("Number of Trains"="n()", "Maximum Speed"="max(SchedSpeedMPH, na.rm=TRUE)")
+      ,totals       = 'NONE' #list("x"="All x", "y"="All y") # informacja o tym czy maja byc podsumowania po kategoriach 
+)
+
+
+
+# tutaj to samo jako HTML
+qhpvt( dataFrame    = diamonds #zbior diamonds z pakietu ggplot2
+      ,rows         = c('cut', 'color') # zmienne grupujace po wierszach
+      ,columns      = c('clarity') #zmianna grupujaca kolumnowa (oczywiscie moze byc wiecej niz jedna)
+      # ponizej dwa pola obliczeniowe
+      ,calculations = c(  'suma'='sum(price, na.rm=TRUE)' 
+                          , 'min'='min(price, na.rm=TRUE)') # c("Number of Trains"="n()", "Maximum Speed"="max(SchedSpeedMPH, na.rm=TRUE)")
+      ,totals       = 'NONE' #list("x"="All x", "y"="All y") # informacja o tym czy maja byc podsumowania po kategoriach 
+)
+
+# Totals can be controlled using the totals argument. This works as follows:
+# If not specified, then totals are generated for all variables.
+# To hide all totals, specify totals=NONE.
+# To specify which variables have totals, specify the names of the variables in a character vector, e.g. in a pivot table containing the variables x, y and z, to display totals only for variables x and z, specify totals=c("x", "z").
+# To specify which variables have totals and also rename the captions of the total cells, specify a list, e.g. to rename the totals for x to “All x” and y to “All y”, specify totals=list("x"="All x", "y"="All y")
+# 
+# c("Number of Trains"="n()", "Maximum Speed"="max(SchedSpeedMPH, na.rm=TRUE)")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Podstawy R-a</title>
+  <meta name="description" content="Podstawy programowania w języku R.">
+  <meta name="generator" content="bookdown 0.6 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Podstawy R-a" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Podstawy programowania w języku R." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Podstawy R-a" />
+  
+  <meta name="twitter:description" content="Podstawy programowania w języku R." />
+  
+
+<meta name="author" content="Ewelina Macioł-Huć">
+
+
+<meta name="date" content="2018-02-17">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="typy-danych.html">
+<link rel="next" href="dodatek-b.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Podstawy R-a</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Prerequisites</a></li>
+<li class="part"><span><b>I Part I</b></span></li>
+<li class="chapter" data-level="2" data-path="informacje-wstepne.html"><a href="informacje-wstepne.html"><i class="fa fa-check"></i><b>2</b> Informacje wstepne</a><ul>
+<li class="chapter" data-level="2.1" data-path="informacje-wstepne.html"><a href="informacje-wstepne.html#uwagi-o-konwencjach-oznaczen-w-tym-dokumencie"><i class="fa fa-check"></i><b>2.1</b> Uwagi o konwencjach oznaczen w tym dokumencie</a></li>
+<li class="chapter" data-level="2.2" data-path="informacje-wstepne.html"><a href="informacje-wstepne.html#materialy-do-nauki"><i class="fa fa-check"></i><b>2.2</b> Materialy do nauki</a></li>
+<li class="chapter" data-level="2.3" data-path="informacje-wstepne.html"><a href="informacje-wstepne.html#skroty-klawiaturowe-te-z-ktorych-caly-czas-korzystam"><i class="fa fa-check"></i><b>2.3</b> Skroty klawiaturowe (te z ktorych caly czas korzystam)</a></li>
+<li class="chapter" data-level="2.4" data-path="informacje-wstepne.html"><a href="informacje-wstepne.html#inne-uwagi"><i class="fa fa-check"></i><b>2.4</b> Inne uwagi</a><ul>
+<li class="chapter" data-level="2.4.1" data-path="informacje-wstepne.html"><a href="informacje-wstepne.html#home-i-end"><i class="fa fa-check"></i><b>2.4.1</b> <strong>Home i End</strong></a></li>
+<li class="chapter" data-level="2.4.2" data-path="informacje-wstepne.html"><a href="informacje-wstepne.html#rozdzialy"><i class="fa fa-check"></i><b>2.4.2</b> <strong>Rozdzialy</strong></a></li>
+<li class="chapter" data-level="2.4.3" data-path="informacje-wstepne.html"><a href="informacje-wstepne.html#snippets"><i class="fa fa-check"></i><b>2.4.3</b> <strong>snippets</strong></a></li>
+<li class="chapter" data-level="2.4.4" data-path="informacje-wstepne.html"><a href="informacje-wstepne.html#instalacja-pakietow"><i class="fa fa-check"></i><b>2.4.4</b> <strong>Instalacja pakietow</strong></a></li>
+<li class="chapter" data-level="2.4.5" data-path="informacje-wstepne.html"><a href="informacje-wstepne.html#projects"><i class="fa fa-check"></i><b>2.4.5</b> <strong>Projects</strong></a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="klika-podstawowych-informacji-o-programowaniu-w-r.html"><a href="klika-podstawowych-informacji-o-programowaniu-w-r.html"><i class="fa fa-check"></i><b>3</b> Klika podstawowych informacji o programowaniu w R</a><ul>
+<li class="chapter" data-level="3.1" data-path="klika-podstawowych-informacji-o-programowaniu-w-r.html"><a href="klika-podstawowych-informacji-o-programowaniu-w-r.html#o-jezyku-r"><i class="fa fa-check"></i><b>3.1</b> O jezyku R</a></li>
+<li class="chapter" data-level="3.2" data-path="klika-podstawowych-informacji-o-programowaniu-w-r.html"><a href="klika-podstawowych-informacji-o-programowaniu-w-r.html#nazwy-zmiennych"><i class="fa fa-check"></i><b>3.2</b> Nazwy zmiennych</a></li>
+<li class="chapter" data-level="3.3" data-path="klika-podstawowych-informacji-o-programowaniu-w-r.html"><a href="klika-podstawowych-informacji-o-programowaniu-w-r.html#uzywaniu-cudzyslowia"><i class="fa fa-check"></i><b>3.3</b> Uzywaniu cudzyslowia</a></li>
+<li class="chapter" data-level="3.4" data-path="klika-podstawowych-informacji-o-programowaniu-w-r.html"><a href="klika-podstawowych-informacji-o-programowaniu-w-r.html#braki-danych"><i class="fa fa-check"></i><b>3.4</b> Braki danych</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html"><i class="fa fa-check"></i><b>4</b> Sterowanie przeplywam [control flow]</a><ul>
+<li class="chapter" data-level="4.1" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#petla-for"><i class="fa fa-check"></i><b>4.1</b> petla for</a></li>
+<li class="chapter" data-level="4.2" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#if"><i class="fa fa-check"></i><b>4.2</b> if</a></li>
+<li class="chapter" data-level="4.3" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#ifelse-czyli-wektorowa-wersja-if"><i class="fa fa-check"></i><b>4.3</b> ifelse (czyli wektorowa wersja if)</a></li>
+<li class="chapter" data-level="4.4" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#while"><i class="fa fa-check"></i><b>4.4</b> while</a></li>
+<li class="chapter" data-level="4.5" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#repeat"><i class="fa fa-check"></i><b>4.5</b> repeat</a></li>
+<li class="chapter" data-level="4.6" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#switch"><i class="fa fa-check"></i><b>4.6</b> switch</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="formulas.html"><a href="formulas.html"><i class="fa fa-check"></i><b>5</b> formulas</a><ul>
+<li class="chapter" data-level="5.1" data-path="formulas.html"><a href="formulas.html#informacje-wstepne-1"><i class="fa fa-check"></i><b>5.1</b> Informacje wstepne</a></li>
+<li class="chapter" data-level="5.2" data-path="formulas.html"><a href="formulas.html#przyklady-stosowania-formul"><i class="fa fa-check"></i><b>5.2</b> Przyklady stosowania formul</a></li>
+<li class="chapter" data-level="5.3" data-path="formulas.html"><a href="formulas.html#formula-a-tekst"><i class="fa fa-check"></i><b>5.3</b> Formula a tekst</a></li>
+<li class="chapter" data-level="5.4" data-path="formulas.html"><a href="formulas.html#wyciaganie-elementow-formuly"><i class="fa fa-check"></i><b>5.4</b> Wyciaganie elementow formuly</a></li>
+<li class="chapter" data-level="5.5" data-path="formulas.html"><a href="formulas.html#modyfikacja-formul"><i class="fa fa-check"></i><b>5.5</b> Modyfikacja formul</a></li>
+<li class="chapter" data-level="5.6" data-path="formulas.html"><a href="formulas.html#dynamiczne-tworzenie-formuly-liniowej-z-zadanych-elementow"><i class="fa fa-check"></i><b>5.6</b> Dynamiczne tworzenie formuly LINIOWEJ z zadanych elementow</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="funkcje.html"><a href="funkcje.html"><i class="fa fa-check"></i><b>6</b> Funkcje</a><ul>
+<li class="chapter" data-level="6.1" data-path="funkcje.html"><a href="funkcje.html#types-of-functions"><i class="fa fa-check"></i><b>6.1</b> Types of functions</a></li>
+</ul></li>
+<li class="part"><span><b>II Part II</b></span></li>
+<li class="chapter" data-level="7" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html"><i class="fa fa-check"></i><b>7</b> Struktury danych w R</a><ul>
+<li class="chapter" data-level="7.1" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html#podzial-struktur"><i class="fa fa-check"></i><b>7.1</b> Podzial struktur</a></li>
+<li class="chapter" data-level="7.2" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html#listy-atomowe"><i class="fa fa-check"></i><b>7.2</b> Listy atomowe</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html#wektory"><i class="fa fa-check"></i><b>7.2.1</b> wektory</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html#matrix"><i class="fa fa-check"></i><b>7.3</b> matrix</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html#array-macierz-wielowymiarowa"><i class="fa fa-check"></i><b>7.3.1</b> Array (macierz wielowymiarowa)</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html#listy-generyczne"><i class="fa fa-check"></i><b>7.4</b> Listy generyczne</a><ul>
+<li class="chapter" data-level="7.4.1" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html#list"><i class="fa fa-check"></i><b>7.4.1</b> List</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html#data.frames"><i class="fa fa-check"></i><b>7.5</b> data.frames</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="typy-danych.html"><a href="typy-danych.html"><i class="fa fa-check"></i><b>8</b> Typy danych</a><ul>
+<li class="chapter" data-level="8.1" data-path="typy-danych.html"><a href="typy-danych.html#typ-logical"><i class="fa fa-check"></i><b>8.1</b> Typ <em>logical</em></a></li>
+<li class="chapter" data-level="8.2" data-path="typy-danych.html"><a href="typy-danych.html#typ-numeric"><i class="fa fa-check"></i><b>8.2</b> Typ <em>numeric</em></a></li>
+<li class="chapter" data-level="8.3" data-path="typy-danych.html"><a href="typy-danych.html#typ-complex"><i class="fa fa-check"></i><b>8.3</b> Typ <em>complex</em></a></li>
+<li class="chapter" data-level="8.4" data-path="typy-danych.html"><a href="typy-danych.html#typ-character"><i class="fa fa-check"></i><b>8.4</b> Typ <em>character</em></a></li>
+<li class="chapter" data-level="8.5" data-path="typy-danych.html"><a href="typy-danych.html#typ-date"><i class="fa fa-check"></i><b>8.5</b> Typ <em>date</em></a></li>
+<li class="chapter" data-level="8.6" data-path="typy-danych.html"><a href="typy-danych.html#typ-posix"><i class="fa fa-check"></i><b>8.6</b> Typ <em>POSIX</em></a></li>
+<li class="chapter" data-level="8.7" data-path="typy-danych.html"><a href="typy-danych.html#typ-factor"><i class="fa fa-check"></i><b>8.7</b> Typ <em>factor</em></a></li>
+</ul></li>
+<li class="appendix"><span><b>Dodatki</b></span></li>
+<li class="chapter" data-level="A" data-path="dodatek-a.html"><a href="dodatek-a.html"><i class="fa fa-check"></i><b>A</b> Dodatek A</a><ul>
+<li class="chapter" data-level="A.1" data-path="dodatek-a.html"><a href="dodatek-a.html#cos-tam"><i class="fa fa-check"></i><b>A.1</b> cos tam</a></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="dodatek-b.html"><a href="dodatek-b.html"><i class="fa fa-check"></i><b>B</b> Dodatek B</a><ul>
+<li class="chapter" data-level="B.1" data-path="dodatek-b.html"><a href="dodatek-b.html#cos-tam-1"><i class="fa fa-check"></i><b>B.1</b> cos tam</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Podstawy R-a</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="dodatek-a" class="section level1">
+<h1><span class="header-section-number">A</span> Dodatek A</h1>
+<div id="cos-tam" class="section level2">
+<h2><span class="header-section-number">A.1</span> cos tam</h2>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="typy-danych.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="dodatek-b.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/A-Dodatek.Rmd",
+"text": "Edit"
+},
+"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

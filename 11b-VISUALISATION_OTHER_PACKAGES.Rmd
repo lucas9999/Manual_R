@@ -1,0 +1,595 @@
+# OTHER PACKAGES
+
+
+
+##  Wykres Gantta
+
+
+
+```{r}
+require(plotrix)
+
+Ymd.format <- "%Y/%m/%d"
+
+Ymd <- function(x){ as.POSIXct(strptime(x, format=Ymd.format))}
+gantt.info <- list(
+  labels     =c("First task","Second task","Third task","Fourth task","Fifth task"),
+  starts     =Ymd(c("2004/01/01","2004/02/02","2004/03/03","2004/05/05","2004/09/09")),
+  ends       =Ymd(c("2004/03/03","2004/05/05","2004/05/05","2004/08/08","2004/12/12")),
+  priorities =c(1,2,3,4,5))
+
+gantt.chart(gantt.info,main="Calendar date Gantt chart")
+```
+
+
+
+
+### Piramida
+
+```{r}
+#wartosci zmiennej dla mezczyzn
+ xy.pop<-c(3.2,3.5,3.6,3.6,3.5,3.5,3.9,3.7,3.9,3.5,3.2,2.8,2.2,1.8,1.5,1.3,0.7,0.4)
+
+#wartosci zmiennej dla kobiet
+ xx.pop<-c(3.2,3.4,3.5,3.5,3.5,3.7,4,3.8,3.9,3.6,3.2,2.5,2,1.7,1.5,1.3,1,0.8)
+
+#przedzialy wiekowe
+ agelabels<-c("0-4","5-9","10-14","15-19","20-24","25-29","30-34",
+"35-39","40-44","45-49","50-54","55-59","60-64","65-69","70-74",
+  "75-79","80-44","85+")
+ mcol<-color.gradient(c(0,0,0.5,1),c(0,0,0.5,1),c(1,1,0.5,1),18)
+ fcol<-color.gradient(c(1,1,0.5,1),c(0.5,0.5,0.5,1),c(0.5,0.5,0.5,1),18)
+ par(mar=pyramid.plot(xy.pop,xx.pop,labels=agelabels,
+  main="Australian population pyramid 2002",lxcol=mcol,rxcol=fcol,gap=0.5,show.values=TRUE))
+ # three column matrices
+ avtemp<-c(seq(11,2,by=-1),rep(2:6,each=2),seq(11,2,by=-1))
+ malecook<-matrix(avtemp+sample(-2:2,30,TRUE),ncol=3)
+ femalecook<-matrix(avtemp+sample(-2:2,30,TRUE),ncol=3)
+ # use a background color
+ par(bg="#eedd55")
+ # group by age
+ agegrps<-c("0-10","11-20","21-30","31-40","41-50","51-60","61-70","71-80","81-90","91+")
+ oldmar<-pyramid.plot(malecook,femalecook,labels=agegrps,unit="Bowls per month",lxcol=c("#ff0000","#eeee88","#0000ff"), rxcol=c("#ff0000","#eeee88","#0000ff"),laxlab=c(0,10,20,30),
+  raxlab=c(0,10,20,30),top.labels=c("Males","Age","Females"),gap=3)
+ # put a box around it
+ box()
+ # give it a title
+ mtext("Porridge temperature by age and sex of cook",3,2,cex=1.5)
+ # stick in a legend
+ legend(par("usr")[1],11,c("Too hot","Just right","Too cold"), fill=c("#ff0000","#eeee88","#0000ff"))
+ # don't forget to restore the margins and background
+ par(mar=oldmar,bg="transparent")
+```
+
+
+
+
+##  ROCR
+
+
+
+### Krzywa roc z bajerami
+```{r}
+library(ROCR)
+
+# plot ROC curves for several cross-validation runs (dotted
+# in grey), overlaid by the vertical average curve and boxplots
+# showing the vertical spread around the average.
+data(ROCR.xval)
+pred <- prediction(ROCR.xval$predictions, ROCR.xval$labels)
+perf <- performance(pred,"tpr","fpr")
+plot(perf,col="grey82",lty=3)
+plot(perf,lwd=1,avg="vertical",spread.estimate="boxplot",add=TRUE)
+```
+
+
+
+##  qualityTools
+
+
+```{r}
+#wykres diagnostyczny
+require(qualityTools)
+set.seed (1234)
+#generate  some  data
+norm = rnorm(20 , mean = 20)
+#generate  some  data
+weib = rweibull (20 , shape = 2, scale = 8)
+#process  capability
+pcr(norm, "normal" ,  lsl = 17, usl = 23)
+#process  cabapility
+# pcr(weib , " weibull " , usl = 20) <small class='s1'>cos nie dziala</small>
+```
+
+
+
+
+
+
+### Wykres Pareto
+```{r}
+#wykres pareto
+require(qualityTools)
+#create  artificial  defect  data  set
+defects = c(rep("E" , 62) , rep("B" , 15) , rep("F" , 3) , rep("A" , 10) , rep("C" ,20) , rep("D" , 10))
+paretoChart( defects )
+```
+
+
+##  tabplot
+
+
+```{r}
+#wizualizacja duzych zbiorow danych (tabplot)---- )(zobaczy tez itableplot)
+require(tabplot) #nie mylic z pakietem 'tableplot'
+require(ggplot2)
+data(diamonds)
+tableplot(diamonds) 
+```
+
+
+## vcd
+
+
+Wykres mozaikowy
+```{r}
+
+library(vcd)
+
+#przyklad z ladowaniem gotowej tablicy kontyngencji-nie trzeba tu tworzyc formuly
+mosaic(  
+  x=HairEyeColor, #dane jako gotowa tabela kontyngencji w formacie array. Opcjonalnie nazwy zmiennych jako dimnames przypisane array. W tym przypadku zmienna HairEyeColor to miacierz trojwymiarowa
+  shade=T,  #czy kolorowac prostokaty 
+  #formula=Sex~Eye, #wzgledem jakich zmiennych tablica kontyngencji.#nie wiem jak to dziala przy gotowych tablicach kontyngencji. Lepiej nie uzywac 
+  legend=TRUE,
+  main='wykres mozaikowy',  #tytul wykresu,
+  sub='wykresik',  #podtytul wykresu
+)  #czy dodac legende. Opcje funkcji legend patrz Biecek strona 256 (nie wiem czy bedzie z tym wykresem dzialac)
+
+#przyklad z ladowanymi surowymi danymi
+library(vcd)
+data('Arthritis') 
+
+z<-transform(Arthritis, Age=cut(Arthritis[,'Age'], breaks=c(0, 20, 40, 150)))
+z$a<-c(rep(c(1,2), each=42))
+mosaic(  
+
+  #formula=Improved ~ Treatment | Sex,
+  #formula=Improved~Treatment,
+  #formula=Improved ~ Treatment + Sex + Age + a,
+  formula=Improved ~ Treatment + Age + Sex + a,
+  #shade=TRUE, #koloroW i legendy na razie nie bedzie-skomplikowana kwestia
+  #legend=TRUE,
+  data=z, #surowe dane jako data.frame lub table
+  #subset=... , wyszczegolnienie podzbioru danych
+  na.action = na.omit, #co robic z brakami danych, na.omit, na.fail, na.pass, na.excule
+  zero.shade=F, #czy kwadraty zerowe (zero obserwacji) powinny byc kolorowane
+  zero.size=0) #rozmiar kwadratow zerowych
+```
+
+
+
+## sparkTable
+
+
+Pakiet sluzy do rysowania tzw. spark charts, czyli wykresow w komorkach tabel. Analigoczne rozwiazania oferuje np. Excel od wersji 2010. 
+
+Pakiet umozliwia wyswietlanie wykresów w PDF i HTML, co zaprezentowano ponizej.
+
+
+
+<span class="glyphicon glyphicon-chevron-down"></span>
+
+
+```{r}
+
+require(sparkTable)
+
+#zbior danych
+data(pop)
+
+#generuje puste obiekty w ktorych beda przechowywane wykresy (struktury danych opisujece wykresy)
+b <- newSparkBox() 
+l <- newSparkLine()
+bb <- newSparkBar()
+
+#generuje strukture tabeli. W kolumnach sa wygenerowane wczesniej obiekty na wykresy lub funkcje przeksztalcające badana zmienna
+content <- list(function(x) { round(mean(x),2) },
+  b,l,bb,
+  function(x) { round(tail(x,1),2) })
+
+#nazwy kolumn w w tabeli ktora bedzie wyswietlana
+names(content) <- paste("column",1:5,sep="")
+
+#(chyba) nazwy podobiektow (obiekt glowny bedzie utworzony dalej), w ktorych sa elementy potrzebne do tabeli
+varType <- rep("value",5)
+
+#wyciaganie zmiennych ze zbioru ktore sa potrzebne
+pop <- pop[,c("variable","value","time")]
+
+#przeksztalcenie zmienna czasowej na typ liczbowy
+pop$time <- as.numeric(as.character(pop$time))
+
+#przygotowanie ostatecznej struktury danych 
+xx <- reshapeExt(pop, #zbior danych
+  idvar="variable",  #zmienna grupujaca
+  varying=list(2)) #zmienna badana a nie zmienna czasowa (jak to chyba jest w zwyklym reshape)
+
+#utworzenie tabeli
+x1 <- newSparkTable(xx, content, varType)
+
+# showSparkTable(x1)
+
+```
+
+
+##  ade4
+
+
+### Reczne rysowanie bardziej wypasionych drzew  (PAKIET ade4)----
+
+```{r}
+
+require(ade4)
+provi.tre <- "(  ((a,b,c,d,e)A,(f,g,h)B) C, ((i\njkj,j)k,l) G )D;" #uwaga. nie wolno powtarzac nazw liter bo sie pomiesza!!!
+provi.phy <- newick2phylog(provi.tre)
+ade4::plot.phylog(provi.phy, 
+            clabel.l = 1.2, #wielkosc znakow w lisciach 
+            clabel.n = .9, #wielkosc znakow na wezlach
+            f = .6, ) #dlugosc galezi drzewa
+
+```
+
+##  arcdiagram
+
+
+
+
+Wykres lukowy
+```
+
+
+# wykres lukowy
+
+
+# install devtools
+install.packages("devtools")
+
+
+# load devtools
+library(devtools)
+
+
+# install arcdiagram
+install_github('arcdiagram', username='gastonstat')
+
+
+# load arcdiagram
+library(arcdiagram)
+
+
+# location of 'gml' file
+mis_file = "F:/Manuale/Manual do R-a/dane/lesmiserables.txt"
+
+
+# read 'gml' file
+mis_graph = read.graph(mis_file, format="gml")
+
+
+# get edgelist
+edgelist = get.edgelist(mis_graph)
+
+
+# get vertex labels
+vlabels = get.vertex.attribute(mis_graph, "label")
+
+
+# get vertex groups
+vgroups = get.vertex.attribute(mis_graph, "group")
+
+
+# get vertex fill color
+vfill = get.vertex.attribute(mis_graph, "fill")
+
+
+# get vertex border color
+vborders = get.vertex.attribute(mis_graph, "border")
+
+
+# get vertex degree
+degrees = degree(mis_graph)
+
+
+# get edges value
+values = get.edge.attribute(mis_graph, "value")
+
+
+# load reshape
+library(reshape)
+
+
+# data frame with vgroups, degree, vlabels and ind
+x = data.frame(vgroups, degrees, vlabels, ind=1:vcount(mis_graph))
+
+
+# arranging by vgroups and degrees
+y = arrange(x, desc(vgroups), desc(degrees))
+
+
+# get ordering 'ind'
+new_ord = y$ind
+
+
+# plot arc diagram
+arcplot(edgelist, ordering=new_ord, labels=vlabels, cex.labels=0.8,
+        show.nodes=TRUE, col.nodes=vborders, bg.nodes=vfill,
+        cex.nodes = log(degrees)+0.5, pch.nodes=21,
+        lwd.nodes = 2, line=-0.5,
+        col.arcs = hsv(0, 0, 0.2, 0.25), lwd.arcs = 1.5 * values)
+
+
+```
+
+
+## wykres balonowy
+
+
+```{r}
+
+#ladny wykres balonowy
+crime <- read.csv("http://datasets.flowingdata.com/crimeRatesByState2005.tsv", header=TRUE, sep="\t")
+symbols(crime$murder, crime$burglary, circles=crime$population)
+radius <- sqrt( crime$population/ pi )
+symbols(crime$murder, crime$burglary, circles=radius)
+symbols(crime$murder, crime$burglary, circles=radius, inches=0.35, fg="white", bg="red", xlab="Murder Rate", ylab="Burglary Rate")
+text(crime$murder, crime$burglary, crime$state, cex=0.5)
+symbols(crime$murder, crime$burglary, squares=sqrt(crime$population), inches=0.5)
+text(crime$murder, crime$burglary, crime$state, cex=0.5)
+
+
+```
+
+
+##  p:networkD3
+
+
+## WAZNE-wykres do wizualizacji dyskryminacji (np. w knn)
+
+```{r}
+#
+library(klaR)
+
+data(iris)
+iris2 <- iris
+levels(iris2$species) <- c('s','e','v')
+# otherwise v*e*rsicolor are mixed ip with *v*irginica
+
+partimat(species ~ ., data = iris2, method = "qda", mar=c(4,4,2,1))
+
+data(iris)
+partimat(species ~ ., data = iris, method = "lda")
+```
+
+
+## ciekawy wykres gestosci
+
+```{r}
+require(hdrcde)
+
+data(faithful)
+faithful.cde <- cde(faithful$waiting,faithful$eruptions)
+plot(faithful.cde,xlab="Waiting time",ylab="Duration time",plot.fn="hdr")
+
+points(faithful$waiting,faithful$eruptions, pch="+", col="yellow")
+```
+
+
+## fajna krzywa ROC
+
+```
+library(ROCR)
+
+
+# plot ROC curves for several cross-validation runs (dotted
+
+
+# in grey), overlaid by the vertical average curve and boxplots
+
+
+# showing the vertical spread around the average.
+data(ROCR.xval)
+pred <- prediction(ROCR.xval$predictions, ROCR.xval$labels)
+perf <- performance(pred,"tpr","fpr")
+plot(perf,col="grey82",lty=3)
+plot(perf,lwd=1,avg="vertical",spread.estimate="boxplot",add=TRUE)
+```
+
+
+## histogram z bloczkami o rownej LICZEBNOSCI
+```
+set.seed(65)
+x      <- rnorm(500)
+breaks <- quantile(x, 0:20/20)
+
+hist(x,
+     breaks = breaks,
+     col    = "#ffc38a",
+     border = "#5FAE27",
+     main   = "Histogram with equal counts")
+
+
+# add a kernel density estimator of x
+lines(density(x), col = '#3F489D', lty = '1318', lwd=2)
+
+
+# add a box around the plot
+box()
+```
+
+
+## odds ratio plot
+```
+require(vcd)
+
+data(CoalMiners)
+l <- oddsratio(CoalMiners)
+g <- seq(25, 60, by = 5)
+plot(l,
+     xlab = "Age Group",
+     main = "Breathelessness and Wheeze in Coal Miners")
+m <- lm(l ~ g + I(g^2))
+lines(fitted(m), col = "red")
+```
+
+
+## wykres gantta
+
+```
+### failed to highlight code
+require(plotrix)
+
+Ymd.format <- "%Y/%m/%d"
+
+Ymd <- function(x){ as.POSIXct(strptime(x, format=Ymd.format))}
+gantt.info <- list(
+  labels     =c("First task","Second task","Third task","Fourth task","Fifth task"),
+  starts     =Ymd(c("2004/01/01","2004/02/02","2004/03/03","2004/05/05","2004/09/09")),
+  ends       =Ymd(c("2004/03/03","2004/05/05","2004/05/05","2004/08/08","2004/12/12")),
+  priorities =c(1,2,3,4,5))
+
+gantt.chart(gantt.info,main="Calendar date Gantt chart")
+```
+
+
+## wykres balonowy w tabelce
+
+```{r}
+require(gplots)
+
+carnames <- c("bmw","renault","mercedes","seat")
+carcolors <- c("red","white","silver","green")
+datavals <- round(rnorm(16, mean=100, sd=60),1)
+data <- data.frame(Car=rep(carnames,4),
+                   Color=rep(carcolors, c(4,4,4,4) ),
+                   Value=datavals )
+
+levels(data$Car) <- c("BMW: \nHigh End,\n German","Renault: \nMedium End,\n French",
+                      "Mercedes:\n High End,\n German", "Seat:\n Imaginary,\n Unknown Producer")
+
+# generate balloon plot with default scaling
+balloonplot( data$Car, data$Color, data$Value, ylab ="Color", xlab="Car")
+```
+
+
+## paralel plot. Nim chyba mozna wartosci nietypowe wykrywac
+
+```{r}
+
+require(MASS)
+data(iris3)
+ir <- rbind(iris3[,,1], iris3[,,2], iris3[,,3])
+parcoord(log(ir)[, c(3, 4, 2, 1)], col = 1 + (0:149)%/%50)
+```
+
+## HiveR
+
+```{r}
+
+
+# HiveR
+require(HiveR)
+
+set.seed(31)
+require(bipartite)
+data(Safariland)
+
+
+# You may wish to do ?Safariland or ?Safari for background
+
+hive1 <- adj2HPD(Safariland, desc = "Safariland data set from bipartite")
+sumHPD(hive1)
+
+
+# Note that all nodes are one axis with radius 1. Process further:
+
+hive2 <- mineHPD(hive1, option = "rad <- tot.edge.count")
+sumHPD(hive2)
+
+
+# All nodes still on 1 axis but degree has been used to set radius
+
+
+# Process further:
+
+hive3 <- mineHPD(hive2, option = "axis <- source.man.sink")
+sumHPD(hive3, chk.all = TRUE)
+
+# Note that mineHPD is generating some warnings, telling us
+# that the first 9 nodes were not assigned to an axis.  Direct
+# inspection of the data shows that these nodes are insects
+# that did not visit any of the flowers in this particular study.
+
+# Pretty up a few things, then plot:
+
+hive3$edges$weight <- sqrt(hive3$edges$weight)*0.5
+hive3$nodes$size <- 0.5
+plotHive(hive3)
+
+```
+
+
+## muir
+
+```{r}
+
+require(muir)
+
+# wszystkie kategorie
+muir(l.dt(diamonds), 
+     tree.dir = 'TB', #kierunki: LR, RL, TB, BT
+     node.levels = c('cut:*','color:*'),
+     label.vals=c('mean(price, na.rm=TRUE): srednia cena'),
+     tree.height = 800, tree.width = 600)
+
+
+# wszysktie kategorie dla cut i color
+muir(l.dt(diamonds), 
+     node.limit = 2,
+     node.levels = c('cut:*','color:*'),
+     label.vals=c('mean(price): srednia cena'),
+     tree.height = 800, tree.width = 600)
+
+# dwie najliczniejsze kategorie dla cut a dla color 2 najliczniejsze kategirie i reszta kategorii to jednego wora (kategoria "other")
+muir(l.dt(diamonds), 
+     node.levels = c('cut:2','color:2+'),
+     label.vals=c('mean(price): srednia cena'),
+     tree.height = 800, tree.width = 600)
+
+# filtr na jedna ze zmiennych ( na razie nie dziala %in%). Jezeli chce rbic automat to najlepiej wczesniej przekodowac dane w zbiore. Tutaj narzedzia z kryteriami sa raczej jako narzedzie reczne. 
+criteria <- data.frame(col=c("cut"),
+                       oper=c('%like%'), 
+                       val=c('Ide'), 
+                       title=c('Ide'))
+
+muir(l.dt(diamonds), 
+     node.levels = c('cut:+','color:*'),
+     label.vals=c('mean(price): srednia cena'),
+     level.criteria = criteria,
+     tree.height = 800, tree.width = 600)
+
+
+```
+
+
+
+## listviewer
+
+```{r}
+require(listviewer)
+l1 <- list(a=10, b=list(c=20, d=list(e=100)))
+listviewer::jsonedit(l1)
+l2 <- list(10, list(20, list(100)))
+listviewer::jsonedit(l)
+```
+
+

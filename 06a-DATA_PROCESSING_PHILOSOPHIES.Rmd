@@ -1,0 +1,1228 @@
+# DATA PROCESSING PHILOSOPIES
+
+
+## p:plyr
+
+melting and casting data
+
+
+```{r}
+dane<-data.frame(a=rep(c('a','b'), each=5), b=rep(c('z', 'y'),5 ), c=sample(c('r','w'),10, replace=T)  ,
+d=10:1, e=runif(10), f=runif(10), g=1:10)
+
+#proste topienie po wybranej zmiennej
+dane_1<-melt(dane, id=c("a", "b", "c","d")) #trzeba wymienic WSZYSTKIE zmienne typu nienumerycznego. Dodatkowo mozna podac zmienne numeryczne
+#opcja measure wybiera zmienne metrczne. Informacje to w obiekcie stworzonym przez 'melt' wykorzystuje 'cast' i decast.
+
+#proste topienie z ustawieniami domyslnymi
+dane_2<-melt(dane) #w tym przypadku zmienne nienumeryczne sa domyslnie uzyte jako grupujace a zmienne numeryczne sa jaki variable-one sa topione w jedna kolumne.
+dane_3<-melt(dane, id=c("a","b","c"), measured=c("f", "g"))
+melt(dane, id=c("a","b","c"), measured=c(5,6))
+
+#Tabela przestawna z uzyciem reshape i reshape2
+require(reshape)
+dane<-data.frame(a=rep(c('a','b'), each=5), b=rep(c('z', 'y'),5 ), c=sample(c('r','w'),10, replace=T)  ,d=10:1, e=runif(10), f=runif(10), g=1:10)
+dane1<-dane[,c('a', 'b', 'c', 'd')] #ograniczamy aby byla jedna zmienna numetyczna (tutaj 'd'). Jak jest wiecej zmiennych trudno jest interpretowac wynik
+cast(dane1, a~b, mean)
+cast(dane1, a~b~c, mean)
+cast(dane1, a~b+c, mean)
+cast(dane1, a+b~c, mean)
+cast(dane1, a~b+c, c(mean, sd, max, min))
+cast(dane1, a+b~c, c(mean, sd, max, min))
+cast(dane1, a+b~c, margins=T ,c(mean, sd, max, min)) #Parametr 'margins' powoduje ze sa wyswietlane sumy po kategoriach.
+require(reshape2)
+dcast(dane1, a~b, mean) #tutaj mozna podac tylko JEDNA funkcje agregujaca niestety.
+
+
+#Tabela przestawna z uzyciem pakietu plyr. Mozna tu stosowac wieksza ilosc funkcji numerycznych na ktorych sa obliczenia. Jednak jest mniejsza elastycznosc przy konfogurowaniu struktury tabeli przestawnej
+dane<-data.frame(a=rep(c('a','b'), each=5), b=rep(c('z', 'y'),5 ), c=sample(c('r','w'),10, replace=T)  ,d=10:1, e=runif(10), f=runif(10), g=1:10)
+ddply(dane, .(a,b), summarise, sredni=mean(d), odch1=sd(d), odch2=sd(e)   )
+#cos takiego wywali blad. Zmienne w formule daje sie tylko po kropce
+ddply(dane, (a,b). , summarise, sredni=mean(d), odch1=sd(d), odch2=sd(e)   )
+ddply(dane, (a,b).(c) , summarise, sredni=mean(d), odch1=sd(d), odch2=sd(e)   )
+
+
+
+
+#Przyklad zastosowanie melt do ggplot
+z<-data.frame(a=c(2,3,2,1,2,3), b=c(3,4,2,3,4,5), id=1:6)
+dane<-as.data.frame(melt(z, id='id'))
+ggplot() + geom_line(data=dane, aes(x=id, y=value ,col=variable))
+
+
+```
+
+
+
+
+### Dodanie *margins* do tabeli
+```{r}
+#dodanie margins to tabeli
+require(reshape)
+require(reshape2)
+d<-data.frame(a=c('a','a','b','b'), b=c('c','d','c','d'), c=c(1:4), d=c(5:8))
+m<-melt(d, id.vars=c('a','b'))
+cast(m, a+b~variable, margins=T, fun.aggregate=sum)
+```
+
+
+
+### Polaczenie funkcji melt i cast
+```{r}
+#recast polaczenie funkcji melt i cast
+require(reshape)
+recast(french_fries, time ~ variable, id.var=1:4)
+```
+
+
+### f:cast a braki danych
+
+```{r}
+
+#cast a braki danych
+d<-data.frame(a=c(1,1,1,2,2,2,2,NA,NA,NA), b=c(1:10))
+      
+require(reshape)
+require(reshape2)
+      
+r<-melt(d, id.vars='a', measure.var='b')
+t<-cast(r, a~. , fun.aggregate=sum, na.rm=T)
+#funkcja traktuje NA jako kategorie przy grupowaniu.
+
+```
+
+
+
+## p:dplyr
+
+
+
+### basic syntax
+
+
+```{r}
+
+```
+
+
+
+
+
+### dplyr and list 
+
+
+```{r}
+
+d2 <- diamonds %>% 
+  group_by(cut, color) %>% 
+  nest(.key = 'dane') %>%
+  # we will use different models for different groups
+  mutate(model=case_when(  color == 'E' ~ 'x~y+price'
+                           , TRUE ~ 'z~y+table')) %>% 
+  mutate(wynik_modelu = pmap(  .l = list(x=dane, y=model)
+                               , .f = function(x,y){summary(lm(data = x, formula = y )) })) %>% 
+  mutate(  R_square = map_dbl(  wynik_modelu
+                                , function(x) x$r.squared )
+           , formula = map(  wynik_modelu
+                             , function(x) deparse(x$terms) ) %>% unlist )
+
+# filtering based on extracting elements which are nested in a list
+d2 %>% arrange( map_dbl(wynik_modelu, function(x) x$r.squared ) )
+
+```
+
+
+
+### do
+
+```{r}
+
+diamonds %>% 
+  group_by(cut) %>% 
+  do(a={lm(data = ., formula=x~y)}) %>% 
+  mutate(podsumowanie = list(summary(a)),
+         r_sq= unlist(podsumowanie['r.squared'])) %>% 
+  # filter(r_sq > 0.98) %>% 
+  filter(podsumowanie['r.squared'] > 0.98)
+
+.dots=setNames(list(expression_1, expression_2),c('new_name_1','new_name_1'))
+
+z1 <- 'cut'; z2 <- 'color'; dplyr::rename_(.data = ddd, .dots=setNames(list(z1, z2), c('ble', 'b' )))
+
+```
+
+
+
+
+
+
+### dynamic arguments
+
+
+```{r}
+
+dane <- head(diamonds, 100)
+
+gr <- c('cut', 'color')
+
+# dynamic columns
+dane %>% group_by(!!! lapply(gr, as.name) ) %>% summarise(suma = sum(price))
+
+# dynamic column name
+cut_1 <- 'new_cut'
+dane %>% group_by(!! cut_1 := tolower(cut)) %>% summarise(suma = sum(price))
+
+# dynamic column and dynamic name
+gr1 <- c(cut_1 = 'cut', color_1 = 'color')
+dane %>% group_by(!!!lapply(gr1, as.name) ) %>% summarise(suma = sum(price))
+
+# dynamic calculation
+var <- 'price'
+dane %>% group_by(cut) %>% summarise(suma = sum(!!!as.name(var)))
+
+```
+
+
+
+
+## p:purrr
+
+
+## p:tidyr
+
+
+## p:rlist
+
+
+
+Pakiet rlist sluzy do pracy z lisa list.
+
+```{r}
+
+require(rlist)
+      
+x <- list(p1 = list(type="A", score=list(c1=10, c2=8)),
+          p2 = list(type="B", score=list(c1=9,  c2=9)),
+          p3 = list(type="B", score=list(c1=9,  c2=7))
+         )
+      
+#list.all-czy dla wszystkich list jest spelniony warunek
+list.all(x,type=="B")
+list.all(x,mean(unlist(score))>=6)
+      
+#list.any-czy dla jakiejkolwiek listy jest spelniony warunek
+list.any
+
+#list.append-dodanie elementy do listy
+
+x <- list(a=1,b=2,c=3)
+list.append(x,d=4,e=5)
+list.append(x,d=4,f=c(2,3))
+      
+      
+      
+#list.cases-wybierz elementy po wyrazeniu
+x <- list(p1 = list(type="A",score=list(c1=10,c2=8)),
+          p2 = list(type="B",score=list(c1=9,c2=9)),
+          p3 = list(type="B",score=list(c1=9,c2=7)))
+list.cases(x,type)
+list.cases(x,mean(unlist(score)))
+      
+      
+#list.cbind-zbindowanie po kolumnach elementow
+x <- list(data.frame(i=1:5     , x=rnorm(5)),
+          data.frame(y=rnorm(5), z=rnorm(5)))
+list.cbind(x)
+
+
+# list.class ???
+
+      
+      
+
+# list.clean-wyrzuc elementy nie spelniajace warunku    
+#domyslnie wywala NULL oraz elementy o dlugosci 0
+      
+      
+#list.count-ile elementow spelnia warunek
+
+
+# list.do-wykonanie funkcji ktorej argumenty sa cale elementy naszej listy glownej
+
+
+
+# list.exclude-usuc elementy spelniajace warunek
+
+
+      
+
+# list.extract ??? (chyba malo ciekawe)
+
+
+
+# list.filter-filtruj wedlug okreslonego warunku
+
+      
+      
+list.find
+
+
+      
+      
+list.findi
+
+      
+      
+      
+      
+list.group
+
+      
+      
+      
+      
+list.if
+
+      
+      
+      
+      
+list.insert
+
+      
+      
+      
+list.iter
+
+      
+      
+      
+list.join
+
+      
+      
+      
+list.load
+
+      
+      
+      
+list.map
+
+      
+      
+      
+list.maps
+
+      
+      
+      
+list.mapv
+
+      
+      
+      
+list.match
+
+      
+      
+      
+list.merge
+
+      
+      
+      
+list.order
+
+      
+      
+      
+list.parse
+      
+      
+      
+      
+list.prepend
+      
+      
+      
+      
+list.rbind
+      
+      
+      
+      
+list.remove
+      
+      
+      
+      
+list.reverse
+      
+      
+      
+      
+# list.sample-wybierz losowo elementy
+  
+      
+      
+list.save
+      
+list.select
+      
+list.serialize
+      
+list.skip
+      
+list.skipWhile
+      
+# list.sort-sortuj wg. okreslonego warunku
+x <- list(p1 = list(type="A", score=list(c1=10, c2=8)),
+          p2 = list(type="B", score=list(c1=9,  c2=9)),
+          p3 = list(type="B", score=list(c1=9,  c2=7)))
+list.sort(x,type,desc(score$c2))
+list.sort(x,min(score$c1,score$c2))
+      
+      
+list.stack
+      
+list.table
+      
+list.take
+      
+      
+# list.takeWhile-pobiera elementy az do spelnienia warunku
+      
+      
+      
+list.ungroup
+      
+list.unserialize
+      
+list.update
+  
+      
+# list.which-numery elementow ktore spelniaja warunek
+x <- list(p1 = list(type="A",score=list(c1=10,c2=8)),
+       p2 = list(type="B",score=list(c1=9,c2=9)),
+       p3 = list(type="B",score=list(c1=9,c2=7)))
+list.which(x,type=="B")
+list.which(x,min(score$c1,score$c2) >= 8)
+      
+      
+list.zip
+
+
+```
+
+
+## p:data.table
+
+
+Intruductory notes
+
+* tlumaczenie z dplyr na data.table: http://stackoverflow.com/questions/21435339/data-table-vs-dplyr-can-one-do-something-well-the-other-cant-or-does-poorly
+* na dysku jest cheat sheet
+* o dynamicznych nazwach w data.table: http://stackoverflow.com/questions/12391950/variably-selecting-assigning-to-fields-in-a-data-table
+
+```{r}
+# tworzenie tabel
+
+data.table(a=1:2, b=1:10) # vektory nie musza byc rownej dlugosci
+
+
+d <- diamonds[1:50,] %>% as.data.table
+
+# filtrowanie
+d[1:10]
+d[between(price, 300, 400)]
+d[color=='E']
+
+
+# selekcja kolumn
+d[,.(price, cut)]
+d[c(TRUE, FALSE)] #elementy nieparzyste
+d[,1:4, with=FALSE]
+d[,c('price', 'cut'), with=FALSE]
+
+
+# obliczenia kolumn
+d[,.(x, sum(x), sum(y))]
+
+
+# mutowanie/updatowanie kolumn (uwaga: to dziala przez referencje!!!)
+d[, c('a'):=(sum(price))]
+d[, ':=' (a=sum(price), b=sum(x))][]
+
+
+# grupowanie
+d[,.(sum(price)), by=.(cut, color)]
+d[,.(sum(price)), by=.(price > 1000)]
+
+
+# dodatkowe skroty
+d[,.(.N, .GRP), by=cut]
+```
+
+
+```{r}
+# operacje po wszystkich kolumnach
+d[, lapply(.SD, sum), by=cut, .SDcols=c('price','x','y','z')]
+d[, lapply(.SD, sum), by=cut, .SDcols=5:7]
+d[, lapply(.SD, sum), by=cut, .SDcols=cut:z]
+
+d[,.SD[which.min(price)],by=color][]
+d[, .SD[1:10] ]
+DT[,sum(v),by=list(y%%2)]  # by expression
+DT[,.SD[2],by=x]           # 2nd row of each group
+DT[,tail(.SD,2),by=x]      # last 2 rows of each group
+DT[,lapply(.SD,sum),by=x]  # apply through columns by group
+```
+
+
+```{r}
+# chaining
+d[]
+
+
+# ekwiwalent f:do z p:dplyr
+d1 <- diamonds %>% as.data.table
+d1[, as.list(summary( x )), by=cut]
+d1[, as.list(summary( .SD )), by=cut]
+
+
+# joiny
+df1 <- data.table(a=c(1,3,5,7,9), b=letters[1:5])
+df2 <- data.table(c=c(-1,2,6,9,12,NA), b=LETTERS[1:6])
+
+df1[df2, on=c(a='c'), nomatch=NA] #right_join from df2 to df1
+df2[df1, on=c(c='a'), nomatch=NA] #left join from df1 to df2
+df1[df2, on=c(a='c'), nomatch=0] # inner join 
+
+# rolling joiny
+df1 <- data.table(a=c(1,3,5,7,9), b=letters[1:5])
+df2 <- data.table(c=c(-1,2,6,9,12,NA), b=LETTERS[1:6])
+
+df2[df1, on=c(c='a'), roll='nearest'] # najblizej
+df2[df1, on=c(c='a'), roll=Inf] # w dol
+df2[df1, on=c(c='a'), roll=-Inf] # w gore
+
+
+#update z innej tabeli
+df1 <- data.table(a=c(1,3,5,7,9), b=letters[1:5])
+df2 <- data.table(c=c(-1,2,6,9,12,NA), b=LETTERS[1:6])
+df2[df1, b:=i.b ,on=c(c='a'), ] # dla wielu kolumn stosuje kontrukcje z ':=' !!!
+
+
+# dynamiczne programowanie - niestety najlepiej jest szukac z 'eval'.
+d[,(a=eval(parse(text=paste0('sum(price)'))))]
+# mozna jeszcze dynamicznie selekcjonowac kolumny w tym w .SDcols i nadawa? dynamicznie nazwy przy mutowaniu. 
+```
+
+### How to work woth keys-duplicates and joining tabels
+
+Setting key
+```{r}
+#USTAWIANIE KLUCZA
+#Ustawianie klucza po nazwach kolumn
+DT<-data.table(a=c(1:10), b=letters[1:10], c=c(1,2,4,7,6,2,3,7,5,7))
+setkey(DT,a,c)
+
+#Ustawianie klucza po numerach kolumn. Zamiast 'setkey' uzywam 'setkeyv'
+setkeyv(DT, colnames(DT)[c(1,3)] )
+```
+
+
+
+### Duplicates
+```{r}
+
+#duplikaty po kluczu
+DT<-data.table(a=c(1,1,2,2,3,3), b=letters[1:6], c=c(1,1,2,3,3,3))
+setkey(DT,a,c)
+
+#dostaniemy duplikaty po kluczu
+duplicated(DT)
+
+#duplikaty a braki danych-braki danych sa tutaj traktowane tak samo jak inne dane
+DT_b_d<-data.table(a=c(NA,NA), b=c(NA,NA))
+duplicated(DT_b_d)
+
+#usuwanie duplikatow po kluczu
+unique(DT)
+
+#usuwanie duplikatow a braki danych
+unique(DT_b_d)
+```
+
+
+Joining tables using keys- f:merge <br>
+  f:merge ma nieco inne parametry w przypadku `data.frame` i `data.table`. W merge wymieniajac kolumny tabel (np. przy podawaniu kluczy) stosujemy cudzyslowie. 
+```{r}
+#laczenie  po  kluczach
+
+DT1<-data.table(a=1:6,  b=letters[1:6],  c=1:6)
+DT2<-data.table(a=c(3,3,4,5,6,7),  b=letters[c(1,2,3,9,10,11)],  c=c(3,3,4,5,9,10),  d=letters[6:1])
+
+#ustawiamy identyczne klucze
+setkey(DT1,  a,c)
+setkey(DT2,  a,c)
+merge(DT1,  DT2)  #polaczenie  bedzie  po  kluczach  zdefiniowanym  wczesniej  tzn.  kolumnach  'a'  i 'c'
+
+#ustawiamy rozne klucze
+setkey(DT1,  a,c)
+setkey(DT2,  a,b)
+merge(DT1,  DT2)  #polaczenie  bedzie  po  elementach wspolnych kluczy czyli po kolumnie 'a'.
+
+#mozna laczyc po z gory okreslonym kluczu
+merge(DT1,  DT2,  by=c('a','b','c'))  #polaczenie  bedzie  po  ustalonym  kluczu
+
+
+#nie mozna loczyc bez zdefiniowania klucza przez 'by' jezeli wczesniej nie ustalono kluczy przez setkey (patrz nastepny liting)
+```
+
+
+
+
+### Bledy w laczeniu kluczami
+
+```{r}
+
+DT1<-data.table(a=1:6, b=letters[1:6], c=1:6)
+DT2<-data.table(a=c(3,3,4,5,6,7), b=letters[c(1,2,3,9,10,11)], c=c(3,3,4,5,9,10), d=letters[6:1])
+
+merge(DT1, DT2)
+```
+
+Wywali blad. Data.table musi miec okreslony klucz jezeli chcemy aby funkcja sama okreslila kolumny. 
+
+
+f:merge a braki danych
+```{r}
+
+DT_1<-data.table(a=c(NA, 1,2,3,4,5), b=letters[1:6])
+DT_2<-data.table(a=c(2,3,NA,1,4,5), c=letters[7:12])
+merge(DT_1, DT_2, by='a')
+```
+
+
+Wniosek jest taki ze braki danych NA nie sa brane pod uwag?.
+
+f:merge a duplikaty
+```{r}
+
+#merge a duplikaty
+DT1<-data.table(a=c(1,1,2,2), b=c(4,4,5,6))
+DT2<-data.table(a=c(1,1,2,2), b=c(4,4,5,6))
+merge(DT1, DT2, b=c('a','b'), allow.cartesian=T)
+```
+
+Wniosek-duplikaty **nie** sa usuwane
+
+
+
+
+
+
+
+
+## p:data.tree
+
+
+### basic methods
+
+```{r}
+data(acme)
+acme$leaves # liscie
+acme$leafCount
+acme$level # na jaki poziomie jestem
+acme$Accounting$level
+acme$children
+acme$count
+acme$totalCount
+acme$levelName
+acme$height # jak wysoko jestesmy od najnizszego liscia
+acme$Accounting$parent
+acme$path
+acme$pathString
+acme$fields
+acme$fieldsAll
+acme$Research$`New Product Line`$position
+acme$Research$`New Product Line`$parent$parent$children
+      
+      
+      
+      
+#> creation of simple tree
+B <- Node$new('B_')
+B1 <- B$AddChild('B1_')
+B11 <- B1$AddChild('B11_')
+B12 <- B1$AddChild('B12_')
+B2 <- B$AddChild('B2_')
+
+B$p <- 10 
+B1$p <- 20
+B11$p <- 30
+B12$p <- 40
+B2$p <- 50
+#<
+
+print(B)
+
+
+B$isRoot
+B$isLeaf; B$B1_$isLeaf; B$B1_$B11_$isLeaf 
+# element 'is not Leaf and not Root'  is Node (but not Root Node!!!)
+
+B$height; B$B1_$height # depth of node
+
+B$count ;B$B2_$count # number of element in node
+B$totalCount # total number of elements (nodes, leaf and root)
+
+B$fields # files with data
+B$fieldsAllll
+
+
+a1 <- B$Get('p'); a2 <- B$B1_$Get('p')
+a1; a2
+sum(a1); sum(a2)
+
+
+```
+
+
+### Creation
+
+
+Creation from list
+
+```{r, o.l='c'}
+
+# be careful when you build list structure. It must be logical. List in Nodes should be NA if you want to use aggregate function.
+
+lista <- list(a=list(l_=100), b=list(l_=200, c=list(l_=400)))
+
+e1 <- as.Node(lista, nodeName = 'lista')
+e2 <- FromListSimple(lista, nodeName = 'lista')
+
+print(e1, 'l_')
+print(e1, 'l_')
+
+```
+
+
+
+Creation from data.frame
+
+```{r}
+
+require(ggplot2)
+
+d1 <- head(diamonds[, c('cut', 'color', 'clarity', 'price')], 100)
+d2 <- d1
+d2$pathString <- paste('main', d2$cut, d2$color, d2$clarity, sep='/')
+
+d3 <- as.Node(d2)
+d3
+print(d3, 'price')
+
+
+#what about categories with NA
+d4 <- rbind(d1, c('Ideal',NA,'VS1',2500), c('Ideal','D','NA',2500))
+dim(d4)
+d4$pathString <- paste('main', d4$cut, d4$color, d4$clarity, sep='/')
+
+d5 <- as.Node(d4)
+d5
+print(d5, 'price')  # NA is not included
+
+
+```
+
+
+
+
+Normal creation
+
+```{r}
+
+A <- Node$new('A_')
+A1 <- A$AddChild('A1_')
+A11 <- A1$AddChild('A11_')
+A12 <- A1$AddChild('A12_')
+A2 <- A$AddChild('A2_')
+A21 <- A2$AddChild('A21_')
+A22 <- A2$AddChild('A22_')
+A3 <- A$AddChild('A3_')
+A31 <- A3$AddChild('A31_')
+A32 <- A3$AddChild('A32_')
+A4 <- A$AddChild('A4_')
+A41 <- A4$AddChild('A41_')
+A411 <- A41$AddChild('A411_')
+A412 <- A41$AddChild('A412_')
+A42 <- A4$AddChild('A42_')
+A421 <- A42$AddChild('A421_')
+A422 <- A42$AddChild('A422_')
+
+A11$p <- 30
+A12$p <- 40
+A21$p <- 10
+A22$p <- 10
+A31$p <- 10
+A32$p <- 25
+A411$p <- 10
+A412$p <- 10
+A421$p <- 10
+A422$p <- 10
+
+# number in node
+A42$p <- 40
+A1$p <- 40
+A$p <- 45
+
+print(A, 'p')
+#<
+```
+
+
+### Filtering and prunning
+
+
+```{r}
+
+#> filtrowanie - sprawdza wszystkie elementy w przeciwienstwie do przycinania
+A$Get('p', filterFun = function(x) sum(x$p, na.rm=TRUE)>20, traversal = 'pre-order') # sprawdza warunek z gory w dol???
+A$Get('p', filterFun = function(x) sum(x$p, na.rm=TRUE)>20, traversal = 'post-order') # sprawdza warunek z dolu do gory??
+
+
+A$Get('p', filterFun = function(x) sum(x$p, na.rm=TRUE)>20 || !x$isLeaf, traversal = 'pre-order') # zwroci tez elementy ktore nie sa liscmi (nawet jezeli maja przpisane NA)
+A$Get('p', filterFun = function(x) sum(x$p, na.rm=TRUE)>20 || !x$isLeaf, traversal = 'post-order')
+#<
+
+
+#> przycinanie - np. idziemy w dol - w momencie gdy warunek nie jest spelniony nie schodzimy dalej w dol - przycinamy
+A$Get('p', pruneFun = function(x) sum(x$p, na.rm=TRUE)>20, traversal = 'pre-order') 
+A$Get('p', pruneFun = function(x) sum(x$p, na.rm=TRUE)>20, traversal = 'post-order') # zeby cos zostalo chyba musimy sie wspiac z warunkiem az do pnia
+
+
+A$Get('p', pruneFun = function(x) sum(x$p, na.rm=TRUE)>20 || !x$isLeaf, traversal = 'pre-order')
+A$Get('p', pruneFun = function(x) sum(x$p, na.rm=TRUE)>20 || !x$isLeaf, traversal = 'post-order')
+#<
+
+```
+
+### Recursion
+
+
+```{r}
+
+A <- Node$new('A_')
+A1 <- A$AddChild('A1_')
+A11 <- A1$AddChild('A11_')
+A12 <- A1$AddChild('A12_')
+A2 <- A$AddChild('A2_')
+A21 <- A2$AddChild('A21_')
+A22 <- A2$AddChild('A22_')
+A3 <- A$AddChild('A3_')
+A31 <- A3$AddChild('A31_')
+A32 <- A3$AddChild('A32_')
+A4 <- A$AddChild('A4_')
+A41 <- A4$AddChild('A41_')
+A411 <- A41$AddChild('A411_')
+A412 <- A41$AddChild('A412_')
+A42 <- A4$AddChild('A42_')
+A421 <- A42$AddChild('A421_')
+A422 <- A42$AddChild('A422_')
+
+A11$p <- 30
+A12$p <- 40
+A21$p <- 10
+A22$p <- 10
+A31$p <- 10
+A32$p <- 25
+A411$p <- 10
+A412$p <- 10
+A421$p <- 10
+A422$p <- 10
+
+A$p <- 5
+
+
+#1
+Cost <- function(node) {
+  result <- node$p
+  if(length(result) == 0) result <- sum(sapply(node$children, Cost))
+  return (result)
+}
+
+print(A, "p", cost = Cost)
+
+
+#2
+Cost <- function(node) {
+  result <- node$p
+  if( isNotLeaf(node) ) result <- sum(sapply(node$children, Cost))
+  return (result)
+}
+
+print(A, "p", cost = Cost)
+
+
+#3
+Cost <- function(node) {
+  result <- node$p
+  if( isNotLeaf(node) ) result <- sum(node$Get('p'), na.rm=TRUE)
+  return (result)
+}
+
+print(A, "p", cost = Cost)
+
+
+#4
+Cost <- function(node) {
+  result <- node$p
+  if( isNotLeaf(node) ) result <- sum(node$Get('p', filterFun=function(x) isLeaf(x) ), na.rm=TRUE)
+  return (result)
+}
+
+print(A, "p", cost = Cost)
+
+
+A_dt_1 <- ToDataFrameTable(A, 'name', 'pathString', 'p', 'level')
+
+A_dt_2 <- ToDataFrameTree(A, "level", "p")
+
+A_dt_3 <- ToDataFrameNetwork(A, "level", "p")
+
+A_dane <- print(A, 'name', 'p')
+
+require(DiagrammeR)
+
+nodes <- create_nodes(nodes = A_dane$name,  label=paste(A_dane$name, ifelse(is.na(A_dane$p),'',A_dane$p), sep='\n') )
+edges <- create_edges(from= A_dt_3$from, to= A_dt_3$to)
+graph <- create_graph(nodes_df = nodes, edges_df = edges)
+render_graph(graph)
+
+
+```
+
+### Plotting
+
+
+
+```{r}
+
+A   <- Node$new('A_')
+A1  <- A$AddChild('A1_')
+A11 <- A1$AddChild('A11_')
+A12 <- A1$AddChild('A12_')
+A2  <- A$AddChild('A2_')
+
+
+# dendrogram
+plot(as.dendrogram(A))
+
+
+# p:igraph
+require(igraph)
+plot(as.igraph.Node(A, direction='climb', directed=TRUE))
+
+
+
+# p:networkD3
+require(networkD3)
+net <- ToDataFrameNetwork(A, 'name')
+simpleNetwork(net)
+
+```
+
+
+
+
+## *apply* family
+
+
+
+How to substitute new values to column in data.frame
+```{r, o.l='k'}
+d <- data.frame(a=c(1,2,Inf), b=c(3,Inf,4))
+d
+
+sapply(d, function(x) is.infinite(x) )
+sapply(d, function(x) replace(x,is.infinite(x),NA))
+```
+
+
+
+
+
+```{r}
+# PROBLEM mapply
+
+
+WEKTOR - WEKTOR
+
+mapply(function(x,y){
+  x*y
+},1:10,1:10)
+
+
+
+LISTA-LISTA
+
+#listy z ramkami danych
+
+#dziala ale trzeba wylaczyc simplify
+
+mapply(function(x,y){
+  rbind(x,y)
+}, list(w=data.frame(a=1:5, b=6:10), z=data.frame(a=1:5, b=6:10) ) , list(w=data.frame(a=1:5, b=6:10), z=data.frame(a=1:5, b=6:10) ) , SIMPLIFY=FALSE)
+
+
+
+
+MACIERZE - COS INNEGO #DUPA
+
+mapply(function(x,y){
+  x*y
+}, as.matrix(diamonds[,c('price','x','y')]) , list(2,5,8) )
+
+
+RAMKI DANYCH - RAMKA DANYCH
+
+require(ggplot2)
+
+mapply(function(x,y){
+x*y  
+}, diamonds[1:4,c('price','x')] , data.frame(a=c(2,2,2,2), b=c(9,9,9,9))  )
+
+
+
+PROGRAMOWANIE DYNAMICZNE
+
+Wykonuje rozne funkcje po roznych kolumnach ramki danych
+
+mapply(function(x,y){
+  eval(parse(text=paste(y,'x)',sep='')))
+}, diamonds[,c('price','x','y')], list('sum(','mean(','sd(') ) #nie moze byc wektor !!!
+
+#KONIEC MAPPLY
+
+
+ARGUMENTY
+
+
+mapply(mean, data.frame(diamonds[1:4,c('price','x','y')],w=c(1,2,NA,NA)), MoreArgs = list(na.rm=T, trim=.2))
+
+
+
+TRZY ARGUMENTY
+
+mapply(function(x,y,z){
+  x*y*z
+},1:10,1:10,1:10)
+
+```
+
+
+### f:mlapply(ENmisc)
+require(ENmisc)
+mlapply(list(list(1,2,3),list(4,5,6),list(6,7,8)),function(x,y,z)x^2+y^2+z)
+
+
+### Agregacja
+
+```{r}
+#suma po kilku roznych zmiennych
+stats::aggregate(price~cut+color, data=diamonds, FUN=sum,  simplify=TRUE)
+
+
+apply(,,) #dla macierzy. Trzeba podac argument okreslajacy czy funkcja ma byc wykonywana po wierszach czy kolumnach. Apply mozna tez stosowac do macierzy wielowymiarowych czyli array
+
+lapply #dla ramek danych i list. Zwraca liste
+
+sapply #dla ramek danych i list. Zwraca wektor
+require(ggplot2)
+sapply(USArrests, class) #jakiej typu dane sa w kolejnych kolumnach ramki danych zawieracjacej dane USArrests.
+
+mapply #argumentem jest funkcja ktora jest wykonywana po kolejnych elementach zadanych kilku struktur danych (np. sumowanie kolejnych odpowiadajacych sobie elementow macierzy)
+z1<-matrix(c(1,2,3,4), ncol=2)
+z2<-matrix(c(1,2,3,4), ncol=2)
+mapply(FUN=sum, z1, z2, z1)
+mapply(rep, 1:4, 4:1)
+
+#tapply  #rozbcie jednego wektora ze wzgledu na drugi. To samo mozna uzyskac split-em
+
+
+#UWaga!!! w przypadku wszystkich powyzszych funkcji jako kolejne argumenty mozna podawac argumenty dla funkcj podanych przy FUN.
+
+```
+
+
+## p:muir
+
+Package makes it easy to work with data.frames as if they were trees. 
+
+
+Examples
+```{r}
+
+
+require(muir)
+
+# data without NA
+data <- diamonds[1:1000,]
+
+# data with NA
+data_na <- bind_rows(  data
+                     , setNames(  as.data.frame(t(rep(NA, ncol(data)) ))
+                                , names(data)) )
+
+
+table(data$cut)
+
+# display no more than 4 most common categories
+muir::muir(  data, node.levels = c('cut:*', 'color:*')
+           , node.limit = 4
+           , tree.height = '1200px')
+
+# display no more than 3 categories (other categories give to category 'other') 
+muir::muir(  data
+           , node.levels = 'cut:3+'
+           , tree.height = '600px')
+
+# display no more than 3 categories (without other categories)
+muir::muir(  data
+           , node.levels = 'cut:3'
+           , tree.height = '600px')
+
+#
+muir::muir(  data
+           , node.levels = 'cut:3'
+           , label.vals  = c('min(price, na.rm=TRUE):Min Weight') 
+           , tree.height = '600px')
+
+
+
+
+
+
+
+
+
+# provide custom filter criteria and custom node titles in \code{label.vals}
+# (criteria could also be read in from a csv file as a data.frame)
+criteria <- data.frame( col = c("cyl", "cyl", "carb")
+                       ,oper = c("<", ">=", "==") # or 
+                       ,val = c(500, 900, 1000)
+                       ,title = c("Less Than 4 Cylinders", "4 or More Cylinders", "2 Carburetors"))
+
+
+criteria_price_1 <- data.frame(  col   = c("price", "price", "price","price")
+                               , oper  = c("<", ">=", "==", "is.na") # or 
+                               , val   = c(500, 900, 1000, NA)
+                               , title = c("Less Than 500", "900 or More", "1000", "no data"))
+
+muir::muir(  data           = data_na
+           , node.levels    = c('price')
+           , level.criteria = criteria_price_1
+           , tree.height    = '600px')
+
+
+
+
+```
+
+
+
+## fuzzyjoin
+
+difference_join
+```{r}
+
+library(dplyr)
+
+head(iris)
+
+# sepal_lengths <- data_frame(Sepal.Length = c(5, 6, 7), Type = 1:3)
+
+
+df_1 <- data.frame( a = letters[1:12]
+                   ,b = 1:12 
+                   ,c=  1:12
+                  )
+
+df_2 <- data.frame( A = letters[1:12]
+                   ,B = c(1, 2.2 ,9.9 ,20, 50, 21:27)
+                   ,C = c(1.05, 2.1, 9.9, 32:40)
+                  )
+
+fuzzyjoin::difference_inner_join(  x = df_1
+                                 , y = df_2
+                                 , by = c(  'b'='B'
+                                          , 'c'='C')
+                                 , max_dist = c(.3, .2)
+                                )
+
+
+
+```
+
+
+
+```{r}
+
+df_1 <- data.frame( a = letters[1:12]
+                   ,b = 1:12 
+                   ,c=  1:12
+                  )
+
+df_2 <- data.frame( A = letters[1:12]
+                   ,B = c(1, 2.2 ,9.9 ,20, 50, 21:27)
+                   ,C = c(1.05, 2.1, 9.9, 32:40)
+                  )
+
+
+
+fuzzyjoin::distance_inner_join(  x  = df_1
+                               , y  = df_2
+                               , by = c(  'b'='B'
+                                        , 'c'='C')
+                               , max_dist = 1
+                               , method = 'euclidean' )
+
+```
+
+
+
+
+
+**interval_inner_join**
+
+Joins tables based on overlapping intervals: for example, joining the row (1, 4) with (3, 6), but not with (5, 10). This operation is sped up using interval trees as implemented in the IRanges package
+```{r}
+
+require(IRanges) # pacakge from biconductor
+
+x1 <- data.frame(id1 = 1:3, start = c(1, 5, 10), end = c(3, 7, 15))
+x2 <- data.frame(id2 = 1:3, start = c(2, 4, 16), end = c(4, 8, 20))
+
+# tylko dwie pierwsze pary przedzialow nachodza na siebie (pierwsza para 1-5 i 2-4 a druga 5-7 i 4-8)
+fuzzyjoin::interval_inner_join(x1, x2)
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+

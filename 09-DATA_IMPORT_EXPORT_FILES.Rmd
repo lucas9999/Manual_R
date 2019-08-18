@@ -1,0 +1,194 @@
+# DATA IMPORT AND EXPORT FROM/TO FILES
+
+
+## clipboard
+
+
+<br>f:read.clipboard.lower(psych)
+
+NOTES:
+
+1. useful to import from clipbard triangle matrixes
+
+```{r}
+require(psych)
+z <- read.clipboard.lower()
+```
+
+<br>f:readClipboard(utils)
+
+NOTES:
+
+1. useful only for character vectors
+
+```{r}
+
+require(utils)
+z <- readClipboard()
+```
+
+
+## R data
+
+### R Data
+
+
+#### f:load  f:save
+
+NOTES about save:
+
+1. *file* is not default the second argument
+2. You can deliver variables names as strings (list), or quoted
+3. In file path file extension must be deliverd.
+4. You can save any type and number of objects (lists for example)
+
+
+NOTES about load:
+
+1. variables are automatically loaded in to environment. You can't assignt it to variable (to do this use f:load2 from p:BBmisc)
+2. You can specify environment which variables are assigned to.
+
+```{r}
+#UWAGA: dodac o RDS!!!
+z<-data.frame(c=runif(100), b=runif(100))
+save(z, file='C:/Documents and Settings/Lukasz/Pulpit/Quick R/dane.rda')
+
+  
+load(file = '', 
+  envir = pareent.frame(), #environment
+  verbose = FALSE) #if print loaded variables
+  
+```
+
+<br><br>
+#### f:load2(BBmisc)  save2(BBmisc)
+
+NOTES:
+
+1. Use to assign loaded Rdata into variable.
+
+```{r}
+require(BBmisc)
+  
+#syntax:
+z <- load2( file     =  
+           ,parts    =  #Elements in file to load. Default is all.
+           ,simplify =  
+           ,envir    =  
+           ,impute   = )
+  
+save2()
+  
+```
+
+
+
+### RDS
+
+1. Use to save/load SINGLE object.
+2. After loading you can assing to variable
+3. Works very fast
+
+```{r}
+saveRDS()
+  
+readRDS()
+```
+
+
+
+
+## csv/text
+
+### p:readr
+
+```{r}
+
+library(readr)
+Book1_csv <- readr::read_delim(  "_09/Book1_csv.txt"
+                               , delim = "\t" # delim
+                               , escape_double = FALSE
+                               , col_types = cols(GBP = col_number()) # type specification only for columns when you want to change default recognized type
+                               , locale = locale(encoding = "WINDOWS-1252") # default UTF-8
+                               , trim_ws = TRUE) # trimming leading and trailing whitespaces
+
+```
+
+
+
+
+## excel
+
+### p:readxl
+
+```{r}
+
+library(readxl)
+Book1 <- readrxl::read_excel(  path     = "./_09/Book1.xlsx"
+                            , range     = 'A1:I50'  # mtcars!A1:H50
+                            , sheet     = "Sheet1"
+                            , col_names = TRUE
+                            , skip      = 0
+                            , na        = ""
+                            , col_types = c( "date" # nie danemy 'Date'
+                                            ,"text" # nid dajemy 'character'
+                                            ,"numeric"
+                                            ,"numeric"
+                                            ,"numeric"
+                                            ,"numeric"
+                                            ,"numeric"
+                                            ,"numeric"
+                                            ,"numeric")
+                            )
+
+```
+
+
+## Basic web scraping
+
+
+Scrat tables with p:rvest
+
+```{r}
+
+library(rvest)
+
+url <- "http://www.espn.com/college-football/rankings" 
+
+page <- read_html(url) #Creates an html document from URL
+
+table <- html_table(page, fill = TRUE) #Parses tables into data frames
+
+  
+```
+
+
+## Data from api
+
+```{r}
+
+library(tidyverse)
+library(httr)
+library(jsonlite)
+library(dplyr)
+
+# getting data in json format from NBP page
+dane_json <- fromJSON(txt = 'http://api.nbp.pl/api/exchangerates/tables/a/2018-01-01/2018-01-31/?format=json')
+
+# estracking only exchanges rates (without dates)
+kursy <- dane_json$rates # list of data.frames. Length is equal to number of dates we downloaded
+
+# naming each data.frame with appropriate date
+names(kursy) <- dane_json$effectiveDate
+
+#
+dplyr::bind_rows(kursy, .id='data') %>%  # binding data frames. Names of data.frames made from dates will create 'id column'
+  mutate(data = as.Date(data)) %>% 
+  View
+
+```
+
+
+
+
+

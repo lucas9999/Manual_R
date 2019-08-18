@@ -1,0 +1,250 @@
+# DATA PROCESSING BY PROBLEMS
+
+
+
+## Frequency tables
+
+
+```{r}
+#Pakiet prettyR
+require(prettyR)
+test.df<-data.frame(sex=sample(c("MALE","FEMALE"),1000,TRUE),suburb=sample(1:4,1000,TRUE),social.type=sample(LETTERS[1:4],1000,TRUE))
+xtab(sex~suburb+social.type,test.df,chisq=TRUE)
+xtab(sex~suburb,test.df,chisq=TRUE)
+
+#wrzucenie wynikow HTML-a (do TeX-a sie nie da)
+xtab(secondbit~firstbit,testxtab,html=TRUE,chisq=TRUE,phi=TRUE)
+
+
+#Funkcja table
+require(ggplot2) #aby miec dostep do diamonds
+data(diamonds)
+z<-table(diamonds[,c(2,3,4)])
+z
+round(prop.table(z),4)
+
+
+
+#Funkcja ftable (flat table)
+Titanic #Dane o takiej strukturze jak ma zbior Titanic mozna wygenerowac np. funkcja table
+
+ftable(Titanic, row.vars = 1:3)  #row.vars okresla ktore zmienne sa brane do wierewszy
+ftable(Titanic, row.vars = 1:2) 
+
+ftable(Titanic, row.vars = 2:3)
+#transpozycja wzgledem wyniku z wykonania wiersza powyzej:
+ftable(Titanic, col.vars = 2:3)
+
+
+
+#Pakiet gmodels, funkcja CrossTable-bardzo dobra funkcja-niestety mozna dac tylko 2 zmienne.
+require(gmodels)
+require(ggplot2) #aby miec dostep do diamonds
+data(diamonds)
+CrossTable(diamonds$cut, diamonds$color, expected=T, dnn=c('cut', 'color'), format='SPSS') \#dnn okresla nazwy dla zmiennych
+CrossTable( t(as.matrix(diamonds[,c('cut','clarity')])), diamonds$color, expected=T, dnn=c('cut', 'color')) \#dnn okresla nazwy dla zmiennych
+
+
+#Pakiet Hmisc  funkcja summary.formula. W przeciwienstwie do CrossTable mozna uzyc wiecej niz 2 zmienne. Jednak podaje duzo skromniejsze wyniki. 
+library(Hmisc)
+dd <- data.frame(Q1=sample(1:3, 20, replace=T), Q2=sample(1:3, 20, replace=T), Q3=sample(1:3, 20, replace=T))  \#fake data
+summary(~Q1+Q2+Q3, data=dd, fun=table)
+summary(Q1~Q2+Q3, data=dd, fun=mean)
+
+
+```
+
+
+
+## Recoding
+
+
+```{r}
+# create 2 age categories
+mydata$agecat <- ifelse(mydata$age > 70,
+c("older"), c("younger"))
+
+# another example: create 3 age categories
+attach(mydata)
+mydata$agecat[age > 75] <- "Elder"
+mydata$agecat[age > 45 & age <= 75] <- "Middle Aged"
+mydata$agecat[age <= 45] <- "Young"
+detach(mydata) 
+#Uwaga. Powyzszego sposobu nie stosujemy do przeksztalcania zmiennych ciaglych jezeli nowa zmienna jest nadpisywana na stara. Prowadzi to do blednych wynikow!!!.
+
+require(car)
+#uwaga. Uzywam funkcji 'recode' z pakietu 'car'. Ale on tez w pakiecie 'epicalc', dlatego musze wskazac o ktory pakie chodzi
+
+#PRZYKLADY:
+car::recode(diamonds[,'clarity'], " 'SI2'='z' " )
+car::recode(diamonds[,'clarity'], " 'SI2'=1; 'VS2'=2; else=NA " )
+#Niestety nie wiem czy 'recode' dziala na warunek nierownosci
+```
+
+<br>
+f:cut i f:cut2
+```{r 7, eval=FALSE}
+#podzial na 4 rowne przedzialy
+x=c(1,2,3,4,5,6)
+cut(
+  x,   #vektor typu liczbowego
+  breaks=4)
+
+cut(
+  x,  #vektor typu liczbowego
+  breaks=c(0,2,4,7),  #przedzialy podawane jako wektor numeryczny. Punkty breakes musza obejmowac caly zakres bo inaczej bedziemy dostawac wartosc NA (wartosc zmiennej poza zakresem zdefiniowanych przedzialow) 
+  #labels = NULL,  #nazwy przedzialow podawnane sa w formie wektora
+  labels=c('a', 'b', 'c'),
+  include.lowest = FALSE, 
+  right = FALSE, #czy przedzial prawostronnie domkniety. Dla False bedzie lewostronnie domkniety
+  #diag.lab=3 #jezli nie ma podanych labels to przy wyswietlaniu przedzialow ile mniejc po przecinku podawac dla liczb wyznaczjacych krance przedzialow
+  ) 
+  
+  #podzial na przedzialy o rownej dlugosci i roznej liczebnosci
+  require(Hmisc)
+  cut2() #uwaga. 'cut2' domyslnie ma przedzialy lewostronnie domkniete w przeciwienstwie do 'cut'
+  # UZYCIE FUNKCJI 'cut 2'(pakiet Hmisc)
+  set.seed(1)
+  x <- runif(1000, 0, 100)
+  z <- cut2(x, c(10,20,30))
+  table(z)
+  table(cut2(x, g=10))      # quantile groups
+  table(cut2(x, m=50))      # group x into intevals with at least 50 obs.
+  
+  
+```
+Trzeba zrobi? w?asne udoskonalenie funkcji cut2. Jezeli jest kategoria ktorej liczebno?? przekracza liczebno?? przedzia?u to uzyskany podzia? na rowne liczebnosci bedzie zly.
+
+<br>
+f:revalue(plyr)
+```{r 8}
+#revalue dziala na stringi i factor
+x <- c("a", "b", "c")
+revalue(x, c(a = "A", c = "C"))
+revalue(x, c("a" = "A", "c" = "C"))
+```
+
+
+Funkcja `mapvlaues`(plyr)
+
+
+
+## Margins
+
+```{r}
+
+#addmargins(stats)
+      
+m<-matrix(1:20, c(4,5))
+addmargins(A=m, #dane typu 'matrix'
+                 margin=2, #wektor okreslajacy po jakich wymiarach (domyslnie po wszystkich)
+                 FUN = list(Suma=sum), #lista wyliczanych funckji wraz z nazwami nowych kolumn
+                 quiet = TRUE) #???nie wiem co jest???
+      
+      #dodanie kolumny z suma w tabeli (dwie pierwsze kolumny sa kolumnami grupujacymi typu 'chaacter')
+require(ggplot2)
+data(diamonds)
+dane<-diamonds[1:10, c('cut','color', 'carat', 'x')]  
+dane$suma<-addmargins(A=as.matrix(dane[,c(3,4)]), margin=2 , FUN = list(Suma=sum), quiet = TRUE) [,3]
+dane
+
+```
+
+
+
+
+
+
+## Transformations
+
+
+### f:transform
+
+```{r}
+require(ggplot)
+z<-diamonds
+names(z)
+z<-transform(z, logprice=log(price)) #dodatnie zmiennej bedacej logarytmem 'price'
+z<-transform(z, price=log(price)) #nadpisanie zmiennej 'price' jej logarytmem
+z<-transform(dane_sql, nowa=kwota/dochody_razem)
+```
+
+
+
+
+### f:split
+```{r}
+#rozbicie zmiennej 'price' po kategoriach zmiannej 'cut'
+z<-diamonds
+c1<-split(z[,'price'], z[,'cut'])
+
+#rozbicie calej tabeli na oddzielne tabele ze wzgledu na zmienna cut
+c2<-split(z, z[,'cut'])
+```
+
+
+
+### Przeksztalcanie kilku kolumn na raz
+
+```{r}
+
+#przeksztalcanie kilku kolumn jednoczesnie
+z<-data.frame(a=1:10, b=1:10, c=1:10)
+sapply(z, function(x) x/5  )
+z[,c(1,3)]<-sapply(z[,c(1,3)], function(x) x/5  )
+```
+
+
+
+
+
+### Rekodowanie czynnika na zmienna zero-jedynkowa
+
+```{r}
+#make_dummy
+require(Kmisc)
+z<-factor(rep(c('a','b'),10))
+z1<-make_dummy(z)
+class(z1) #otrzymujemy liste. Tyle elementow ile jest katgorii
+z1
+```
+
+
+### f:split
+```{r}
+#rozbicie zmiennej 'price' po kategoriach zmiannej 'cut'
+z<-diamonds
+c1<-split(z[,'price'], z[,'cut'])
+
+#rozbicie calej tabeli na oddzielne tabele ze wzgledu na zmienna cut
+c2<-split(z, z[,'cut'])
+```
+
+
+
+### Przeksztalcanie kilku kolumn na raz
+
+```{r}
+
+#przeksztalcanie kilku kolumn jednoczesnie
+z<-data.frame(a=1:10, b=1:10, c=1:10)
+sapply(z, function(x) x/5  )
+z[,c(1,3)]<-sapply(z[,c(1,3)], function(x) x/5  )
+```
+
+
+
+
+
+### Rekodowanie czynnika na zmienna zero-jedynkowa
+
+```{r}
+#make_dummy
+require(Kmisc)
+z<-factor(rep(c('a','b'),10))
+z1<-make_dummy(z)
+class(z1) #otrzymujemy liste. Tyle elementow ile jest katgorii
+z1
+```
+
+

@@ -1,0 +1,80 @@
+## Python
+
+### configuration
+
+```{r}
+
+require(reticulate)
+
+# information about python configuration used by p:reticulate
+py_config()
+
+# discovering configuration
+py_discover_config()
+
+# changing default python
+use_python(python = 'C:\ ...' , required = FALSE)
+
+# using virtual environment
+reticulate::use_virtualenv(virtualenv = 'C:/Users/memy/OneDrive/Pulpit/1_Programs_and_programing/PYTHON/project_1/venv')
+
+# using conda virtual environment
+use_condaenv(conda = 'C:\...')
+
+reticulate::use_condaenv('C:/Users/memy/OneDrive/Pulpit/1_Programs_and_programing/PYTHON/project_1/venv')
+
+```
+
+
+
+### Executing Python in R
+
+```{r}
+# reticulate::virtualenv_create(envname = 'C:/Users/memy/OneDrive/Pulpit/1_Programs_and_programing/PYTHON/project_1/venv')
+
+library(reticulate)
+
+# running Python code from a file
+py_run_file("script.py")
+
+
+# running python code from string and assigning space to variable 'main'
+main <- py_run_string("
+x = 10
+y = 20")
+# extracting in R variables from Python
+main$x %>% class
+main$y
+
+
+# general rule to extra python object in R from Pyhon
+py$x
+
+
+# loading Python packages
+np <- import("numpy", convert = FALSE)
+pd <- import("pandas", convert = FALSE)
+
+
+# playing the Pandas data.frames
+main_data_frame <- py_run_string('
+import pandas as pd
+df=pd.DataFrame({"Animal":["dog","dolphin","chicken","ant","spider"],"Legs":[4,0,2,6,8]})')
+
+df <- main_data_frame$df
+class(df) # this is not a R data.frame !!! . Currently (2018 Feb) you cannot convert it do R data.frame !!! 
+
+```
+
+
+
+### Execution R in Python
+
+```{python}
+
+```
+
+
+
+
+

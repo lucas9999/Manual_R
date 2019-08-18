@@ -1,0 +1,789 @@
+# DATA PROCESSING TRICKS
+
+
+
+
+## Remove duplicated columns
+
+
+```{r}
+tabela <- dplyr::frame_data(
+  ~a, ~b, ~c,
+  1,2,1,
+  2,3,2
+)
+
+require(digest)
+tabela[!duplicated(lapply(tabela, digest))]
+```
+
+
+
+
+## get name of elements in nested list
+
+In this case I don't treat data.frame as list.
+
+
+Hierarchical view:
+```{r} 
+
+l <- list(a=10, b=list(c=20, d=data.frame(z=10,x=30)))
+
+
+f <- function(x, parent=""){
+    if(!(is.list(x) & !is.data.frame(x)) ) return(parent)
+    mapply(f, x, paste(parent,names(x),sep="$"), SIMPLIFY=FALSE)
+}
+
+f(l)
+
+```
+<br>
+Just names:
+```{r} 
+
+l <- list(a=10, b=list(c=20, d=data.frame(z=10,x=30)))
+
+f <- function(x, parent=""){
+    if(!is.list(x)) return(parent)
+    unlist(mapply(f, x, paste(parent,names(x),sep="$"), SIMPLIFY=FALSE))
+}
+
+f(l)
+```
+
+
+
+## moving columns
+
+```{r}
+
+# move to the end
+require(dplyr)
+require(ggplot2)
+dplyr::select_(diamonds, interp(quote(-x), x=as.name('cut')) ,.dots=list(quote(everything()))) %>% head #dynamic argumenst
+dplyr::select_(diamonds, -cut ,everything()) %>% head #static arguments
+
+# move to front
+dplyr::select_(diamonds, cut ,everything()) %>% head
+
+```
+
+
+
+## Usuwanie wartosci nieskonczonych z ramek danych
+
+
+
+This doesn't work:
+```
+x[is.infinity(x)] <-NaN
+```
+You have to use e.g.:
+```
+do.call(data.frame, lapply(x, function(x) replace(x, is.infinity(x), NaN )))
+```
+
+
+## Dynamiczne wygenerowanie pustej ramki danych
+
+```{r, opts.label='k'}
+
+as.data.frame(setNames(replicate(5, numeric(0), simplify = FALSE), letters[1:5]))
+```
+
+
+
+## Dynamiczne wygenerowanie listy pustych data.frame
+
+Elementy listy beda posiadaly nazwy
+```{r, opts.label='k'}
+
+setNames(lapply(1:5, function(x) data.frame()), letters[1:5])
+```
+
+
+## Selecting columns by condition
+
+```{r}
+
+require(ggplot2)
+d1 <- diamonds[,sapply(diamonds, is.numeric)]
+d1[,sapply(d1, function(x) sum(x)>1000000)]
+```
+
+Creating variables using the elements in a list
+
+
+
+
+```{r}
+
+# First method
+
+l <- list(a=1, b=2)
+
+for(i in 1:length(l)){
+  assign(x = names(l)[i] , value = l[[i]])
+}
+rm(a,b)
+
+
+# Second method
+
+w <- list(a=1, b=2)
+list2env(x = w, envir = .GlobalEnv)
+
+```
+
+
+## DUPLIKATY z orginalami
+
+
+
+
+```{r}
+
+a<-data.frame(a=c('a','a','b','c','c','d','e'), b=c('w','w','r','c','c','r','t'))
+a[ duplicated(a) | duplicated(a[nrow(a):1,])[nrow(a):1],]
+```
+
+
+## DYNAMICZNE FILTROWANIE PO KOLUMNACH
+
+Problem: Tabla musi być przefiltrowana po wszystkie kolumnach o dynamicznie wygenerowanych. Zakładam że warunek na każdą kolumnę jest taki sam 
+
+```{r}
+
+require(dplyr)
+
+d <- data.frame(a=1:10, b=1:10, c=c(8,9,1:8))
+c<-c('b','c')
+for(i in 1:length(c)){
+  # i=1
+  d <- d %>% filter_(.dots = interp(~ c < 8, c=as.name(c[i]) ) )
+}
+d
+
+```
+
+
+## PRZETAPIANIE CHARACTER
+```{r}
+
+require(ggplot2)
+require(reshape2)
+require(dplyr)
+
+d <- data.frame( cut=rep(c('a','b'), each=5 ), color=c(1:10), clarity=letters[1:10]  )
+
+recast(d, formula=cut~color, id.var=c('cut','color'), measure.var=c('clarity'))
+```
+
+## Odwolywanie sie do nazw w sapply
+
+
+
+
+Stosujemy taki trick (przyklad wybierania kolumn typu 'numeric' lub o nazwie 'cut')
+```
+diamonds[,unlist(lapply(seq_along(diamonds),function(x,d,n) {is.numeric(d[[x]]) | n[[x]]=='cut'} ,d=diamonds,  n=names(diamonds)))]
+```
+
+
+## converting lists into vectors in data.frames----
+
+```{r}
+require(ggplot2)
+require(abind)
+require(dplyr)
+require(plyr)
+
+
+require(rlist)
+
+wynik <- diamonds %>% group_by(cut) %>% do(a={sum(.$price)})
+
+sapply(wynik, class)
+
+class(wynik)
+wynik
+wynik$a
+ddd <- do.call('data.frame', sapply(as.data.frame(wynik), unlist, simplify = FALSE
+```
+
+
+## SUMOWANIE POPRZEDNICH WARTOSCI
+
+Most advanced version
+```{r}
+#Assumptions
+#I will do operation for each group (a-groupuing variable)
+#fof each grup i have "ordered variable" b and "measure variable" 'c'.
+
+
+z<-data.frame(a=rep(c(1,2),each=5),b=c(1,1,2,2,2,3,4,4,4,5), c=1:10)
+require(dplyr)
+z <- z %>% group_by(a) %>% mutate(lp=1:n(), rank=dense_rank(b)) %>% ungroup()
+z1<-z
+names(z1) <- paste(names(z1),'1', sep='') 
+
+z1 <-z %>% group_by(a,lp) %>% 
+  mutate( sumka=sum( z1[ (z1$rank1==rank & z1$a1==a) | 
+                         (z1$rank1==rank+1 & z1$a1==a) | 
+                         (z1$rank1==rank+2 & z1$a1==a) ,'c1'], na.rm=TRUE) )
+```
+
+
+## USUWANIE Z WEKTORA WARTOSCI ODSTAJACYCH PRZY POMOCY BOXPLOT (WARTOSCI ODSTAJACE). Jak to uogólnic na ramke danych?
+
+
+
+
+
+```{r}
+
+x[!x %in% boxplot.stats(x)$out]
+```
+
+
+
+
+
+## patent na sortowanie stringow z cyframi
+
+```{r}
+
+z001
+z002
+
+a nie
+
+z1
+z2
+```
+
+
+
+
+
+## wstawienie kolumny miedzy kolumny ramki danych
+
+```{r}
+
+as.data.frame(append(tabela, list(a=...), after=1 ))
+```
+
+
+
+
+
+## dodawanie tego samego elementu do wszystkich rekordow w grupie (problem powstal przy liczeniu WoE)
+
+
+```{r}
+
+require(ggplot2)
+require(dplyr)
+
+d <- diamonds
+d1 <- d %>% group_by(cut,color) %>% summarise(s=sum(price))
+d2 <- d1[,c('s','color','cut')] %>% filter(color=='J') %>% do(left_join(d1,.,by=c('cut')))
+d2
+
+```
+
+
+
+## Dividing data.frames by vectors
+
+```{r}
+
+#dzielenie ramki i macierzy przez wektor
+z<-data.frame(a=rep(5,5), b=rep(2,5))
+w<-c(5,2)
+z/w #
+
+
+#Jezeli chcemy podzielic odpowiadajace sobie pozycje kazdego wiersza przez pozycje z wektora niestety macirz/ramek musimy transponowac. Niestety ramke bedziemy musli przeksztalcic na macierz i utracimy informacje o nazwach zmiennych
+z1<-t(z)
+class(z1) #dostalismy typ matrix po transpozycji
+z1<-z1/w
+z1<-t(z1)
+names(z1)<-names(z)
+```
+
+
+## zagniezdzenie sapply w lappy
+
+
+```{r}
+require(ggplot2)
+data(diamonds)
+
+a=diamonds[1:1000,c('carat','price')]
+b=diamonds[1:1000,c('x','y')]
+a[1:10,]<-NA
+
+l<-list(a=a, b=b)
+lapply(l, sapply, mean, na.rm=T)
+lapply(l, sapply, quantile, probs=c(.2,.5,.7) ,na.rm=T)
+```
+
+
+
+
+## DZIALANIE NA WIERSZACH WEWNATRZ GRUP (jedna z lepszych wersji)
+
+
+```{r}
+# mozena tez z uzyciem abind
+require(plyr)
+require(dplyr)
+require(ggplot2)
+w <- diamonds %>% 
+  group_by(cut, color) %>% 
+  dplyr::summarise(., sum=sum(price))
+w1 <- w %>% dplyr::do(sum={.[.[,'color']=='I','sum'] / .[.[,'color']=='J','sum']}) %>% 
+  as.data.frame(.$sum) %>% 
+  lapply(unlist) %>% 
+  as.data.frame
+rbind.fill(w, cbind(w1, color='nowy')) %>% arrange(cut, color)
+```
+
+
+## RELACJA GRUPY W PODGGRUPA SUMY WSZYSTKICH PODGRUP
+
+```{r}
+
+require(diamonds)
+require(dplyr)
+require(data.table)
+
+d <- as.data.table(diamonds)
+
+d[, pd:=sample(0:1,.N,TRUE)] %>% group_by(cut, pd) %>% dplyr::summarise_(.dots=setNames(list(~sum(price)), c('suma'))) 
+
+```
+
+
+
+## dodawanie komentrzy osobno do kazdej kolumny w ramce danych
+
+
+
+```{r}
+
+require(Hmisc)
+d<-data.frame(a=1, b=2)
+label(d,FALSE)<-c('aaaa','bbbbb')
+```
+
+
+
+## f:rep vs f:replicate
+
+
+
+```{r}
+
+rep(rnorm(1), 10)
+replicate(10, expr = rnorm(1))
+
+require(microbenchmark)
+microbenchmark(rep(rnorm(1), 10), replicate(10, expr = rnorm(1)))
+
+```
+
+
+
+
+## Closest value
+
+
+
+### ogolnie najblizsze
+```{r}
+
+c1<-c(1,2,5,6,7,10)
+c2<-c(2,4,5,6,6,10,1,1,12)
+
+# I will find closest value among 'c1' for values in 'c2'
+c1[sapply(c2, function(x) which.min(abs(c1-x))[1])] #[1] - first  finded
+
+
+
+```
+
+
+### najwyzej najblizsze
+```{r}
+
+#code below wasn't checked
+c1<-c(1,3,5,6,7,10)
+c2<-c(2,4,5,6,6,10,1,1,12)
+c1[sapply(c2, function(x) which.min(ifelse(c1-x<0,NA,c1-x ))[1])]
+```
+
+
+### najnizej-sprawdziczy czy dobrze dziala
+```{r}
+
+c1<-c(1,3,5,6,7,10)
+c2<-c(2,4,5,6,6,10,1,1,12)
+#code below wasn't checked
+c1[sapply(c2, function(x) which.max(ifelse(c1-x>0,NA,c1-x ))[1])]
+```
+
+
+
+
+## WYSZUKIWANIE ZAKRESU DAT TYGODNIA Z KTOREGO SA DATY
+
+```{r}
+
+require(plyr)
+require(lubridate)
+
+daty<-as.Date(c('2013-01-03','2012-07-28','2014-09-12'))
+
+daty_komplet<-data.frame(daty, daty_week=week(daty))
+
+min<-min(daty)
+max<-max(daty)
+
+sekwencja<-seq(min,max, by='1 day')
+tygodnie<-week(sekwencja)
+ramka<-data.frame(daty=sekwencja, tygodnie=tygodnie)
+
+ramka_1<-cbind(ddply(ramka, .(tygodnie_min=tygodnie), summarise, min=min(daty) ), max=ddply(ramka, .(tygodnie_max=tygodnie), summarise, max=max(daty) )[,2] )
+
+cbind(ramka_1[match(daty_komplet[,2], ramka_1[,1]),],daty)
+```
+
+
+
+## NA problems in mapping and joining
+
+
+
+```{r}
+
+require(plyr)
+
+z1 <- c('a','b','c',NA)
+mapvalues(z1, c(NA,'a'), c('z','z1'))
+    
+z2 <- factor(c('a','b','c',NA))
+mapvalues(z2, c(NA,'a'), c('z','z1'))
+    
+z3 <- addNA(factor(c('a','b','c',NA)))
+mapvalues(z3, c(NA,'a'), c('z','z1'))
+    
+
+
+
+require(car)
+    
+#character
+z1 <- c('a','b','c',NA)
+car::recode(z1, "'a'='z1'; NA='z2'")
+
+#factor without NA
+z2 <- factor(c('a','b','c',NA))
+car::recode(z2, "'a'='z1'; NA='z2'")    
+
+#factor with NA
+z3 <- addNA(factor(c('a','b','c',NA)))
+car::recode(z3, "'a'='z1'; NA='z2'")    
+
+
+
+
+
+
+require(dplyr)
+
+#character
+d1 <- data.frame(a=c('a','b',NA), b=1:3, stringsAsFactors = FALSE)
+d2 <- data.frame(c=c('a','b',NA), d=4:6, stringsAsFactors = FALSE)
+left_join(d1, d2, by=c('a'='c'))
+
+#factor without NA as factor
+d1 <- data.frame(a=factor(c('a','b',NA)), b=1:3, stringsAsFactors = FALSE)
+d2 <- data.frame(c=factor(c('a','b',NA)), d=4:6, stringsAsFactors = FALSE)
+left_join(d1, d2, by=c('a'='c'))
+
+#factor with NA as factor
+d1 <- data.frame(a=addNA(factor(c('a','b',NA))), b=1:3, stringsAsFactors = FALSE)
+d2 <- data.frame(c=addNA(factor(c('a','b',NA))), d=4:6, stringsAsFactors = FALSE)
+left_join(d1, d2, by=c('a'='c'))
+
+```
+
+
+
+
+
+## Functions by packages
+
+## f:do.call
+
+Przekazywanie parametrow do funckji zagniezdzonej w do.call na przykladnie sklejanie kolumn ramki danych
+
+```{r}
+do.call('paste', c(diamonds[1:10,c('cut','color')], sep='_'))
+```
+
+
+
+
+## f:aggregate
+```{r 39, eval=FALSE}
+
+		require(ggplot2)
+		d<-data(diamonds) #takie zapis jest zly
+		d<-diamonds
+		d<-d[1:20 , c('cut', 'clarity', 'price', 'carat') ]
+		
+		#aggeagate
+		#nie ma parametru drop
+		#akceptuje funkcje zwracajace wektory (np. quantile)
+		#parametr symplify=TRUE powoduje ze mamy wynik w postaci wektora lub macierzy.
+		#aggregate a braki danych
+		
+		#wplyw na zmienna grupujaca
+		d<-data.frame(a=c('a','a','b','b',NA), b=c(1:5), c=c(6:10))
+		aggregate(b~a, data=d ,FUN=sum)
+		#braki danych zostaly pominiete dlatego ze tak jest domyslnie ustawione
+		aggregate(b~a, data=d ,FUN=sum, na.action=na.pass)
+		aggregate(b~a, data=d ,FUN=sum, na.action=na.omit)
+		aggregate(b~a, data=d ,FUN=sum, na.action=na.fail)
+		
+		#wplyw na zmienne na ktore dziala funkcja FUN
+		d<-data.frame(a=c('a','a','b','b','b'), b=c(1:4,NA), c=c(6:10))
+		aggregate(b~a, data=d ,FUN=sum)
+		#braki danych zostaly pominiete dlatego ze tak jest domyslnie ustawione
+		aggregate(b~a, data=d ,FUN=sum, na.action=na.pass)
+		aggregate(b~a, data=d ,FUN=sum, na.action=na.omit)
+		aggregate(b~a, data=d ,FUN=sum, na.action=na.fail)
+		
+		#Wniosek
+		#uwaga. parametr na.action dotyczy elementow na ktore dziala funkcja FUN. Jestli chodzi o kategorie po ktorych sie sumuje nie da sie w zaden sposob uzyska NA jako kategorii. Jedyne rozwiazanie to chyba po prostu przekodowac braki danych na jakis ciag tekstowy
+```
+		
+		
+## f:by
+		
+```{r 40}
+
+		#funkcja fun musi przetwarzac cala ramke danych. Nie jest to robienie dzialan po kolumnach jak w apply itp.
+		d<-data(diamonds) #takie zapis jest zly
+		d<-diamonds
+		d<-d[1:20 , c('cut', 'clarity', 'price', 'x') ]
+		#zastsowanie funkcji w 'by'
+		by(d[,c('price','x')], d[,'clarity'], function(x) lm(price~x, data=x) )
+		by(d[,c('price','x')], d[,'clarity'], summary )
+		
+```
+
+
+## f:outer
+
+
+
+```{r}
+
+#uzycie funkcji
+a1<-1:3
+a2<-c(1:5,NA)
+outer(a1,a2, function(a,b) mapply(sum,a,b,na.rm=TRUE))
+
+#zagniezdzenie
+a1<-1:3
+a2<-c(1:5,NA)
+a3<-1:2
+outer(a3, outer(a1,a2,'*'),'*')
+```
+
+
+
+## f:summary
+
+
+
+```{r}
+
+## summary dla roznych typow danych i roznych struktur----
+
+### character
+z<-rep(c('a','b','c'), 100)
+summary(z)
+
+> summary(z)
+Length     Class      Mode 
+300 character character 
+
+
+### logical
+z<-c(T,F,T)
+summary(z)
+> summary(z)
+Mode   FALSE    TRUE    NA s 
+logical       1       2       0 
+
+
+### factor
+z<-factor(c(1,1,2,2,2,2,3))
+summary(z)
+
+
+
+
+### matrix
+z<-matrix(c(1:6), c(2,3))
+summary(z)
+
+
+### data.frame -same libczy
+z<-data.frame(a=c(1:50), b=51:100)
+summary(z)
+
+
+### data.frame-liczby i factor
+z<-data.frame(a=c(1:50), b=51:100, c=rep(c('a','b'), 25))
+summary(z)
+
+```
+
+## Misselenious
+
+### Elementarne funkcje
+
+```{r}
+#Sortuje rosnaco wektor
+Sort(x, decreasing = FALSE) 
+
+#Zwraca pozycje min (pierwszego, jesli wystepuje kilka elementow najmniejszych)???
+which.min(a)
+
+#Rozstep, czyli wartosc max i min
+range()   
+
+#Roznice dla co drugiego wyrazu wektora (czyli przyrosty)
+diff(x,lag=1)
+
+#Suma skumulowana
+cumsum(x)  #dostaniemy wektor kolejnych skumulowanych sum
+
+#Przyklad z helpa zastosowania funkcji sqrt
+example(sqrt)
+
+#Przyrosty dla co drugiej wartosci z wektora x
+diff(x, lag=2)
+
+#Przyrosty 2 rzedy
+diff(diff(x))
+
+#Jakiego typu jest element x
+class(x)
+
+#Zwracanie wartosci maksymalnej z kolejnych pozycji dla kilku wektorow
+pmax(a,b,c) 
+
+#iloczyn elementow wektora
+prod(x)
+```
+
+### Ciagi
+
+```{r}
+#Ciag liczb 1:100  
+X<-c(1:100)
+
+#Ciag liczb od -5 do 5 z krokiem rownym 0.3  
+seq(-5,5,by=0.3)
+
+#Ciag stworzony z podzielenia przedzialu [-5;5], na 4 rowne czesci
+seq(-5,5,length.out=4) 
+
+#Powtorz wektor x (x to moze byc tez liczba), 5 razy  
+rep(x, Times=5)
+
+#Powtorz 5 razy kazdy element wektora x	
+rep(x, each=5)
+
+#Powtorz  element 2 ,5 razy i element 3, 2 razy	
+rep(c(2,3),c(5,2))
+
+#Zwrocic losowo 4 liczby z wektora x, bez powtarzania	
+sample(x, 4, rep=TRUE)
+
+#Ciag malych liter	letters[1:10]  
+#Uwaga: lettres(1:10) nie zadziala. Nawiasy sa kwadratowe!!!!
+
+#Ciag wielkich liter	
+LETTERS[1:10]
+
+```
+
+
+### Rangowanie
+
+```{r}
+#SKLADNIA:
+rank(x, #a numeric, complex, character or logical vector
+na.last = TRUE, #for controlling the treatment of NAs. If TRUE, missing values in the data are put last; if FALSE, they are put first; if NA, they are removed; if "keep" they are kept with rank NA.
+ties.method = c("average", "first", "random", "max", "min"))
+
+#PRZYKLAD:
+w<-c(3,2,5,6,3,NA,4,5,2)
+rank(w, na.last=T, ties.method='average') #average jest domyslne. Zwroci : 3.5 1.5 6.5 8.0 3.5 9.0 5.0 6.5 1.5
+rank(w, na.last=T, ties.method='max') #zwroc: 4 2 7 8 4 9 5 7 2
+rank(w, na.last=T, ties.method='min') #zwroci: 3 1 6 8 3 9 5 6 1
+rank(w, na.last=T, ties.method='random') #zwrocinp: 3 1 6 8 4 9 5 7 2
+rank(w, na.last=T, ties.method='first') #zwroci: 3 1 6 8 4 9 5 7 2
+```
+
+
+### Operacje mnogosciowe
+```{r}
+x<-c(1,2,3,4,5,6,7,8,9, 10)
+y<-c(6,7,8,9,10,11,12,13,14, 15)
+union(x, y) #suma
+intersect(x, y) #elementy wspolne
+
+setdiff(x, y) #x-y
+setequal(x, y) #czy zbiory sa rowne
+is.element(5, y)
+is.element(c(3,5,6), y)
+is.element(x,y)
+(sum(is.element(x,y)) ==length(x))|(sum(is.element(y,x)) ==length(y)) #czy zbiory sa sobie rowne. Uwaga! to rozwiazanie nie bierze pod uwage elementow powtarzajacych sie zatem np. zbiory {1} oraz {1,1,1} bede rownowazne.
+ma1<-matrix(x, ncol=2)
+ma2<-matrix(y, ncol=2)
+union(ma1, ma2) #macierze sa traktowanej jak wektory
+
+# PROBLEM: jak zrobic union wielokrotnie na kilku zbiorach?????
+```
+
+### funkcja expand grid
+
+```{r}
+x<-c(1,2)
+y<-c(4,5)
+z<-factor(c('a','b') )
+u<-c('w','g')
+d<-as.Date(c('2014-09-09','1999-09-06'))
+expand.grid(x,y,z,u,d)
+```
+
+
+### f:interaction
+
+
+
+```{r}
+interaction(c(1,2,3),c(2,3,4))
+```
+

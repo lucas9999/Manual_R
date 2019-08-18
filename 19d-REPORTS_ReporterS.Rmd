@@ -1,0 +1,187 @@
+# REPORTS Officer
+
+p:officer documentation: https://davidgohel.github.io/officer/index.html
+
+
+## Word
+
+### basic operations
+
+```{r}
+
+require(officer)
+require(ggplot2)
+library(magrittr)
+
+# creating new word document
+my_doc = read_docx()
+
+# default styles in document
+styles_info(doc)
+
+
+
+# adding elements
+
+gg_plot <- ggplot(iris) + geom_density(aes(x=Petal.Width))
+
+myft <- regulartable(  head(mtcars)
+                     , col_keys = c("am", "carb", "gear", "mpg", "drat" ) # by default is names(data)
+                     )
+
+my_doc <- my_doc %>% 
+  body_add_par('Witam. To jest moj wierwszy paragraf w dokumencie wykonanym pakietem officer') %>% 
+  body_add_break() %>%  # przejscie do nowej STRONY
+  # add picutre
+  body_add_img(src = 'figures\\create_project.png', width = 5, height = 6, style = "centered") %>% 
+  # add paragraph
+  body_add_par("Hello world!", style = "Normal") %>% 
+  body_add_par("", style = "Normal") %>% # blank paragraph
+  #add table
+  body_add_table(iris[1:5,], style = "table_template") %>% 
+  body_add_gg(gg_plot) %>% 
+  body_add_flextable(myft)
+  
+
+# adding elements to our document
+
+print(my_doc, target = "first_example.docx")
+
+
+```
+
+
+### using bookmarks and cursors
+
+```{r}
+require(officer)
+require(magrittr)
+
+my_doc_1 <- officer::read_docx()
+
+
+my_doc_1 <- my_doc_1 %>% 
+  body_add_par('tekst 1') %>% 
+  body_add_par('tekst 2') %>% 
+  body_add_par('tekst 3') %>%
+  body_bookmark('moj_znacznik_1') %>%
+  body_add_par('tekst 4') %>%
+  body_add_par('tekst 5') %>%
+  body_add_par('tekst 6') %>%
+  body_bookmark('moj_znacznik_2') %>%
+  body_add_par('tekst 7') %>%
+  body_add_par('tekst 8')
+
+print(my_doc_1, target = "cursors.docx")
+
+# removing part of text with cursor
+
+my_doc_2 <- my_doc_1 %>% 
+  cursor_bookmark('moj_znacznik_1') %>% 
+  body_remove() # removing element before cursor
+
+print(my_doc_2, target = "cursors_removed.docx")
+
+```
+
+
+
+### merging cells in columns and rows
+
+
+More at: https://davidgohel.github.io/flextable/articles/layout.html
+
+**columns**
+```{r}
+
+select_columns <- c("Species", "Petal.Length", "Petal.Width")
+
+myft <- regulartable(iris[46:55,], col_keys = select_columns)
+
+# merge cells in columns 'spaces' and 'Petal.Width'
+myft <- merge_v(myft, ~ Species + Petal.Width )
+
+myft
+
+```
+
+
+
+
+**rows**
+```{r}
+
+select_columns <- c("Species", "Petal.Length", "Petal.Width")
+
+myft <- regulartable(head(mtcars, n = 10 ) )
+
+myft <- merge_h(myft)
+
+# and add borders
+
+myft <- border(myft, border = fp_border(), part = "all")
+
+myft
+
+```
+
+
+
+**colls and rows**
+```{r}
+select_columns <- c("Species", "Petal.Length", "Petal.Width")
+
+myft <- regulartable(head(mtcars, n = 6 ) )
+
+myft <- merge_at( myft, i = 1:3, j = 1:3)
+
+myft <- border(myft, border = fp_border(), part = "all")
+
+myft
+```
+
+
+
+### Headers
+
+```{r}
+
+```
+
+
+## Power Point scraping
+
+
+
+
+
+
+## Table p:flextable 
+
+
+### Simple table
+
+```{r}
+
+require(officer)
+require(flextable)
+
+# creating of new object
+myft <- regulartable(  head(mtcars)
+                     , col_keys = c("am", "carb", "gear", "mpg", "drat" ) # by default is names(data)
+                     )
+
+myft
+
+# changing table layout with theme
+myft <- theme_vanilla(myft)
+myft
+```
+
+
+
+
+
+
+
+

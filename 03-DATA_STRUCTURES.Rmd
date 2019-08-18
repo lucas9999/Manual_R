@@ -1,0 +1,1279 @@
+# DATA STRUCTURES
+
+
+## Objects attributes
+
+1. Atrybuty sa przechowywane w postaci *pairlist*
+2. Liste atrybutow obiekty pobieramy przez f:attributes
+3. Konkretny atrybut pobieramy f:attr (np. `attr(x, 'names')`)
+4. Nowe atrybuty przypisujemy przez f:attr (np. `attr(x, 'atrybut') <- wartosc`).
+5. W przypadku niektorych atrubutow (class, names,...) mozna odwolywac sie przez funkcje podstawieniowe.
+6. dim, length, ncol, nrow  are not an attributes. They are function of type *primitive*
+
+
+## Podzial struktur
+
+Na razie pominiemy tzw. typy danych tzn. daty, liczny, ciagi tekstowe, bo to rozbudowane tematy i zajmiemy się tym w jakie struktury mozna takie typu zebrac. 
+
+Dane w jezyku R sa przechodywane w listach ktore dzieli sie na 2 podstawowe typy
+
+1. **atomowe** - kazdy element listy jest tego samego typu (czyli wszystko jest np. liczba) i elementow nie mozna w sobie zagniezdzac (przykladem jest np. vektor, matrix, array). Lista atomowa nie moze przechowywac obiektu NULL.
+2. **generyczne** - kazdy element moze byc innego typu i elementy mozna zagniezdzac (przykladem sa listy, data.frames [ramki danych]). Lista generyczna moze przechowywac obiekt `NULL`.
+
+```{r}
+nasz_wektor <- c(1,2,3)
+
+is.atomic(nasz_wektor)   # czy obiekt jest atmowy
+isGeneric('nasz_wektor') # czy obiekt jest generyczny
+
+```
+
+
+## Atomic lists [Listy atomowe]
+
+W przypadku list atomowych beda nas interesowaly:
+
+1. **vector** - wektor
+2. **matrix** - macierz dwuwymiarowa
+3. **array**  - macierz o dowolnej liczbie wymiarow
+
+**Uwaga**: W R nie ma czegos takiego jak **skalar**, czyli obiektu zawierajacego na sztywno tylko jeden element !!!. Mozna sobie co najwyzej zrobic wektor z jednym elementem albo macierz o wymiarze 1x1.
+
+
+
+### wektory
+
+Dla wektorow w wiekszosci sytuacji chyba nie ma sensu wyrozniac czy jest wierszowy czy kolumnowy. Po uzyciu na nim funkcji transponujacej dostaniemy matrix z jednym wierszem:
+```{r}
+wektor <- c(1,2,3)
+
+transponowany_wektor <- t(wektor)
+class(transponowany_wektor) # sprawdzam klase obiektu i dostaje "matrix"
+
+```
+Taka transpozycja moze kilka razy mi sie kiedys przydala. 
+
+
+
+
+
+
+
+
+**Tworzenie wektora**
+```{r}
+
+#obie ponizsze linijki kodu sa rownowazne
+wektor <- c(1,2,3,4,5,6,7,8,9)
+wektor <- 1:9
+
+#mozna tez to mieszac te konstrukcje
+wektor1 <- c(1:3, 10:20, 5, 12, 100:200)
+
+# sklejanie wektorow
+wektor_1 <- 1:3
+wektor_2 <- 4:6
+
+# skleilem ponizej 4 wektory 
+wektor_razem <- c(  wektor_1
+						  		, wektor_2
+							  	, 1:30
+								  , c(1,2,3)) 
+
+
+wektor_pusty_liczbowy <- numeric(0) # ten wektor ma zero elementow ale wiemy ze jest typu liczbowego (typy wektorow bede w jednej z kolejnych czesci)
+
+
+```
+
+**Wybieranie podzbioru elementow wektora po indeksach**
+```{r}
+
+# wybieranie po indeksach (pozycjach) elementow
+
+wektor[1]        #wyciagnij pierwszy element
+wektor[c(2,3)]   #wyciagnij drugi i trzeci element
+wektor[2:3]      #wyciagnij drugi i trzeci element
+wektor[-1]       # wszyskie elementy z wyjatkiem pierwszego
+wektor[c(-1,-3)] # wszyskie elementy z wyjatkiem pierwszego i trzeciego
+wektor[-1:-3]    # wszyskie elementy z wyjatkiem pierwszego drugiego i trzeciego
+
+# mozeby tez wyciagajac elementy zmieniac sobie kolejnosc
+wektor[c(3,2,1)]
+order(wektor) # to naz zwroci ktory pod wzgledem wartosci jest dany element
+wektor[order(wektor)] # dzieki takiemu podstawieniu dostaniemy posortowany wektor. Ale do srotowania generalnie lepsza jest f:sort ktora bedzie potem pokazana.
+
+
+
+```
+
+**Wybieranie podzbioru elementow wektora po warunkach logicznych**
+```{r}
+
+wektor[c(TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)] # wycianij pierwszy i drugi element - zwrocmy uwage ze ilosc wartosci logicznych jest rowna ilosci elementow wektora, czyli warunek definiujemy oddzielnie dla kazdego elementu
+
+#ponizsze dzialanie zwraca nam wektor wartosci logicznych o dlugosci naszego wektora pokazujace ktore elementy sa wieksze niz 3
+wektor > 3
+#nic nie stoi na przeszkodzie zeby powyzsze dzialanie podstawic w nawiasach kwadratowych naszego wektora:
+wektor[wektor > 3] # wyciagnij elementy wieksze niz 3
+
+# bardziej skpmplikowany warunek
+wektor[wektor > 3 & wektor < 8]
+
+```
+
+
+**Wybieranie podzbioru elementow wektora po nazwach.**
+```{r}
+
+wektor <- c(a=10, b=20, c=30) # kazdy element naszego wektora bedzie teraz mial nazwy literowe
+
+names(wektor) # zwroci wektor z nazwami elementow wystapujacymi w naszym wektorze
+
+wektor['a'] # element o nazwie 'a'
+wektor[c('a','b')] # elementy o nazwach 'a' i 'b'
+
+# niestety nie dziala tutaj trik ze znakiem minus jak przy odwolywaniu sie przez indeksy
+wektor[-'a'] # dostaniemy blad
+
+#zeby rozwiazac powyzszy problem z brakie mozliwosci uzycia minusa zastosujemy:
+indeksy_do_usuniecia <- which(names(wektor) %in% c('a', 'b')) # f:which zwroci nam numery nazw ktore zawieraja sie w zbiore dwuelementowym 'a' i 'b'.
+wektor[-indeksy_do_usuniecia] # dostaniemy tylko element 'c'
+
+
+
+# wektor bez komplenu nazw dla elementow:
+wektor_bez_kompletu_nazw <- c(a=10, b=20, 30) # trzeci element nie nazwany
+names(wektor_bez_kompletu_nazw)   # na trzeciej pozycji mamy po prostu znak pusty ""
+
+wektor_bez_kompletu_nazw[""] # to nie zadziala. Do elementow nie nazwanych nie odwolamy sie po nazwie !!!
+
+
+```
+
+
+**Atrybuty wektora**
+```{r}
+
+wektor <- c(a=10, b=20, c=30)
+
+#wczesniej wspomniane nazwy elementow
+names(wektor)
+
+#dlugosc wektora
+length(wektor)
+
+# podstawowy typ wektora (w rozdziale o typach danych wyjasnie co to jest)
+mode(wektor)
+
+# tzw. klasa wektora (to nie to samo co podstawowy typ, chociaz tutaj mamy akurat prosty wektor numeryczny i f:mode oraz f:class zwraca nam 'numeric' ). O tym czym jest klasa tez bedzie pozniej
+class(wektor)
+
+```
+
+
+
+**Modyfikacja wektora**
+```{r}
+
+wektor <- c(a=10, b=20, c=30, d=40)
+
+wektor[2] <- 200 # drugi element zastap wartosciowa 200
+wektor
+wektor['c'] <- 300
+wektor
+wektor[1:3] <- c(1,2,3)
+wektor
+wektor[1:3] <- c(1000, 2000) # trzy elementy zastepujemy dwoma, ale nie jest do dobra praktyka. 
+wektor
+wektor[1:3] <- 100  # to zadziala  i jest czesto stosowane bo kilka elementow zastepujemy JEDNYM I TYM SAMYM elementem
+wektor
+
+# mimo ze wektor ma tylko 4 elementy mozemy sie odwolac w indeksie do liczby 5 i tym samym dokleic kolejny element
+wektor[5] <- 10000
+wektor
+
+# to co jest nizej tez zadziala. Wektor ma juz 5 elementow a teraz bedzie mial 10. Dziury od elementu 6 do 9 zostana wypelnione brakami danych czyli wartoscia NA
+wektor[10] <- 10000
+wektor
+
+wektor <- wektor[1:3] # skrocenie wektora do pierwszych 3 elementow
+
+
+# ponizsze 2 linijki sa roznowazne
+wektor <- replace(wektor, list = c(1,2), values = c(10,20))
+wektor[c(1,2)] <- c(10,20)
+
+
+```
+
+
+**Rozne przydatne funkcje do pracy z wektorami**
+```{r}
+
+wektor <- 1:10
+
+# odwrocenie kolejnosci elementow
+rev(wektor) 
+
+# sortowanie rosnaco
+sort(wektor)
+
+# sortowanie malejaco
+sort(wektor, decreasing = TRUE)
+
+# sortowanie malejaco tak zeby braki danych NA byly po sortowaniu na koncu wektora 
+sort(wektor, decreasing = TRUE, na.last = TRUE)
+
+which(wektor == 2) # pozycja elementow rownych 2
+which(wektor > 2 & wektor < 7)
+
+which.max(wektor) # pozycja najwiekszego elementu
+which.min(wektor) # pozycja najmniejszego elementu
+is.na(wektor) # czy elementy sa brakami danych typu NA
+is.nan(wektor) # czy elementy sa brakami danych typu NaN
+
+wektor %in% c(1,10) # czy kazdy z kolejnych elementow zawiera sie w zbiorze liczb 1 i 2
+! wektor %in% c(1,10) # zaprzeczenie tego co jest wyzej
+
+
+
+wektor_1 <- 1:10
+wektor_2 <- 1:10
+wektor_1 == wektor_2 # czy kazdy element z osobna jest taki sam 
+wektor_1 != wektor_2 # czy kazdy element z osobna jest taki rozny
+wektor_1 > wektor_2 # czy kazdy element z osobna jest wiekszy w wektorze_1 w stosunku do wektora_2
+all.equal(wektor_1, wektor_2) # czy wszyskie elementy sa takie same (dostaniemy jedna wartosc logiczna)
+
+unique(wektor) # usuniecie duplikatow
+
+duplicated(wektor) # czy poszczegolne wartosci sa duplikatami
+
+order(wektor) # ktory z kolei pod wzgledem wartosci jest dany element
+
+```
+
+
+
+
+## matrix
+
+
+**Tworzenie macierzy**
+```{r}
+
+macierz <- matrix(  data  = 1:4 #beda 4 elementy 
+									, nrow  = 2 # beda w wiersz
+									, byrow = TRUE) # elementy beda wprowadzone w kolejnosci po wierszach
+
+
+macierz
+
+# tak jak przy wektorach mozna wprowadzic nazwy elementow
+# (1) mozna nazwac oddzielnie kazda komorke macierz co chyba nigdy nie jest praktykowane i nie bedziemy sie tym zajmowac
+# (2) mozna nazwac kolumny i wiersze - to sie najbardziej przydaje
+# (3) mozna nazwa wymiary
+
+macierz_z_nazwami <- matrix(  data = 1:4
+														, nrow = 2
+														, dimnames = list(  a=c('A','B') #wymiar wierszy o nazwie 'a' bedzie zawieral wiesze 'A' i 'B'
+																							, b=c('D','E'))) #wymiar kolumn o nazwie 'b' bedzie zawieral kolumny 'D' i 'E'
+
+#
+macierz_z_nazwami
+
+```
+
+**Atrybuty macierzy*
+
+```{r}
+
+names(macierz_z_nazwami) # dostaniemy NULL bo nie nazwalismy osobno kazdej komorki (Przy okazji zauwaz ze to pierwszy raz kiedy dostalismy obiekt NULL - wlasnie czesto jezli jakas funkcja nie ma czego zwrocic bo to nie isnieje, to zwraca NULL ktorego nie nalezy mylic z NULL-em w SQL-u)
+colnames(macierz_z_nazwami) # nazwy kolumn 
+rownames(macierz_z_nazwami) # nazwy wierszy
+dimnames(macierz_z_nazwami) # nazwy wymiarow
+
+length(macierz) # ilosc komorek macierzy
+dim(macierz) # wymiary - dostaniemy dwu elementowy wektor z iloscia i kolumn i wierszy
+ncol(macierz) # ilosc kolumn
+nrow(macierz) # ilosc wierszy
+
+
+```
+**Odwolywanie sie do elemenow**
+Tutaj wszystko dziala analogicznie do wektorow wiec nie ma sie nad czym rozwodzic. Komplikacja jest to ze mamy 2 wymiary. Podam kilka prosty przykladow juz bez rozwleklego komentowania
+
+```{r}
+
+macierz1 <- matrix( data  = 1:9
+									, nrow  = 3)
+
+#nazwy kolumn i wierszy mozna tez przypisac tak
+colnames(macierz1) <- c('A','B','C') 
+rownames(macierz1) <- c('D','E','F') 
+
+macierz1[ ,2] # druga kolumna
+macierz1[2, ] # druga wiersz
+macierz1[1,2] # element z pierwszego wiesza i drugiej kolumny
+macierz1[1, 1:2]
+macierz1[1:2, 1:2]
+macierz1[-1,]
+macierz1[-1:-2,]
+macierz1[,'A']
+macierz1[,c('A','B')]
+
+# Wazna uwaga do powyzszego jest to ze jezeli zwracany obiekt jest jednowymiarowy dostajemy wektor a nie jednowymiarowa macierz
+is.matrix(macierz1[ ,2]) # zwroci FALSE
+
+
+```
+
+**Funckje do pracy z macierzami**
+
+Generalnie wiekszosc funkcji do pracy z wektorami moze tez pobrac macierze:
+```{r}
+macierz <- matrix(1:4, 2)
+sum(macierz) #suma wszysktich elementow
+max(1:4) # maksimum z wszystkich elemenotow
+
+```
+W powyzszych sytuacjach macierz jest potraktowana po prostu jak wektor i funkcja nie widzi wymiarowosci macierzy.
+
+
+Problem jest jezeli nie chcemy traktowac macierzy jak wektora ale zrobic obliczenia wzgledem kolumn albo wierszy (czyli pracowac na jej wymiarach)
+
+
+Zalozmy ze chcemy zrobic wartosc maksymalna z kazdej kolumny. Mozna to zrobic petla for:
+```{r}
+macierz <- matrix(1:4, 2)
+
+wynik <- numeric(0) #definiuje pusty wektor liczbowy gdzie bededokladal wyniki moich obliczen
+for(i in 1:ncol(macierz)){ # wartosc licznika 'i' bedzie od 1 do ncol(macierz) czyli ilosci kolumn macierzy
+	max_i_tej_kolumny <- max(macierz[,i])  #max z i-tej kolumny
+	wynik <- c(wynik, max_i_tej_kolumny) # do mojej zmiennej doklejam sobie wartosc max z kolejnej kolumny
+}
+wynik
+```
+
+Jest to jednak malo wygodne i w praktyce jesli chcemy ta sama operacje wykonac na wielu roznych elementach (czyli np. na kolejnych kolumnach marcierzy) to stosujemy funkcje mapujace. Funkcje te niesamowite zastosowania w pracy ze zlowonymi strukturami danych. Przy macierzach nie bedzie dzialo sie nic spektakulanego. Dla macierzy istnieje taka dedykowana mapujaca funkcja i nazywa sie apply:
+
+```{r}
+# wartosc maksymalna z kolumn (dostaniemy dokladnie to samo co wczesniej z petli for)
+apply(macierz
+			, MARGIN = 1
+			, FUN = max) 
+
+# wartosc maksymalna z wierszy
+apply(  macierz
+			, MARGIN = 2
+			, FUN = max) 
+```
+
+
+
+**Skejanie (bindowanie [binding])**
+
+Bindowanie po wierszach [rows]
+```{r}
+
+#czy mozna bindowac macierz ktore maja inne nazwy kolumn?
+z1 <- matrix(c(1:4),c(2:2))
+colnames(z1) <- c('a','b')
+z2 <- matrix(c(5:8),c(2:2))
+colnames(z2) <- c('c','d')
+
+z <- rbind(z1,z2)
+#wniosek jest taki ze mozna. Nazwy sa przejmowane od pierwszej macierzy
+
+
+
+#tworzenie macierzy przez bindowanie kiedy macierz startowa jest pusta i nieokreslona (bidnowanie od zera)
+m1 <- numeric()
+m1 <- rbind(m1, matrix(c(1:10), 2) )
+m1 <- rbind(m1, matrix(c(10:1), 2) )
+m1 #dostaniemy macierz o wymiarach 2X10
+
+
+
+
+# bindowanie po kolumnach
+cbind(m1, m1)
+
+
+```
+
+
+
+
+**Inne operacje macierzowe**
+```{r}
+#posortowanie po pierwszej kolumnie
+macierz[order(macierz[, 1]), ]  #przypomnij sobie co robi f:order i wyjasnij jak tutaj dziala
+
+
+# transponowanie
+t(macierz)
+
+```
+
+
+
+
+
+
+
+### Array (macierz wielowymiarowa)
+Ja tego typu struktury danych bardzo rzadko uzywam w praktyce, wiec potraktuj to jako ciekawostke ktorej nie bede szczegolowo opisywal. W podstawowych kwestiach tutaj nie ma sie nad czym rozwodzic bo wszystko jest tak jak w matrix tylko mamy wiecej wymiarow. W przypadku takich obiektow bardziej skomplikowane jest np. sklejanie (bindowanie) takich kilku wielowymiarowych kostek w jedna. Gdyby Cie to interesowalo to jest p:abind ktory sluzy do pracy z macierzmi wialowymiarowymi, ktory tutaj bedzi uzyty wlasnie do bindowania. 
+
+```{r}
+# tworze macierz twojwymiarowa
+macierz_w <- array(  data = 1:27
+									 , dim = c(3, 3, 3) # zrobimy 3 wymiarowa kostke z 3 wierszami w kazdym wymiarze
+									 , dimnames = NULL) # nazwy sobie podarujemy
+
+
+dim(macierz_w) #wymiary macierzy
+
+# uwaga: do wielowymiarowej transpozycji sluzy f:aperm a NIE f:t jak przy macierzach dwuwymiarowych
+aperm(macierz_w, perm = c(2,1,3)) # tutaj zrobilismy transpozycje wymiaru drugiego z pierwszym
+
+```
+
+
+
+**Sklejanie (bindowanie) macierzy wielowymiarowych**
+```{r}
+
+require(abind)
+w1 <- array(NA, c(5,2))   #macierz dwuwymiarowa o wymiarach 5x2
+
+m1 <- matrix(1:10, c(5,2)) # nastepna macierz dwuwymiarowa 5x2
+
+w2 <- abind::abind(  w1
+						       , m1
+						       , along = 3) #bindujemy po trzecim wymiarze - wiec dostane trojwymiarowa kostke sklejona z dwoch dwuwymiarowych macierzy
+dim(w2) # moj nowy obiekt ma wymiar 5x2x2
+
+```
+
+
+
+
+
+
+
+
+## Generic list [Listy generyczne]
+
+
+Tutaj zajmiemy się dwoma najbardziej podstawowymi:
+
+1. list [lista] - najbardizej ogolny typ listy. Wszyskie inne sa jej szczegolnymi przypadkami i modyfikacjami
+2. data.frame [ramka danych] - cos co jest mniej wiecej odpowiednikiem tabeli w SQL, czyli prostokatna tabela z danymi gdzie kazda ma tyle samo elementow ale moze byc innego typu
+
+
+### List
+
+
+Przedstawiamy najpowszechniej spotykana i najbardziej ogolna postac listy generic, czyli  *list*.  
+
+Uwagi ogolne
+
+1. Lista jest typu *recursive* (mozna ja zagniezdzac). W R mozna ustawić limit rekursji przez f:options (options(expressions=10000)). Dosylnie mozna dokonac rekursji 5000 razy.
+2. Elementami listy moga byc funkcje i srodowiska. `w <- list(z=mean); w$z(1:50, na.rm=TRUE)`
+3. Nazwy elementow listy NIE musza byc unikatowe.
+4. Atrybut *names* moze byc NULL-em.
+5. Jest to najbardziej ogolny typ list wiec wiekszosc atrybutów i cech powinna sie odnosci tez do innych list (np. data.frame)
+6. Elementem listy moze byc obiekt NULL (w przeciwienstwie do listy atomowej)
+7. Pusta lista (list()), nie jest obiektem typy NULL. Ma dlugosc rowna 0
+8. Do list mozna dodawac elementy o indeksie przekraczajacym aktualny rozmiar listy. Przerwy sa wypalniane przez NULL (lista ma dlugosc 6 a my przypisujemy elemento do 8 to w 7 bedzie automatycznie przypisany NULL) 
+8. Do listy mozna dodawac elementy o nazwie ktorej nie ma w liscie
+9. `is.vector(list(1,2,3))` - zroci TRUE. Nalezy pamietac ze kazdy typ danych to w ogolnosci lista. 
+
+
+Glowne atrybuty:
+
+1. length-ilosc elementow
+2. names - nazwy elementow
+
+```{r}
+# utworzenie listy
+
+moja_lista <- list( a = 1:10 # wektor liczbowy
+									 ,b = 'ala' # wektor teksotwy
+									 ,c = list(a=10, z=200) # w liscie moge zagniezdzic nastepna liste bo to typ generyczny
+									 ,d = NULL # w liscie moge umiescic NULL bo to typ generyczny
+)
+
+
+
+# 5 sposobow wyciagniecia pierwszego elementu listy
+
+moja_lista[1] # wyciagam pierwsza element listy
+class(moja_lista[1]) # ale jest to dalej lista tylko ze jedno elementowa - nie dobralem sie bezposrednio do wektora liczbowego !!!
+
+# teraz dobiore sie do pierwszego elementu bezposrednio
+moja_lista[[1]]
+class(moja_lista[[1]]) # mam wektor liczbowy - dobralem sie bezposrednio do niego!!!
+
+# analogicznie dziala to dla pobieraniu elementow po nazwach
+moja_lista['a']
+moja_lista[['a']]
+
+moja_lista$a  # tu znowu dobieram sie bezposrednio po nazwie !!!
+class(moja_lista$a)
+
+```
+
+Teraz wazne pytanie: skoro elementy w liscie mozna zagniezdzac to czy jak odwolac sie do zagniezdzonych elementow. Nie stanowi to problemu bo odwolania mozna ukladac z lancuchy:
+```{r}
+# drugi element w wektorze liczbowym
+moja_lista[['a']][2] 
+#lub
+moja_lista[[1]][2] 
+#lub
+moja_lista$a[1]
+
+
+# drugi element w zagniezdzonej liscie
+moja_lista[['c']][['z']]
+#lub
+moja_lista[[1]][['z']]
+#lub
+moja_lista$c$z
+
+```
+Jezeli w wystapiloby wielokrotne zagniezdzenie to teki lancuszek mozna dalej ciagnac.
+
+
+** f:list a f:as.list**
+```{r}
+
+require(ggplot2)
+d <- head(diamonds)
+
+list(d) # jednolementontowa lista
+
+as.list(d) # lista wektorow
+```
+
+**Modyfikacja listy**
+```{r}
+
+moja_lista <- list( a = 1:10 # wektor liczbowy
+									 ,b = 'ala' # wektor teksotwy
+									 ,c = list(a=10, z=200) # w liscie moge zagniezdzic nastepna liste bo to typ generyczny
+									 ,d = NULL # w liscie moge umiescic NULL bo to typ generyczny
+)
+
+# podmieniam pierwsze 2 elementy listy nowymi wartosciami. Warto zwrocic uwage na to ze nazwy pierwszych dwoch elementow sie nie zmiania mimo ze lista nowych elementow ma inne nazwy ('ab' i 'wz')
+moja_lista[1:2] <- list(ab = 1000, wz = 200)
+moja_lista
+
+
+# dodaj nowa zagniezdzona liste na koncu naszej listy
+moja_lista <- append(  moja_lista
+			 							 , values = list(nowa_lista = list(a=200)))
+
+# dodaj wektor liczbowy po 3 elemencie listy
+moja_lista <- append(  moja_lista
+			 							 , values = list(nowy_wektor=1:5)
+			 							 , after =  3)
+
+#usuniecie drugiego elementu z listy
+moja_lista[2] <- NULL
+
+
+# usun NULL-e z listy
+moja_lista <- purrr::compact(moja_lista)
+
+
+# ZOSTAW w liscie tylko te elementy ktore spelniaja okresony warunek
+purrr::keep(   moja_lista
+						, .p = function(x) length(x) > 1 ) # element listy musi miec dlugosc co najmniej 2. 'x' symbolizuje tu element listy
+
+
+#teraz odwrotnie: USUN w listy tylko te elementy ktore spelniaja okresony warunek
+purrr::discard(   moja_lista
+						   , .p = function(x) length(x) > 1 ) # usuwam elementy ktore maja dlugosc co najmniej 2
+
+
+```
+
+
+**Atrybuty listy**
+```{r}
+# ilosc elementow glownych (nie zlicza zagniezdzonych itp)
+length(moja_lista)
+
+# nazwy elementow glownych
+names(moje_lista)
+
+# glebokosc listy (jak glebokie jest zagniezdzenie)
+purrr::vec_depth(moja_lista)
+
+```
+
+
+
+**Laczenie list (merge)**
+```{r}
+
+lista_1 <- list(a=10 , b=20 ,  c=30             )
+lista_2 <- list(       b=200,       d=300       )
+lista_3 <- list(       b=2000,            w=3000)
+
+rlist::list.merge(  lista_1
+									, lista_2 # tu nadpiszemy 'b' i dodamy 'd'
+									, lista_3) # tutaj znowu nadpiszemy 'b' i dodamy 'w'
+
+
+
+```
+
+**funkcje mapujaca dla list**
+
+lapply
+```{r}
+
+lista <- list(a=2, b=4)
+
+lapply(lista, function(x) x^2) # podnies do kwadratu kazdy element listy
+
+# to samo
+purrr::map(lista, .f = function(x) x^2)
+
+
+# podnies do kwadratu tylko wybrane elementy
+lista2 <- list(a=2, b=3, c=4)
+purrr::map_at(  .x = lista2
+							, .at = c('a', 'b') # podnosze elementy o nazwach 'a' i 'b'
+							, .f = function(x) x^2 )
+
+# podnies do kwadratu tylko wybrane elementy
+purrr::map_at(  .x = lista2
+							, .at = c(1, 3) # podnosze element pierszy i trzeci
+							, .f = function(x) x^2 )
+
+
+# podnies do kwadratu tylko wybrane elementy
+purrr::map_if(  .x = lista2
+							, .p = function(x) x >2 # podnosze elementy wieksze niz 2
+							, .f = function(x) x^2 )
+
+
+```
+
+
+#### List recursion
+
+
+```{r}
+
+
+################ list  - podstawowe konstrukcje
+
+# PROSTE DRZEWO - latwo stworzyc ulepszona wersje rapply
+
+lista <- list(a=list(b=20, c=list(d=100, e=200)), b=list(i=40, w=90), p=100)
+lista
+f <- function(l){
+  if(is.numeric(l)){
+    l^2
+  }else{
+    lapply(l, f)
+  }
+}
+wynik_1 <- f(lista) #  w wyniku dostajemy liste ale liczby sa tylko na lisciach
+print(wynik_1)
+listviewer::jsonedit(wynik_1)
+unlist(wynik_1) # dodajemy liscie przeksztalcone w wektor
+
+
+
+
+
+
+# AGREGOWANIE WSPINAJACE - z uzyciem p:data.tree
+
+lista <- list('a'=list('z'=9), 
+              'b'=list('c'=list('z'=20), 
+                       'd'=list('z'=30, 
+                                'w'=40)))
+# uwaga na taki zestaw danych:
+# lista <- list('z'=9, 'b'=list('c'=list('z'=20), 'd'=list('z'=30, 'w'=40)))  - pierwszy element nie jest lista
+
+require(data.tree)
+nod <- FromListSimple(lista, nodeName = 'lista')
+
+print(nod, 'z','w')
+
+# uwaga moze byc problem z kolejnoscia zaladowania pakietow
+Aggregate(node = nod, attribute = 'z', aggFun =  sum) # sumujemy tylko po 'z' a nie po 'w' !!!
+nod$Get(Aggregate, "z", sum) # sumujemy w sposob wsponajacy po zmiennaj 'z'
+
+
+
+
+
+
+# CIAGNIECIE DANYCH W DOL 
+
+f_mean <- function(l, n=''){
+  
+  nazwy <- names(l)
+  n_nazwy <- paste(n, nazwy, sep='_') # zestaw nazw - tyle elementow ile elemetow listy (nie ma w paste parametru collapse wiec nie dostajemy jednego elementu)
+  
+  
+  
+  mapply(function(x,y){ # poczatek mapply
+    if(is.list(l)){
+      f_mean(x,y)
+    }else{
+      y
+    }
+  }, 
+  l, 
+  n_nazwy) # nazwy ktore przekazuje w dol - inna dla kazdego elementu listy
+  # koniec mapply
+}
+wynik_3 <- f_mean(lista, '') # dostajemy liste ktora ma wartosci tylko na lisciach
+listviewer::jsonedit(wynik_3) 
+unlist(wynik_3)
+
+
+
+
+# AGREGACJA SEGMENTAMI - bez stosowania p:data.tree
+
+f_mean_c <- function(l,n=NULL){
+  
+  srednia <- mean(unlist(l)) # licze srednia z wszystkich lisci poprzed przeksztalcenie w wezle wszystkiego na wektor
+  
+  n_srednia <- c(n, srednia)
+  
+  lapply(l,
+         function(x,y){
+           if(is.list(x)){
+             f_mean_c(x,y)
+           }else{
+             y
+           }
+         }
+         ,n_srednia
+  )
+}
+
+f_mean_c(lista, NULL)
+
+
+
+
+
+### AGREGACJA SEGMENTAMI - ulepszona wersja z bardziej czytelnymi wynikami bez storowania p:data.tree
+
+lista <- list('a'=list('z'=9), 'b'=list('c'=list('z'=20), 'd'=list('z'=30, 'w'=40)))
+
+
+f_mean_c1 <- function(l,n=NULL){
+  
+  lapply(l,
+         function(x,y){
+           if(is.list(x)){
+             srednia <- mean(unlist(x)) # bedziemy liczyc srednia
+             return(list(srednia,f_mean_c1(x,y))) 
+           }else{
+             '' # z liscmi na samym dole nic nie robimy
+           }
+         }
+         ,n
+  )
+}
+
+wyn_1 <- f_mean_c1(lista) 
+wyn_2 <- unlist(wyn_1)
+wyn_3 <- wyn_2[wyn_2!='']
+
+require(data.tree)
+
+nod_1 <- FromListSimple(wyn_1, nameName = 'lista')
+
+
+
+
+
+
+
+
+
+```
+
+
+
+
+
+#### Other issues
+
+```{r}
+
+# listy mozna powielac funkcja 'rep'
+
+lista <- list(a=1, b=2)
+rep(lista, 3)
+
+```
+
+
+### pairlist
+
+Section 2.1.11 from R documentation states this:  
+Pairlists are handled in the R language in exactly the same way as generic vectors (“lists”). In particular, elements are accessed using the same [[]] syntax. The use of pairlists is deprecated since generic vectors are usually more efficient to use. When an internal pairlist is accessed from R it is generally (including when subsetted) converted to a generic vector.
+
+
+
+### data.frames
+
+Jest to typ z ktorego korzysta sie najczesciej
+
+**Tworzenie**
+```{r}
+
+```
+
+#### Atrybuty i odwolywanie sie do elementow
+
+
+Odwolywanie do pustej tabeli - powoduje blad
+
+```{r}
+f <- data.frame()
+j <- 1
+maks <- max(f[,j], na.rm=T) # zakladamy ze 'f' jest pusta
+```
+
+
+Jaki ma numer kolumna o okreslonej nazwie?
+```{r}
+which(names(dane_sql)=='kwota')
+```
+
+
+
+
+#### Columns removing
+
+
+```{r}
+
+require(ggplot2)
+d <- data(diamonds) 
+d <- diamonds
+
+#usuwanie kolumn#
+
+d <- diamonds
+d <- d[1:20 , -c('cut', 'clarity', 'price', 'carat') ]  #nie dziala!!!
+
+d <- diamonds
+d <- d[1:20 , c(-1,-2,-3) ] #dziala
+
+d <- diamonds
+d <- d[1:20 , -c(1,2,3) ] #dziala
+```
+
+
+#### Columns adding
+
+
+```{r}
+#zakladaem ze nie ma kolumny o nazwie 'z'
+ramka$z <- wektor
+ramka[,'z'] <- wektor
+
+
+
+#dodanie kolumny po okreslonej kolumnie
+append(x = ramka, values = wektor , after = numer_kolumny_po_ktorej_dokladamy )
+
+```
+
+
+#### Rows adding
+
+use functions from p:dplyr
+
+#### Sorting
+
+```{r}
+
+require(ggplot2)
+z<-diamonds
+names(z)
+dim(z)
+#pierwszy sposob
+z1<-z[ with(z, order(depth, -price))   ,] #uprzadkowanie po zmiennej 'depth' rosnaca, a nastepnie malejaco po 'price'
+#drugi sposob
+library(taRifx)
+sort(z, f= ~ depth + -price)
+#trzeci sposob
+library(plyr)
+arrange(z, depth, desc(price))
+```
+		
+#### Duplicates
+
+```{r}		
+
+#MACIERZ i RAMKI DANYCH
+require(ggplot2)
+z<-diamonds
+#zwroci wiersze ktore sie zduplikowaly ze wzgledu na zmienne depth i price
+z2<-z[duplicated(z[,c('depth', 'price')]),]  
+#usuniecie duplikatow ze wzgledu na zmienne depth i price
+z2<-z[!duplicated(paste(z['depth'], z['price'])),]  
+
+#Usuwanie calych zduplikowanych wierszy
+z[  !duplicated(z)   ,   ]
+#lub
+unique(z)
+
+#Zliczanie zduplikowanych wierszy
+sum(duplicated(z) )
+```
+		
+
+#### Missing data
+
+
+```{r}
+
+#DANE:
+m <- data.frame(  a = c(1,4,3,1,2,7)
+                , b = c(NA,4,NA,1,4,6)
+                , c = c(NA,1,4,NA,NA,6)
+                , d = c(NA,2,4,5,6,NA))
+
+#usuwanie wierszy ze wzgledu na braki danych w ktorychkolwiek kolumnach (sprawdzic czy jest dobrze)
+m1 <- m[ ifelse(apply( !is.na(m), 1, FUN=prod ), TRUE, FALSE)  , ]
+  
+#usuniecie wierszy po ze wzgledu na braki danych w kolumnach 2 i 3
+m1 <- m[!is.na(m[,2]) & !is.na(m[,3]),]
+
+#zliczenie wszystkich komorek z brakami danych w ramce danych
+sum(is.na(m))
+
+#zliczenie brakow danych po zmiennych
+apply(is.na(m),2, FUN=sum) #stosujemy apply poniewaz funkcja is.na zwroci nam tu typ matrix!!!
+
+#zliczanie brakow danych po wierszach
+apply(is.na(m),1, FUN=sum)
+
+#INNE PROBLEMY
+z <- data.frame(a=c(1,2,2,3, NA, NA, 5   ))
+z1 <- z[ z[,1]==2   ,]
+z1 #dostaniemy elementy rowne 2 ale rowniez braki danych NA!!!
+#Trzeba zastosowac
+z1 <- z[   !is.na(z[,1]==2  ) &  (z[,1]==2 )==TRUE    ,      ]
+```
+
+
+
+
+	
+#### Binding *data.frames* by rows
+	
+		
+f:rbind
+
+```{r}
+
+r1 <- data.frame() #pusta ramka danych.
+r1 <- rbind(r1, c(1:10))
+r1 <- rbind(r1, c(10:1))
+r1 <- rbind(r1, list(c(1,5), letters[6:10])) #wywali blad
+```
+<br>		
+f:rbind.fill(plyr)
+```{r}
+
+#Zastosowanie funkcji rbind.fill (pakiet plyr)
+#Funkcja binduje po wierszach ramki danych, dopasowujac dane z kolumn o odpowiadajacych sobie nazwach. Jezeli nazwy nie pasuja to powstaje kolumna z brakami danych. ez problemowo dziala laczenie kolumn typu factor. Jesli zakresy leveli sie nie zgzdzaja w nowej polaczonej ramce beda poszerzone. 
+require(plyr)
+a1<-data.frame(a=1:5, b=5:1)
+a2<-data.frame(b=letters[1:5], c=1:5)
+a1
+a2
+rbind.fill(a1,a2)
+```
+
+
+<br>
+
+
+f:rbind_all(dplyr) and f:rbind_list(dplyr). It works like f:rbind.all(plyr), but are much faster. (<small class='SwhiteR'>Warning</small> Warning: when you are joinning *factor* columns bevaviour is slightly differen. Namely, if levels of factor don't fit new column will be conwerted to factor)
+
+
+
+    
+Bindowanie ramek o innej strukturze po kolumnach - musza do siebie pasowac nazwy w pierwszej kolumnie
+```{r}
+
+#Bindowanie ramek po kolumnach-jedna kolumna.
+z1 <- data.frame(a=c(1,2,3,4,5), b=letters[1:5])
+z2 <- data.frame(a=c(2,3,4,5,6), b=letters[6:10])
+
+m1 <- match(z2[,1],z1[,1])
+d1 <- m1[is.na(m1)==F]
+d2 <- z2[is.na(m1)==F,2:ncol(z2)]
+z1[d1,3] <- d2  #tutaj mamy z1[,3]. W petli numeracje zaczynamy od ncol(z1)+1
+
+
+
+
+#Uogolnienie na wiele kolumn
+#Bindowanie ramek po kolumnach-jedna kolumna. Zrobic cos co jest odpowiednikiem dla find.matches dla wierszy.
+z1 <- data.frame(a=c(1,2,3,4,5), b=letters[1:5])
+z2 <- data.frame(a=c(2,3,4,5,6), b=letters[6:10], c=c(10,11,12,13,14))
+
+m1 <- match(z2[,1],z1[,1])
+d1 <- m1[is.na(m1) == FALSE]
+d2 <- z2[is.na(m1) == FALSE,2:ncol(z2)]
+
+f <- ncol(z1)
+for(i in 1:ncol(d2))
+{
+  #i=2
+  z1[d1,c(f+i)] <- as.vector(d2[,i])
+}
+
+#Uwaga. Cos takiego nie zadziala:
+# f1<-ncol(z1)
+# f2<-ncol(d2)
+# z1[d1,c(f1+1:f1+f2)]<-d2
+```
+
+<br>
+See also f:rlist.bind(rlist).  
+		
+#### Binding *data.frames* by columns
+		
+
+Generally it is good to use functions like f:join or f:merge to add column if no all names fits.
+
+```{r}
+
+r2 <- data.frame() #empty data.frame.
+r2 <- cbind(r2, c(1:10)) #we will get error
+r2 <- cbind(r2, c(10:1)) #we will get error
+r2 <- cbind(r2, letters[10:1]) #we will get error
+
+```
+
+    
+		
+#### Subsets
+		
+
+```{r}
+
+require(ggplot2)
+data(diamonds)
+
+#pierwszy sposob:
+p1 <- d[  d[,'clarity']=='SI2' & d[,'z']>2.8  ,c(-3,-7)]
+
+#drugi sposob:
+subset(diamonds, price>2000 & x>6 , select=cut:x ) #select wybiera zmienne (tutaj od cut do x)
+subset(diamonds, select=c(cut,x) ) #select wybiera zmienne (tutaj od cut do x)
+subset(diamonds, price>1500 & color=='E' ) 
+subset(diamonds, price>1500 | color=='E' ) 
+```
+				
+			
+			
+		
+#### Other issues
+		
+Funkcja do konwertowania typu kolumn
+
+```{r}
+
+convert.magic <- function(obj,types){
+  for (i in 1:length(obj)){
+    FUN <- switch(types[i],character = as.character, 
+                  numeric = as.numeric, 
+                  factor = as.factor)
+    obj[,i] <- FUN(obj[,i])
+  }
+  obj
+}
+
+foo<-data.frame(a=1:5, b=6:10,c=as.character(c('1','2','3','4','9')))
+sapply(foo,class)
+
+out <- convert.magic(foo,c('character','character','numeric'))
+
+sapply(out, class)
+```
+
+		
+Utworzenie nowej `pustej` tabeli z odziedziczonj struktury po innej tabeli (te same nazwy kolumn i typy danych)
+```{r}
+
+a<-data.frame(a=1:10, b=11:20, c=letters[1:10])
+a
+sapply(a,class)
+
+b<-a[0,]
+b
+sapply(b,class)
+```
+
+			
+			
+
+## Different data structures convetring and merging
+
+
+### Converting from *matrix* to *data.frame*
+
+Nazwy przy konwertowaniu z *data.frame* na *matrix* i odwrotnie
+		
+```{r, o.l='ko'}
+
+		#utrata nazw przy konwertowaniu data.frame na matrix
+		z<-data.frame(a=c(1,2), b=c(1,2))
+		z1<-as.matrix(z)
+		names(z1)  #utrata nazw
+		
+		
+		#utrata nazw przy konwertowaniu matrix na data.frame
+		m<-matrix(c(1,2,3,4), c(2,2), dimnames=list(c('a','b'),c('c','d')))
+		m1<-as.data.frame(m)
+		names(m1)  #nie ma utraty!!!
+```
+
+### Merging data.frames and matrices
+		
+```{r}
+
+#merge
+merge(df1,df2, all=T)  #df1 i df2, to nazwy table. Zlaczenie nastepuje domyslnie po kolumnach o tych samych nazwach
+#all=T full outer
+#all.x=T left outer
+#all.y=T right outer
+
+#sqldf
+require(sqldf)
+sqldf("select df1.id, df2.cov as covariate from df1 join df2 on df1.id=df2.id where class='case' and cov>3 order by cov")
+```
+
+
+
+
+### Converting to list
+
+```{r}
+
+#WEKTOR
+as.list(c(a=1,b=2,3)) #zachowuje nazwy elementow tam gdzie sa podane
+
+      
+#MACIERZ
+m<-matrix(1:4, 2, dimnames=list(aa=c('a','b'),bb=c('w','z') ))
+names(m)<-letters[6:9]
+#po elementach
+as.list(m) #zachowa nazwy elementow
+
+#po wierszach
+require(plyr)
+alply(m,1) #zachowa nazwy kolumn
+
+#po kolumnach
+alply(m,2) #zachowa nazwy wierszy
+
+      
+      
+      
+#ARRAY
+a<-array(1:27, c(3,3,3))
+
+#po elementach
+as.list(a)
+
+#po wymiarach
+require(plyr)
+alply(a,1)
+alply(a,2)
+alply(a,c(1,2))
+alply(a,c(1,2,3))
+
+
+      
+      
+#DATA.FRAME
+require(ggplot2)
+
+#po kolumnach
+as.list(head(diamonds)) #zachowuje nazwy kolumn
+
+
+      
+      
+#DATA.TABLE
+require(data.table)
+d<-as.data.table(head(diamonds))
+
+#po kolumnach
+as.list(d) #zachowa nazwy kolumn
+
+```
+
+
+### Converting from list
+
+Skomplikowane zagadnienie bo lista moga miec zlozona strukture.
+
+```{r}
+
+#TUTAJ DOSTANIEMY WEKTORY-dziale koercja
+
+l <- list(a=1, b=c(10,20), c='dcdsc',d=T )
+unlist(l) #dziala mechanizm koercji      
+
+l <- list(m=matrix(1:4,2), c=c('1',2))
+unlist(l)
+
+d <- data.frame(a=c(1,2), z=c(2,4))
+unlist(d)
+
+l <- list(z=data.frame(a=c(1,2), z=c(2,4)), w=c(1,2,3))
+unlist(l)
+
+l <- list(list(a=1,b=2), c=c(1,'2',3))    
+unlist(l)
+
+l <- list(c(1,2,3))
+unlist(l, recursive=FALSE)
+     
+l <- list(c(1,2,3), c(3,4))
+unlist(l, recursive=FALSE)      
+     
+      
+      
+      
+#TU NIE DOSTANIEMY WEKTORA ALE LISTE-recursive=FALSE
+        
+#jest jakas lista
+l <- list(c(1,2,3), list(1,2,3))
+unlist(l, recursive=FALSE)
+
+#jest jakas ramka
+l <- list(data.frame(a=c(1,2),b=c(2,3)), c=c(1,2,3))
+unlist(l, recursive=FALSE)
+
+
+    
+      
+```
+

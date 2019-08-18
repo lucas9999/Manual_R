@@ -1,0 +1,301 @@
+# (APPENDIX) <lfg> APPENDICES </lfg> {-}
+
+
+# Uwagi dla Eweliny
+
+
+Starałem sie pisać ten manual, żeby był w miarę uprządkowany i łatwy w czytaniu. Ale wszyskiego jest bardzo dużo i wiele elementów jest po prostu na tą chwilę mieszanką roznych materiałów z roznych zrodel pisanych w bardzo roznych okresach czasu. To powoduje zaburzenie ciaglosci i zmniejsza przystepnosc.
+
+Format calej "ksiazki" (bo tak to trzeba nazwac) jest na tyle przyjemny, że mysle iż będzie Ci się wygodnie na własna ręką go uzupełniało i rozszerzało. Ten szablon możesz oczywiście smialo  używać też przy nauce innych języków programowania. Ja będę go używał do Python i do materiałów związanych z analizą statytyczną (w tej ksiazce o statystyce w R nic nie bedzie - tylko podstawy programowania). Chcialem też w takiej ksiazce gromadzic wiedze z SQL-a, ale z uwagi na to ze zakres materialu ktory mnie interesuje jest maly, nie wiem czy warto. Plik ze snippetami ktory Ci przeslalem na razie mi wystarcza. Tak czy inaczej jezeli bys ten materiał rozwijała po proponuje, żeby się na przyszłość takimi rzeczmi wymieniać. Napewno przyśpieszy nam to zdobywanie wiedzy.
+<br><br>
+**Kilka zdan a porpos tego co jest w załącznikach, a zwłaszcza w rodziale o stosowanych OZNACZENIACH**
+
+To co jest napisane w zalacznikach moze byc dla niektorych troche smieszne i byc przejawem skrajnej pedanterii ale uwierz mi ze to ma sens. Kiedy ilosc informacji którą gromadzisz jest bardzo duża trzeba stosować różne reguły w jej zapisywaniu. Wie to każda osoba która prowadzi np. porządny zeszyt z notatkami. Takie reguły ułatwiają logiczne porządkowanie wszystkiego, zapewniają przejżystość, umożliwiają wprowadzenie hierarchizacji w ważności informacji. Dlatego też takie reguły warto sobie dobrze przemyśleć już na samym początku. 
+Sama "ksiażka"  którą teraz oglądasz też powstała jak wynik różnych doświadczeń związanych z gromadzeniem informacji. Kiedyś moja wiedza programistyczna była rozproszona po różnych plikach i zeszycikach. W pewnym momencie było tego tak dużo że zacząłem się w tym wszystkim gubić. Ta książka podobnie jak inne które prowadzę pozwala mi bardzo uporządkowane magazynowanie wiedzy na zdobycie której trzeba przecież poświećić tak wiele pracy i czasu. Potem w takiej książce wszysko  mam  na wyciągnięcie ręki.
+Jeszcze jedno. Wiele osob lubi notować papierowo w zeszytach Ale tutaj jak widziesz mamy do czynienia z kodem programistycznym i notowanie tego z zeszycie to słaby pomysł. Kod to rozwiązania które musisz móc szybko sobie przekopiować do wlasnego skryptu. Poza tym tutaj ten cały materiał żyje i cały czas jest mofikowany i udoskonalany. W zeszycie musiałabys albo cały czas kreślić, albo robić na końcu załączniki i byś się w końcu w tym wszyskim pogubiła. Narzędzie elektroniczne są już na tyle rozwinięte, że naprawdę notowanie tutaj jest bardzo wygodne i nie doskwierają nam wieksze ograniczenia. Jak dla mnie na tą chwilę jezeli chodzi o wiedze naukowa/zawodowa, to tylko notowanie rzeczy gdzie trzeba dużo rysować albo pisać wzorów matematycznych powinno sie robic na papierze. Ale to też się powoli zmienia to pokazuje mi mój tablet z rysikiem.
+
+
+# Oznaczenia 
+
+## Oznaczenia odpisowe
+
+Opisujac cos slowami posluguje sie nastepujacymi zasadami (to tylko zasady do opisu slownego  NIESTOSOWANE w samym programowaniu !!!):
+
+1. "p:" dla pakietow (np. zamiast "pakiet dplyr"" pisze "p:dplyr" )
+2. "f:" dla funkcji (np. zamiast "funkcja max" pisze "f:max))
+3. Jezeli chce pozdac ze cos jest funkcja i jednoczesnie okreslic pakiet robie tak: funkcja summarise z pakietu dplyr zamieniam na. f:summarise(dplyr)
+4. Tlumaczenia na na jezyk polski (lub czasem z polskiego na angielski) sa w nawiasach kwadratowyh np.: data.frame [ramka danych]. Warto uczyc sie nazw angielskich, zeby potem szybkiej wyszukiwac informacje w internecie. W ostatnim dodatku bede prowadzil sobie slowniczej.
+5. Przy pisaniu tak jak przy programowaniu raczej nie uzywam polskich znakow. Pare razy przez zle ustawienie kodowania w RStudio wszyskie polskie znaki pozamienialy sie na krzaczki i od tego czasu odechcialo mi sie ich uzywania. Poza tym wszystkie nowe materialy staram sie juz pisac po angielsku. Tobie w ramach nauki angielskiego tez cos takiego doradzam. Bedzie Ci sie latwiej wypowiadalo na tematy informatyczne i znacznie latwiej pisalo dokumentacje. 
+6. Rzeczy istotne sa **boldowane**
+7. Nazwy wlasne itp. sa *kursywa pochylona*
+8. W codzyslowie podaje tytuly publikacji itp.
+9. Bloki w ktorych jest kod R-a bede nazywal *chunk* (wymawiam: czank), zgodnie z ich prawdziwa nazwa w jezyku angielskim. Niektorzy tez uzywaja pojecia *Listing*.
+10. Poza chunk-ami formatowanie czcionki jakie jest w kodach `moze pojawic sie w samym teksie`.
+11. Czesc chunkow jest pisana tak ze po przejlejeniu powinny dzialac. Jezeli mam doczynienia z jakims ciekawszym i wpelni dzialajacym kodem to przed chunkiem jest znak '.>>>>'. 
+12. Czasami jakis wiekszy przyklad moze byc rozbity na wiecej chunkow. Wtedy przed pierwszym chunkiem jest napis 'BEGIN' a po ostatnim 'END'.
+13. Niektore kody w chunkach musza byc dlugie zeby zrobic pelny dzialajacy przyklad. Ale istota problemy moze byc zlokalizowana w zaledwie kilku linijkach. Zeby je oznaczyc w komentarza wstawiam znanik 'IM!!'
+
+Przyklad chunk-a:
+```{r}
+#tutaj jest przykladowy chunk w ktorym bede pisal kod R-a. 
+```
+
+
+
+Ponadto stosuje kolorowe ramki dla oznaczenia rzeczy istotnych:
+
+<br><lfr>Warning!</lfr>
+<div class="btn-danger"> jakies wazne ostrzezenie </div>
+  
+<br><lfsb>Tip</lfsb>
+<div class="btn-info"> Jakis przydatny trik </div>
+  
+<br><lfg>Useful</lfg>
+<div class="btn-success"> Jakas ciekawa i uzyteczna informacja, np. fajne zrodlo z informacjami </div>
+
+
+## Oznaczenia w kodzie
+
+### Packages names before functions names
+
+Co do samego programowania to jezeli funkcja pochodzi z jakiegos pakietu ktory trzeba zaladowac wywoluje ja z podaniem nazwy pakietu:
+```{r}
+
+dplyr::summarise(data) # f:summarise podchodzi z p:dplyr i mozna ja tak wywolac wlasnie podajac nazwe pakietu przed podwojnym dwukropkiem
+
+summarise(data)
+
+```
+Po co cos takiego? PO PIERWSZE dla Twojej wygody zebys od razu wiedziala z jakiego pakietu jest dana funkcja. PO DRUGIE czasem wystepuje konflikt polegajacy na tym, ze funkcja o tej samej nazwie jest w dwoch roznych pakietach i zeby byc pewnym co tak naprawde wywolujemy musimy wlasnie podac nazwe pakietu przed podwojnym dwukropkiem. Ale to sie zdarza dosyc rzadko. Przykladem sa p:dplyr i p:plyr gdzie wiele funkcji nazywa sie tak samo.
+
+Pytanie jak sprawdzic ile funkcji o tej samej nazwie jest zaladowanych:
+
+```{r}
+
+# laduje 2 pakiety w ktorych wystepuje ta sama f:mutate
+require(plyr)
+require(dplyr)
+
+# sprawdzam czy jest zaladowana wiecej niz jedna f:mutate
+getAnywhere('mutate')
+
+```
+Powyzej domyslnie bedzie uzywana funkcja z p:dplyr, bo zostal zaladowany po p:plyr. Po prostu f:mutate z p:plyr zostala przykrywa przez funkcje z p:dplyr. Takie wiec:
+```{r}
+mutate(data) # tutaj wywolamy funkcja z p:dplyr
+plyr::mutate(data) # tak piszemy jezeli chcemy jednak uzyc funkcji z p:plyr
+```
+
+
+### Sytem of making variables names
+
+```{r}
+zmienne:przedrostki
+d. - date
+path. - file/directory path 
+c. - control 
+
+names: using dots
+after one dot - type
+after two dots - source
+
+use '_' if the name compare few words
+
+variables named with one letter - only for loop counter.
+```
+
+
+### System of making comments
+
+```
+# from number to number
+
+# from capital letter to capital letter (chapters)
+
+# one line blow or next to
+
+
+#> opcjonalnie tekst
+#< bez tekstu
+
+
+#> opcjonalnie tekst
+#< opcjonalnie tekst ( potrzebne przy zagniezdzaniach zeby sie polapac co gdzie sie konczy)
+
+#>b to remove
+#<e
+
+
+# note (general remarks not direcly concerning a code)
+
+```
+
+
+# More about R
+
+1. Dla zaawansowanego uzytownika bezcenny jest internetowy podrecznik: http://adv-r.had.co.nz/
+2. Na stronie RStudio sa tzw. sciagi [cheat sheets] https://www.rstudio.com/resources/cheatsheets/  gdzie w skroconej i przejzystej formie sa pokazane najwazniejsze rzeczy w R. Niektore z nich sa dostepne w samym RStudio: Help -> Cheatsheets.
+3. Podobnie jak w przypadku chyba kazdego innego jezyka programowania forum https://stackoverflow.com/  to ogromna skarbnica wiedzy
+4. Warto też odwiedzac strony do danych pakietow z funkcjami. Sa najczesciej na stronie tzw. githuba gdzie ludzie rozwijaja te pakiety. Tu jest przykladowo strona dla p:dplyr: https://github.com/tidyverse/dplyr
+5. Firma ktora robi program RStudio robi tez wlasne swietne pakiety ktore maja rewelacyjna dokumentacja na ich stronie: https://www.rstudio.com/products/rpackages/  . Do tych pakietow wlicza sie m.in caly czas przede mnie polecany dplyr (czyli sql pod R-em), ggplot2 (wykresy) czy tez makrodown (tworzenie dokumentow/raportow/prezentacji)
+6. http://r4ds.had.co.nz/  . Na tej stronie jest fajny podrecznik "R for Data Science"
+7. Pisanie wlasnych ksiazek przy uzyciu p:markdown i bookdown: https://bookdown.org/yihui/bookdown/
+8. Warto ogladac filmiki na youtubie
+9. Sa tez darmowe albo za niewielka oplata kursy internetowe np. na DataCamp
+10. Strona: https://awesome-r.com/#awesome-r-syntax
+
+
+
+# Skroty klawiaturowe 
+
+
+Ponizej sa skroty z ktorych sam najczesciej korzystam
+
+1. **alt + strzalka** - umozliwia przesuwanie w gore i w dol zaznaczonych linijek kodu
+2. **ctrl + alt + strzelka** - umozliwia rozwiniecie multikursora czyli pisanie w kilku linijkach jednoczesnie
+3. **alt +  znak minus**  - wstawia znak przypisania ze spacjami po obu stronach
+4. **ctrl + shift + R** - wstawia w skrypcie nowy rozdzial (dziala w pliku bedacym skryptem R-a a nie np. pliku markdown do generowania raportow)
+5. **ctrl + s** - zapisanie zmian w pliku
+6. **ctrl + Enter** - uruchomienie zaznaczonego kodu
+7. **ctrl + l** - w konsoli (tam gdzie kod jest wykonywany, a nie w pliku skryptu) czysci ekran
+8. **ctr1 + 1** - przejscie kursorem do skryptu z kodem
+9. **ctrl + 2** - przejcie kursorem do konsoli
+10. **F1** - kiedy jestesmy kursorem na funkcji to wyswieli nam pomoc w obienku help
+11. **F2** - kiedy jestesmy kursorem na funkcji to wyswieli nam kod funkcji
+12. **ctrl + z** - cofniecie ostatniej operacji
+13. **ctrl + F** - wyszukiwanie/zamienianie w tekscie - dosyc rozbudowane narzedzie - mozna uzywac wyrazen regularnych [regular expressions]
+14. **ctrl + shift + F3** - wyszukiwanie w plikach - bardzo użyteczna rzecz. 
+15. **shift + alt + G** - przejdz do linii numer. Ja sobie zawsze zmieniam ten skrot na ctrl + G zeby miec tak samo jak w MS SQL. 
+16. **ctrl + shift + C** - zamiana linijek kodu na komentrz, lub odkomentowanie jezeli juz mamy komentarz
+17. **Shift + Ctrl + m** - new pipe
+18. **Ctrl + Alt + i**  - new chunk in markdown file
+19. **Alt + o** - collapse all collapsible code (e.g. chunks)
+20. **Shift + Alt + o**  - expand all collapsible code
+
+
+
+
+Pelna lista skrotow jest w: *Tools -> Keyboards Shorcuts Help*
+
+<br><lfg>Useful</lfg>
+  <div class="btn-success"> W RStudio mozna sobie modyfikowac skroty i tworzyc swoje wlasne: Tools -> Modify Keyboard Shorcuts </div>
+
+
+# Dobre nawyki
+
+O dobrych nakach w programowaniu w R: https://google.github.io/styleguide/Rguide.xml
+
+## skladnia w kodzie
+
+1. Make new line each time it makes code more clear
+2. Use spaces after commas and around signs (like <-, + and so on)
+3. Dont’t use capital letters in variables names
+4. Variables and functions names should be related to their purpose.
+5. Make long variables names if it is necessary.
+
+
+## Home i End
+W programowaniu warto uzywac przyciskow *Home* i *End* rzeby szybo przechodzic na poczatek i koniec linijek kodu.
+
+
+
+
+## Rozdzialy
+Warto skrypt z kodem **dzielic sobie na rozdzialy** (dodawanie skrotem ctrl + shift + R) - dzieki temu stworzymy fajny spis tresci. Poza tym rozdzialy mozemy zwijac i rozwijac przez to przegladanie nawet duzego skryptu jest znacznie wygodniejsze. 
+
+
+## snippets
+Warto je robic dla ulatwianie sobie zycia. Sa w *Tools -> Global Options -> Code -> Editing*(sam dół tej zakładki)
+
+
+```{r, eval=TRUE, echo=FALSE, fig.cap='gdzie znalesc snippety w RStudio', out.width='500px'}
+knitr::include_graphics('figures/snippety.png')
+# ![Opis i tyle](figures/snippety.png){ width=60% }
+```
+
+
+## Projects
+W przyszlosci zrob sobie nawyk zeby kazda wieksza analize robic jako oddzielny *Project*. *Project* jest zwartym katalogiem (taka paczka) ktory zapewnie przenoscnowsc. Czyli taki *Project* mozesz po prostu komus skopiowac na inny komputer i bedzie mu to dzialalo (pod warunkiem ze ma oczywiscie zainstalowne odpowiednie pakiety). Kazdy *Project* ma swoj wlasny Environment ze zmiennymi wiec nie ma komfliktu miedzy nimi i np. czyszczac pamiec zmiennych w jednym projekcie nie naruszasz innych projektow.  
+
+
+
+
+
+
+
+
+# Other things
+
+## **Packages instalation**
+Uwaga: jezeli instalujemy jakis pakiet i nie wystepuje w podpowiedziach, to wcale nie musi oznaczec ze go nie ma na repozytorium pakietow na CRAN-R. Przyczyna problemy moze byc to ze mamy zbyt stara wersje R-a. Zeby to sprawdzic wchodzi na pakiet na stronie repozytorium i sprawdzamy parametr 'Depends'
+
+
+## My packages
+
+```
+l.html - generating html code
+l.s - supporing non graphic functions
+l.a - analytics function(includig analytical-vizualization functions )
+l.g - supporting graphic functions
+```
+
+## Categories for index (for the future when adding index is possible)
+
+```
+1. f  - function
+2. p  - package
+3. w  - warning
+4. t  - statistical test
+5. w  - warning
+6. tr - trick/tip
+```
+
+
+# Things to do
+
+Przeczytac koniecznie o najciekawszych nowych pakietach:
+https://www.r-bloggers.com/jan-2018-top-40-new-package-picks/
+https://www.r-bloggers.com/august-2017-new-package-picks/
+
+# Dictionary 
+
+## EN-PL
+
+
+```{r, eval=TRUE, echo=FALSE}
+
+DT::datatable(  filter = 'top'
+              , data =tibble::tribble(
+                ~EN, ~PL, ~Comment
+        ,'dispatch', '', ''
+        ,'lazy evaluation', 'leniwa evaluacja', ''
+        ,'eager evaluation', 'gorliwa ewaluacja', ''
+))
+
+```
+
+
+
+## PL-EN
+
+
+
+```{r, eval=TRUE, echo=FALSE}
+
+DT::datatable(  filter = 'top'
+              , data = tibble::tribble(
+  ~PL, ~EN, ~Comment
+  ,'wartosc skrajna', 'outlier', ''
+  ,'brak danych', 'missing value', ''
+  ,'eager evaluation', 'gorliwa ewaluacja', ''
+  ,'','',''
+))
+
+```
+
+
+`r if (knitr:::is_html_output()) '
+# References {-}
+'`
+
+

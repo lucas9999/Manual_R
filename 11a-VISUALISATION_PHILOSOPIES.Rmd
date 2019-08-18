@@ -1,0 +1,1587 @@
+# (PART) <lfg>VISUALISATION<</lfg> {-} 
+
+# PHILOSOPIES
+
+
+
+
+
+## graphic systems in R
+
+
+### g:graphics
+
+
+#### useful functions  
+
+
+```{r}
+#czyszczenie pola wykresu
+plot.new()
+```
+
+
+#### basic-f:par
+
+
+Use f:par to change settings of displayed plot. Setting are valid till you change it again using f:par. <small class='SwhiteB'>Watch out!</small>
+```{r}
+
+par(
+  mfcol=c(1,2), #rozmiary siatki po wierszach
+  mfrow=c(1,2), #rozmiary siatki po kolumnach
+  bg='blue', #kolor tla wykresu
+  col.main='black', #title color
+	col.axis='black', #axis color
+	col.lab='black', #color of axis label
+	col.sub='black',  #subtitle color
+	#col='black', #all colours are black (except for background)
+	cex=5, #size of elements on a plot (dots). Details can be specified like in the case of 'col
+	font=5, #wielkosc czcionki na wszystko. Mozna specyfikowac szczegolowo jak przy 'col'
+	mar=c(5, 4, 4, 2), #wielkosc marginesow na okolo pola wykresu,
+	new=F, #when you draw a plot the old one should be removew to get clear pane. Default is 'FALSE',
+	xlog=T, #czy scala x logarytmiczna
+	ylog=T #czy skala y logarytmiczna
+  )
+```
+More details see: 'Przewodnik po pakiecie R' Biecek p. 264. 
+
+#### layout
+
+Use if you want to have irregular grid for a plots.
+```{r}
+
+# mamy 4 elementy (dlatego ze taki jest rozmiar macierzy zadeklarowanej)
+layout(matrix(c(1, # wykres nr zajmuje pierwsza kratke 
+                0, # druga kratka jest puste
+                1, # trzecia kratke zajmuje wykres nr 1
+                2),# czwarta kratke zajmuje wykres nr 2
+              ncol=2, 
+              nrow=2, 
+              byrow = TRUE)
+      ) 
+layout.show(2) # pokaza wszystkie elementu o numerze nie wiekszym niz 2
+
+
+plot.new()
+hist(diamonds$price)
+hist(diamonds$depth)
+```
+
+
+### grid
+
+#### viewports
+
+
+
+##### general rules
+
+viewporty
+```{r}
+require(grid) #wspolpracuje z ggplotem
+require(ggplot2)
+grid.newpage() #nowa czysta strona
+
+#poruszanie sie po viewportach
+
+#nowa czysta strona
+grid.newpage() 
+
+#okreslenie pierwszego vieportu
+vp <- viewport(width=0.5, height=0.5, name='A')
+
+#gp okresla parametry graficzne. Grid.rect robi otoczke dla obszaru
+grid.rect(gp=gpar(col='blue'))  
+
+#robimy pierwszy viewport. Tutaj nie podajemy parametru 'name'
+pushViewport(vp) 
+
+#obramowanie dla pierwszego vieportu
+grid.rect(gp=gpar(col='red')) 
+
+#okreslenie drugiego vieportu
+vp1<-viewport(width=0.5, height=0.5, layout=grid.layout(1,2), name='B') #w tym viewporcie zrobie sobie dodatkowo grid'a. Jest zagniezdzony w pierwszym viewporcie.
+
+#zrobienie drugiego viewportu
+pushViewport(vp1)
+
+grid.rect(gp=gpar(col='yellow'))
+
+a1<-data.frame(a=c(3,4,4,5,6,5,6,7,7,6,7,8))
+p1<-ggplot()+geom_bar(data=a1, aes(x=a) )
+
+print(p1,vp=viewport(layout.pos.row=1, layout.pos.col=2) )  #drukuje wykres w aktualnym viewport ('B')
+
+#przeniesienie do innego viewport
+upViewport(0) #przechodze na najwyzszy poziom 0
+downViewport(vpPath('A', 'B'))
+a1<-data.frame(a=c(3,4,7,5,4,5,1,1,1,2,2,3))
+p2<-ggplot()+geom_bar(data=a1, aes(x=a) )
+print(p2,vp=viewport(layout.pos.row=1, layout.pos.col=1) )
+
+
+
+#PRZYKLAD Z CHWILOWEK
+dane1<-data.frame(a=   dane[  dane[,'START.ROK']==2011 &  dane[,'ZAROBEK']<10000,  'ZAROBEK']  )
+srednia<-mean(dane1[,1], na.rm=T)
+mediana<-median(dane1[,1], na.rm=T)
+plot1<-ggplot() + .......
+plot2<-ggplot() + .......  
+plot3<-ggplot() + .......
+
+#ustawienie grida na ktorym beda rozmieszczone wykresy
+grid.newpage()
+pushViewport(viewport(layout = grid.layout(3, 2)))  #ustawienie ilosci panali: # wiersze i 2 kolumny  
+print(plot3, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))         
+print(plot2, vp = viewport(layout.pos.row = 1, layout.pos.col = 2))
+print(plot1, vp = viewport(layout.pos.row = 2:3, layout.pos.col = 1:2)) #plot 1 zajmuje 2 i 3 wiersz oraz pierwsza i druga kolumne
+```
+
+
+
+##### ggplot i zwykly wykres na jednej stronie
+
+
+```{r}
+library(grid)
+library(gridBase)
+library(ggplot2)
+
+# start new page
+plot.new( )
+
+# setup layout
+gl <- grid.layout(nrow=1, ncol=2)  #kolejne odpalane vieporty beda w kolejnych komorkach grid.layout
+# grid.show.layout(gl)
+
+# setup viewports
+vp.1 <- viewport(layout.pos.col=1, layout.pos.row=1) 
+vp.2 <- viewport(layout.pos.col=2, layout.pos.row=1) 
+
+# pierwszy vieport
+pushViewport(viewport(layout=gl))
+
+# stworzenie vieportu zagniezdzonego w pierwszym
+pushViewport(vp.1)
+
+# start new base graphics in first viewport
+par(new=TRUE, fig=gridFIG()) #musimy stworzyc par. Nie da sie bezposrednio wkleic wykresu
+plot(x = 1:10, y = 10:1)
+
+#wracam do poczatku (zeby kolejny vieport nie byl zagniezdzony)
+popViewport()
+
+# move to the next viewport
+pushViewport(vp.2) #vieport znajdzie sie w drugiej komorce grid.layout ktora to wymusi (pierwsza jest juz zajeta)
+
+ggplotted <- qplot(x=1:10,y=10:1, 'point')
+# print our ggplot graphics here
+print(ggplotted, newpage = FALSE)
+
+popViewport(1)
+```
+
+
+
+## p:ggplot
+
+### General issues
+
+#### Podstawowe parametry wygladu
+
+
+```{r}
+require(ggplot2)
+require(scales) #zeby mozna bylo ustawic format liczbowy na osiach
+windowsFonts(Verdana='TT Verdana') #nowa czcionka ktora bedzie wykorzystana w wykresie
+
+data(diamonds)
+
+ggplot(data=diamonds) + 
+  geom_histogram(aes(x=price, y=..density..), binwidth=100) +
+  
+  ggtitle("Tytul \n wykresu") + #Tytul wykresu
+  
+  xlab('bleble') +
+  ylab('alala') +
+  xlim(0,10000) +  #ograniczenie zakresu danych z osi x
+  ylim(0,1) +  #ograniczenie zakresu danych z osi y
+  
+  guides(fill = guide_legend(title.theme = element_text(size=15, face="italic", colour = "red", angle = 45))) + #formatowanie tytulu legendy
+  
+  scale_x_continuous(breaks=c(5000,10000), labels=c('a','b')) +
+  scale_y_continuous(labels=comma) + #ustawienie formatowania
+  scale_fill_continuous(guide = "legend") +
+  
+  theme(
+    plot.title=element_text(colour='red',size=9, angle=30, vjust=1, face='bold', family='Verdana'),
+    
+    axis.title.x=element_text(size=9),  #tytul osi x
+    axis.title.y=element_text(angle=30),  #tytul osi y
+    axis.text.x=element_text(angle=10), #elementy na osi y
+    axis.text.y=element_text(angle=30),  #elementy na osi y
+    axis.line.x=element_line(size=1, linetype='dotted',colour='blue'),  #linie osi x
+    axis.line.y=element_line(size=1),  #linie osi y
+    axis.ticks.x=element_line(linetype=2), #znaczki na osi x
+    axis.ticks.y=element_line(linetype=1), #znaczki na osi y 
+    axis.ticks.length=unit(2.3, 'cm'),
+    axis.ticks.margin=unit(1.3, 'cm'),
+    
+    legend.position=c(.5,.5), #mozna dac ' "bottom" ,' "none" ', ' "top" '
+    #legend.box=, #jezeli mamy multiple legend to czy ma byc w ukladzie pionowym czy poziomym
+    legend.direction='vertical', #moze byc 'horizontal' i 'vertical'
+    legend.title=element_text(colour='blue'), #formatowanie wygladu tekstu opisujacego legende
+    legend.text=element_text(colour='yellow'),
+    legend.justification=c(.3,.2), # mozna dac tez  ' "center" '
+    legend.background=element_rect(colour='blue', fill='red', linetype=2 , size=3), #
+    
+    panel.background=element_rect(colour='green', fill='red'),  #tlo wykresu
+    #panel.border=element_rect(colour=rgb(.5,.5,.5), fill='green'),  #otoczenie wykresu. Cos kiepsko dziala
+    panel.grid.minor.x=element_line(linetype=2),
+    panel.grid.major.x=element_line(linetype=2),
+    panel.grid.minor.y=element_line(linetype=2),
+    panel.grid.major.y=element_line(linetype=2),
+    panel.margin=unit(.3,'cm')  #wielkosc marginesu na okolo wykresu
+  )
+```
+
+
+
+
+Notes:
+1. Gdy chcemy zeby czegos nie bylo w *themes* dajemy 'element_blank()'. Wyjatkiem jest 'legend.position' gdzie dajemy *none*
+2. W czcionce *face* moze miec wartosci *bold*, *italic*.
+3. *linetype* moze przyjmowac wartosci liczbowe: 0 = blank, 1 = solid, 2 = dashed, 3 = dotted, 4 = dotdash, 5 = longdash, 6 = twodash
+4. *format* moze przyjac wartosci *dollar*, *comma*, *percent*, *sientific*. Ustawiamy to np. w `scale_x_continuous(labels=percent)`. Potrzeba p:scales.
+5. *break* na wykresie mozna recznie modyfikowac: `scale_x_continuous(breaks=c(2,5,8))`
+
+
+
+
+#### facets
+
+
++---------+--------+--------+
+|Parameter| Values | Comment|
++=========+========+========+
+|shrink   |        |        |
++---------+--------+--------+
+|drop     |logical |Czy nie brac pod uwage; poziomow czynnikow ktore sie nie znalazly w wyswietlanych danych        |
++---------+--------+--------+
+
+
+Zroznicowanie zakresu osi ze wzgledu na facet:
+
+1. `facet_grid(kateg~. ,scales='fixed')`
+2. `facet_grid(kateg~. ,scales='free')`
+3. `facet_grid(kateg~. ,scales='free_x')`
+4. `facet_grid(kateg~. ,scales='free_y')`
+
+
+<br> Example for **drop**
+
+
+```{r}
+
+diamonds$cut <- factor(diamonds$cut, levels=c(levels(diamonds$cut) ,'mmm'))
+
+ggplot() + geom_density(data=diamonds, aes(x=price)) + facet_grid(.~cut, drop=FALSE)
+
+ggplot() + geom_density(data=diamonds, aes(x=price)) + facet_grid(.~cut, drop=TRUE)
+
+```
+
+
+#### fill and colour
+
+
+
+Umieszczone poza \textit{aes} umozliwia wskazanie koloru 
+Jezeli *fill* jest w *aes*, to sluzy on wtedy do wskaZwania zmiennej po ktorej jest grupowany wykres *fill*. Musi byc wtedy typu factor. Dlatego dla bezpieczenstwa lepiej jest uzywaC dodatkowo f:as.factor. Wtedy kolory wypelniania ustawia sie inaczej:<br>
+
+1. `scale_fill_manual(values = c("red","blue", "green"))`
+2. `scale_fill_brewer(type="seq", palette=3)`
+
+Patrz tez inne funkcje typu *scale_fill*
+
+<br>
+Reczne ustawianie kolorow dla *fill*.
+`scale_colour_manual(values = c("red","blue", "green"))`
+
+<br>
+Opis kategorii na legendzie
+`scale_fill_manual(values=c(',dob,',',zle,')) ',sep='')`
+
+
+
+#### Pozycjonowanie
+
+
+Jest 5 rodzajow pozycjonowania:
+
+
+<img src="graphics/ggplot-pozycjonowanie_1.jpg" alt="pozycjonowanie w ggplot">
+
+
+### grid.arrange
+
+### grid.arrange (gridExtra)
+Jest to odpowiednik prostej funkcji `par` stosowanej do podstawowych wykres?w w R
+
+
+```{r}
+
+
+require(ggplot2)
+require(gridExtra)
+
+plot1<-ggplot(diamonds, aes(clarity, fill=cut)) + geom_bar()
+plot2<-ggplot(diamonds, aes(color)) + geom_bar()
+
+grid.arrange(plot1,plot2, ncol=2, nrow=1)
+```
+
+
+
+### Tricks and problems
+
+#### Dynamic elements
+
+##### Limits
+
+
+
+```{r}
+require(ggplot2)
+
+limits_1 <- NULL
+ggplot() + geom_density(data=diamonds, aes(x=price)) + scale_x_continuous(limits=limits_1)
+
+
+limits_2 <- c(10,10000)
+ggplot() + geom_density(data=diamonds, aes(x=price)) + scale_x_continuous(limits=limits_2)
+
+
+```
+
+
+##### fill
+
+
+```{r}
+require(ggplot2)
+
+fill_1 <- NULL
+ggplot() + geom_density(data=diamonds, aes(x=price, fill=eval(fill_1)) )
+
+
+fill_2 <- quote(cut)
+ggplot() + geom_density(data=diamonds, aes(x=price, fill=eval(fill_2)) )
+
+```
+
+
+##### facets
+
+
+```{r}
+
+facet_1 <- NULL
+ggplot() + geom_density(data=diamonds, aes(x=price)) + facet_1
+
+
+variable <- 'cut'
+facet_2 <- facet_grid(paste0('.~',variable))
+ggplot() + geom_density(data=diamonds, aes(x=price)) + facet_2
+
+
+```
+
+
+<br> To add empty *facet* just add NULL to the plot.
+
+
+```{r}
+
+w <- facet_grid(.~cut)
+z <- TRUE
+ggplot() + geom_density(data=diamonds, aes(x=price)) + if(z) NULL else w
+
+```
+
+
+#### Zmiana domylsnego stylu
+
+       
+```{r}
+
+require(ggplot2)
+ble<-theme_set(theme_bw())      
+ble<-theme_update(
+        panel.border=element_rect(colour="black", fill=NA, size=2),
+        panel.grid.major=element_line(colour=rgb(.4,.4,.4), size=.3, linetype=1),
+        axis.title.y=element_text(face="bold", size=14),  
+        axis.title.x=element_text(face="bold", size=13) , 
+        axis.text.x=element_text(colour=rgb(.0,.0,.0), size=12, face="bold"), 
+        axis.text.y=element_text(colour=rgb(.0,.0,.0), size=12, face="bold") ,
+        panel.background=element_rect(fill=rgb(.99,.99,.99)), 
+        legend.text=element_text(size=5), 
+        legend.title=element_text(size=10), 
+        strip.text.x=element_text(size=5))
+      
+      
+data(diamonds)
+ggplot()+geom_histogram(data=diamonds, aes(x=cut),fill='red')
+ggplot()+geom_density(data=diamonds, aes(x=cut))
+ggplot()+geom_bar(data=diamonds, aes(x=cut))
+
+```
+
+
+
+#### Praca na kilku stylach
+
+```{r}
+
+require(ggplot2)
+t_1 <- theme(panel.background=element_rect(fill='green'))
+t_2 <- theme(panel.background=element_rect(fill='yellow'))
+
+
+ggplot() + geom_density(data=diamonds, aes(x=price)) + t_1
+
+ggplot() + geom_density(data=diamonds, aes(x=price)) + t_2
+
+```
+
+
+#### Podwojna os x
+  
+    
+```{r}
+d = data.frame(x = 1:20, y = rnorm(20, 5, 5))
+require(ggplot2)      
+ggplot(data = d, aes(x = x, y = y)) +
+scale_x_continuous(breaks = c(1:20, #braks dla ornego wiersya
+                              seq(2.54, 20, 2.54)), #breaks dla dolnego wiersya
+       labels = c(1:20, #labels dla gornego wiersza
+                  paste0("\n", 1:as.integer(20/2.54), "\"")) ) + #labels dla dolnego wiersza
+        geom_point()
+```
+
+
+#### Podwojna os y
+
+
+```{r}
+
+library(ggplot2)
+library(gtable)
+library(grid)
+
+grid.newpage()
+
+# two plots
+p1 <- ggplot(mtcars, aes(mpg, disp)) + geom_line(colour = "blue") + theme_bw()
+p2 <- ggplot(mtcars, aes(mpg, drat)) + geom_line(colour = "red") + theme_bw() %+replace% 
+    theme(panel.background = element_rect(fill = NA))
+
+# extract gtable
+g1 <- ggplot_gtable(ggplot_build(p1))
+g2 <- ggplot_gtable(ggplot_build(p2))
+
+# overlap the panel of 2nd plot on that of 1st plot
+pp <- c(subset(g1$layout, name == "panel", se = t:r))
+g <- gtable_add_grob(g1, g2$grobs[[which(g2$layout$name == "panel")]], pp$t, 
+    pp$l, pp$b, pp$l)
+
+# axis tweaks
+ia <- which(g2$layout$name == "axis-l")
+ga <- g2$grobs[[ia]]
+ax <- ga$children[[2]]
+ax$widths <- rev(ax$widths)
+ax$grobs <- rev(ax$grobs)
+ax$grobs[[1]]$x <- ax$grobs[[1]]$x - unit(1, "npc") + unit(0.15, "cm")
+g <- gtable_add_cols(g, g2$widths[g2$layout[ia, ]$l], length(g$widths) - 1)
+g <- gtable_add_grob(g, ax, pp$t, length(g$widths) - 1, pp$b)
+
+# draw it
+grid.draw(g)
+
+```
+
+
+
+#### group
+
+
+Problem polega na tym zeby narysowac geom_line w sytuacji gdy x jest typu factor. Trzeba wtedy ustawic group na 1.
+
+```{r}
+ggplot() + 
+  geom_point(data=d8, aes(x=factor(miesiac), y=odrzucenie_proc)) + 
+  geom_line(data=d8, aes(x=factor(miesiac), y=odrzucenie_proc, group=1))
+
+```
+
+
+#### f:gg_build
+
+<br><lfsb>Tip</lfsb>
+<div class="btn-info"> W przypadku ggplot da sie wyciagnac wszystkie parametry niezbedne do narysowania wykresow (szerokosc bloczkow, wysokosc, dane, zakres osi itp.). Uzywamy do tego funkcji ggplot_build </div><br>
+
+
+
+```{r}
+require(ggplot2)
+require(grid)
+data(diamonds)
+d<-diamonds
+
+p<-ggplot()+geom_histogram(data=d, aes(x=price)) +  annotate('text',  x=.5,  y=.5, label='bleble', default.unit=unit(c(.5,.5),'cm'))
+
+ggplot_build(p)
+```
+
+
+#### slowny opis osi y
+
+`hwp + scale_y_continuous(breaks=c(50, 56, 60, 66, 72),
+                         labels=c("Tiny", "Really\nshort", "Short",
+                                  "Medium", "Tallish"))`
+
+
+#### using *dodge*
+
+W *geom_text* nie używa sie *position='dodge'* ale:
+ggplot(data=d1) + geom_bar(aes(x=variable, y=value, fill=statystyka), position='dodge', stat='identity')  +
+  geom_text(aes(x=variable, y=value, label=round(value,0), fill=factor(statystyka)), position=position_dodge(width=1)) +  facet_grid(PD~.)
+
+
+#### rodzaje wykresow
+
+##### histogram
+
+
+```{r}
+require(ggplot2)
+data(diamonds)
+ggplot()+geom_histogram(
+  data=diamonds,
+  aes(x=price,
+      y=..count.. #moze byc ..count.. i ..density.. . Przy density chyba mozna wybierac jadro wygladzania
+        ),
+  binwidth=1 #im mniejsza wartosc tym ciensze bloczki.
+  )
+```
+
+
+##### Wykres gestosci-[density plot]
+
+
+```{r}
+
+require(ggplot2)
+data(diamonds)
+ggplot()+geom_density(
+  data=diamonds,
+  aes(x=price,
+      y=..count.. #moze byc ..count.. i ..density.. . PPRzy density chyba mozna wybierac jadrow wygladzania
+  ),
+  adjust=.5 #im mniejsza wartosc tym dokladniejsze dopasowanie
+)
+```
+
+
+##### Wykres kolowy [pie plot]
+
+
+bez facet
+```{r}
+
+require(ggplot2)
+data(mtcars)
+ggplot(
+  mtcars, 
+  stat='indentity', #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  aes(x = factor(1), fill = factor(cyl))) + 
+geom_bar(
+  width = 1) + 
+coord_polar(
+  theta = "y") +
+theme(
+    panel.border=element_rect(colour="black", fill=NA, size=2),
+    panel.grid.major=element_line(colour=rgb(.4,.4,.4), size=.3, linetype=1),
+    axis.title.y=element_blank(),
+    axis.title.x=element_blank(), 
+    axis.text.x=element_text(colour=rgb(.0,.0,.0), size=12, face="bold"),
+    axis.text.y=element_text(colour=rgb(.0,.0,.0), size=12, face="bold"),
+    panel.background=element_rect(fill=rgb(.99,.99,.99)),
+    legend.text=element_text(size=5),
+    legend.title=element_text(size=10),
+    strip.text.x=element_text(size=5)) +
+scale_fill_brewer(palette=1) +
+scale_y_continuous(breaks=NULL) +
+scale_x_discrete(breaks=NULL)
+
+```
+
+
+
+z facet
+!!!!! zbadac co ten wykres tak naprawde wyswietla. !!!!!
+```{r}
+    
+require(ggplot2)
+data(mtcars)
+ggplot(mtcars, aes(
+  x = factor(1), 
+  fill = factor(cyl))) +
+geom_bar(
+  width = 1, 
+  stat='bin', #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  position='fill') + 
+facet_grid(
+  .~vs) + 
+coord_polar(
+  theta = "y") +
+  theme(
+    panel.border=element_rect(colour="black", fill=NA, size=2),
+    panel.grid.major=element_line(colour=rgb(.4,.4,.4), size=.3, linetype=1),
+    axis.title.y=element_blank(),
+    axis.title.x=element_blank(), 
+    axis.text.x=element_text(colour=rgb(.0,.0,.0), size=12, face="bold"),
+    axis.text.y=element_text(colour=rgb(.0,.0,.0), size=12, face="bold"),
+    panel.background=element_rect(fill=rgb(.99,.99,.99)),
+    legend.text=element_text(size=5),
+    legend.title=element_text(size=10),
+    strip.text.x=element_text(size=15)) +
+scale_fill_brewer(palette=1) +
+scale_y_continuous(breaks=NULL) #po to aby nie bylo dodatkowych opisow na obreczy
+
+```
+
+
+Opisy
+
+```{r}
+#pie z opisami - wykonywany recznie
+require(ggplot2)
+data(diamonds)
+e<-as.data.frame(prop.table(table(diamonds[,'cut'])))
+z<-data.frame(il=e$Var1, naz=e$Freq )
+z$ddd<-cumsum(sort(z[,2]))
+
+
+
+ggplot() + 
+geom_bar(data=z, aes(x=factor(1), y=z[,2] ,fill=z[,1]), stat='identity')  + 
+geom_text(data=z, aes(x=factor(1), y=z[,'ddd'] ,label=z[,2], fill=z[,1]), colour='white', size=10)+ coord_polar(theta='y')+ 
+theme(
+    panel.border=element_rect(colour="black", fill=NA, size=2),
+    panel.grid.major=element_line(colour=rgb(.4,.4,.4), size=.3, linetype=1),
+    axis.title.y=element_blank(),
+    axis.title.x=element_blank(), 
+    axis.text.x=element_text(colour=rgb(.0,.0,.0), size=12, face="bold"),
+    axis.text.y=element_text(colour=rgb(.0,.0,.0), size=12, face="bold"),
+    panel.background=element_rect(fill=rgb(.99,.99,.99)),
+    legend.text=element_text(size=5),
+    legend.title=element_text(size=10),
+    strip.text.x=element_text(size=5)) +
+scale_y_continuous(breaks=NULL) +
+scale_x_discrete(breaks=NULL)
+
+```
+
+
+##### Wykres pudelkowy [box plot]
+
+<br><lfr>Warning!</lfr>
+<div class="btn-danger"> Tutaj w parametrze mapowaniu 'y' jest automatycznie zmienna grupujac.  Parametru `fill` mozna uzyc do dodatkowego pogrupowania.<br> </div><br>
+
+
+Przyklad bez `fill`
+
+```{r}
+require(ggplot2)
+data(diamonds)
+ggplot()+geom_boxplot(
+  data=diamonds,
+  aes(y=price,
+      x=cut
+    ))
+```
+
+
+Przyklad z *fill*
+
+```{r}
+require(ggplot2)
+data(diamonds)
+ggplot()+geom_boxplot(
+  data=diamonds,
+  aes(y=price,
+      x=cut,
+      fill=clarity
+  )
+  )
+```
+
+Przyklad jezeli chcemy zrobic BEZ GRUPOWANIA.
+
+```{r}
+
+require(ggplot2)
+data(diamonds)
+ggplot()+geom_boxplot(
+    data=diamonds,
+    aes(y=price, x=1
+    ))
+
+```
+
+
+
+
+
+<br><lfr>Warning!</lfr>
+<div class="btn-danger"> Uwaga. Zmienne grupujace (zarowno x w `aes` jak i `fill`) musze byc typu factor.<br><br><br> </div><br>
+
+Parametr `notch.` wykonuje dodatkowe wciecia w boxplotach na wysoko?ci mediany.
+
+```{r}
+require(ggplot2)
+data(diamonds)
+ggplot()+geom_boxplot(
+  data=diamonds,
+  aes(y=price,
+      x=cut
+  ),
+  notch=.5
+  )
+```
+
+
+
+##### Wykres skrzypcowy [violin plot]
+
+
+```{r}
+require(ggplot2)
+data(diamonds)
+ggplot(mtcars, aes(factor(cyl), mpg)) + 
+  geom_violin(trim=T)
+```
+
+
+
+##### Wykres rozrzutu [scatter plot]
+
+
+```{r}
+
+require(ggplot2)
+data(diamonds)
+ggplot() + geom_point(
+  data=diamonds,
+  aes(
+    x=price,
+    y=carat
+    ))
+
+```
+
+
+##### Wykres rozrzutu z liniow regresji
+
+```{r}
+require(ggplot2)
+data(diamonds)
+ggplot() + geom_point(
+  data=diamonds,
+  aes(
+    x=price,
+    y=carat
+  )) +
+  stat_smooth(
+    data=diamonds, 
+    aes(x=price, y=carat), 
+    method='lm' #do wyboru jest 'loess' , 'lm' i 'glm'
+    , size=2) 
+```
+
+
+##### Regresja kwantylowa
+
+Uwaga: wymagany pakiet **quantreg**. 
+
+```{r}
+require(quantreg)
+require(ggplot2)
+data(diamonds)
+ggplot()+geom_quantile(data=diamonds,
+                       aes(
+                         x=price,
+                         y=carat
+                         )
+                       )
+```
+
+##### Wykres kwantyl-kwantyl [qq plot]
+
+
+W wykresie kwantylowym ggplot wymaga aby x i y byly **rownoliczne**. Jezeli chcemy obejsc ten problem robimy najpierw qq plot wykresem z pakietu basic. Wyciagamy potem wspolrzedne i podkladamy je do ggplota (np. do wykresu rozrzutu).<br><br>
+
+Dwie zmienne r?wnoliczne:
+
+```{r}
+require(ggplot2)
+data(diamonds)
+ggplot()+stat_qq(
+                 data=diamonds, 
+                 aes(
+                   sample=price, 
+                   theoretical=z)
+                 )
+```
+
+
+
+
+
+Dwie zmienne roznoliczne
+```{r}
+z1<-rnorm(100)
+z2<-rnorm(200)
+z3<-qqplot(z1,z2)
+x<-z3$x
+y<-z3$y
+ggplot()+geom_point(aes(x=x,y=y))
+
+#zmienna i rozklad o zadanych parametrach
+ggplot()+stat_qq(
+  data=diamonds, 
+  aes(sample=price),
+  distribution=qnorm,
+  dparams=list(mean=1, sd=3)
+)
+```
+
+
+
+
+
+
+#### Wykres paskowy [barplot]
+
+Jezeli chcemy po prosty wyswietlic okreslone wartosci zmiennej:
+
+```{r}
+z<-data.frame(a=c(2,1,5,4,3), b=letters[1:5])
+ggplot()+geom_bar(data=z, aes(x=b, y=a), stat='identity')
+```
+
+
+
+
+
+Jezeli chcemy zliczyc (histogram)
+```{r}
+ggplot() + geom_bar(data=diamonds, aes(x=clarity), stat='bin')
+```
+
+
+
+#### Wykres powierzchniowy [area plot]
+
+```{r}
+z<-data.frame(a=c(1,2,3,4,5), b=c(3,2,4,5,1))
+ggplot()+geom_area(data=z, aes(x=a, y=b))
+```
+
+
+
+
+#### Wykres wstazkowy [ribbon plot]
+
+```{r}
+z<-data.frame(a=c(1,2,3,4,5), b=c(3,2,4,5,1), c=c(3,2,2,3,2))
+ggplot()+geom_ribbon(data=z, aes(x=a, ymin=b, ymax=c))
+```
+
+
+#### Wykres z linia o okreslonym nachyleniu`
+
+```{r}
+
+require(ggplot2)
+data(diamonds)
+ggplot()+geom_line(data=diamonds, aes(x=carat, y=price))
+```
+
+
+#### Wykres z linia o okreslonym nachyleniu
+
+```{r}
+require(ggplot2)
+data(diamonds)
+ggplot()+geom_point(data=diamonds, aes(x=price, y=z)) +
+  geom_abline(intercept = 10, slope = .002, colour='red')
+```
+
+
+#### Linia pionowa i pozioma
+
+```{r}
+require(ggplot2)
+data(diamonds)
+ggplot(diamonds, aes(x=carat, y=price, colour=cut)) + 
+  geom_point() + 
+  geom_hline(yintercept=6000, colour='red') + 
+  geom_vline(xintercept=2, size=1)
+```
+
+
+
+
+#### Sciezka [path]
+
+```{r}
+z<-data.frame(a=c(1,3,2,4), b=c(3,2,3,4))
+ggplot()+geom_path(data=z, aes(x=a, y=b))
+```
+
+
+
+#### Wykres bledu [Error bar]
+
+```{r}
+z<-data.frame(a=c(1,2,3,4), b=c(2,3,4,4), c=c(3,5,6,9))
+ggplot()+geom_errorbar(data=z, aes(x=a, ymin=b, ymax=c))
+```
+
+
+
+
+
+#### Linerange
+
+```{r}
+z<-data.frame(a=c(1,2,3,4), b=c(2,3,4,4), c=c(3,5,6,9))
+ggplot()+geom_linerange(data=z, aes(x=a, ymin=b, ymax=c))
+```
+
+
+#### Crossbar
+
+```{r}
+z<-data.frame(a=c(1,2,3,4), b=c(2,3,4,4))
+ggplot() + geom_crossbar(data=z, aes(x=factor(a), ymin = b+2, ymax = b-2, y = b))
+```
+
+
+#### Pointrange
+
+```{r}
+z<-data.frame(a=c(1,2,3,4), b=c(2,3,4,4))
+ggplot()+geom_pointrange(data=z, aes(x=a, ymin=b+2, ymax=b-2, y=b))
+```
+
+
+#### Wykres termiczn
+
+```{r}
+require(ggplot2)
+data(diamonds)
+ggplot()+geom_bin2d(data=diamonds, aes(x=carat, y=price))
+```
+
+
+#### Wykres gestosci 2D
+
+
+```{r}
+require(ggplot2)
+data(diamonds)
+ggplot()+geom_density2d(data=diamonds, aes(x=price, y=carat))
+```
+
+
+
+
+#### dotplot
+
+```{r}
+require(ggplot2)
+data(diamonds)
+ggplot(mtcars, aes(x = mpg)) + geom_dotplot()
+```
+
+
+
+```{r}
+library(gcookbook) # For the data set
+ggplot(heightweight, aes(x=sex, y=heightIn)) +
+geom_dotplot(binaxis="y", binwidth=.5, stackdir="center")
+```
+
+
+#### segment plot - przykład wykresu gannta
+
+
+
+```{r}
+
+dat <- data.frame(person=c('sam','greg','teacher', 'sam'), start=c(0,6,11,15), end=c(6,11,15,19))
+
+library(ggplot2)
+ggplot(dat, aes(colour=person)) + 
+    geom_segment(aes(x=start, xend=end, y=person, yend=person), size=3) +
+    xlab("Duration")
+
+```
+
+
+
+
+### Piramida
+
+
+```{r}
+test <- data.frame(v=sample(1:20,1000,replace=T), g=c('M','F'))
+# Then combined two geom_bar() calls separately for each of g values. For F counts are calculated as they are but for M counts are multiplied by -1 to get bar in opposite direction. Then scale_y_continuous() is used to get pretty values for axis.
+
+require(ggplot2)
+require(plyr)    
+ggplot(data=test,aes(x=as.factor(v),fill=g)) + 
+  geom_bar(subset=.(g=="F")) + 
+  geom_bar(subset=.(g=="M"),aes(y=..count..*(-1))) + 
+  scale_y_continuous(breaks=seq(-40,40,10),labels=abs(seq(-40,40,10))) + 
+  coord_flip()
+```
+
+
+### ggplot-cieniowanie
+
+
+Prostokat:
+```{r}
+require(ggplot2)
+library(gcookbook) # For the data set
+
+p <- ggplot(subset(climate, Source=="Berkeley"), aes(x=Year, y=Anomaly10y)) +
+  geom_line()
+
+p + annotate("rect", xmin=1950, xmax=1980, ymin=-1, ymax=1, alpha=.1,
+             fill="blue")
+```
+
+
+Cieniowanie pod krzywa:
+```{r}
+require(ggplot2)
+# Return dnorm(x) for 0 < x < 2, and NA for all other x
+dnorm_limit <- function(x) {
+  y <- dnorm(x)
+  y[x < 0  |  x > 2] <- NA
+  return(y)
+}
+
+# ggplot() with dummy data
+p <- ggplot(data.frame(x=c(-3, 3)), aes(x=x))
+p + stat_function(fun=dnorm_limit, geom="area", fill="blue", alpha=0.2) +
+  stat_function(fun=dnorm)
+```
+
+
+### ggplot-Adnotacje
+
+
+#### Zwykłe adnotacje
+
+
+```{r}
+p <- ggplot(faithful, aes(x=eruptions, y=waiting)) + geom_point()
+
+p + annotate("text", x=3, y=48, label="Group 1") +
+  annotate("text", x=4.5, y=66, label="Group 2")
+```
+
+
+
+
+
+
+#### Adnotacje matematyczne
+
+```{r}
+p <- ggplot(data.frame(x=c(-3,3)), aes(x=x)) + stat_function(fun = dnorm)
+
+p + annotate("text", x=2, y=0.3, parse=TRUE,
+             label="frac(1, sqrt(2 * pi)) * e ^ {-x^2 / 2}")
+```
+
+
+
+
+
+#### Adnotacje po różnych facets
+
+
+```{r}
+require(ggplot2)
+p <- ggplot(mpg, aes(x=displ, y=hwy)) + geom_point() + facet_grid(. ~ drv)
+
+# A data frame with labels for each facet
+f_labels <- data.frame(drv = c("4", "f", "r"), label = c("4wd", "Front", "Rear"))
+
+p + geom_text(x=6, y=40, aes(label=label), data=f_labels)
+
+# If you use annotate(), the label will appear in all facets
+p + annotate("text", x=6, y=42, label="label text")
+```
+
+
+
+
+#### Adnotacje jako kreski i strzałki
+
+
+```{r}
+
+library(gcookbook) # For the data set
+
+p <- ggplot(subset(climate, Source=="Berkeley"), aes(x=Year, y=Anomaly10y)) +
+  geom_line()
+
+p + annotate("segment", x=1950, xend=1980, y=-.25, yend=-.25)
+```
+
+
+
+
+```{r}
+library(gcookbook) # For the data set
+
+p <- ggplot(subset(climate, Source=="Berkeley"), aes(x=Year, y=Anomaly10y)) +
+  geom_line()
+
+library(grid)
+p + annotate("segment", x=1850, xend=1820, y=-.8, yend=-.95, colour="blue",
+             size=2, arrow=arrow()) +
+  annotate("segment", x=1950, xend=1980, y=-.25, yend=-.25,
+           arrow=arrow(ends="both", angle=90, length=unit(.2,"cm")))
+```
+
+
+
+### ggplot- szablony
+
+#### Zmiana domyslnych ustawien themes
+
+Zmiana domyslnych ustawien dla `themes` w ggplot2:
+
+```{r}
+#Zmiana dziala az to zrestartowania R-a.
+require(ggplot2)
+ble<-theme_set(theme_bw())      
+ble<-theme_update(
+        panel.border=element_rect(colour="black", fill=NA, size=2),
+        panel.grid.major=element_line(colour=rgb(.4,.4,.4), size=.3, linetype=1),
+        axis.title.y=element_text(face="bold", size=14),  
+        axis.title.x=element_text(face="bold", size=13) , 
+        axis.text.x=element_text(colour=rgb(.0,.0,.0), size=12, face="bold"), 
+        axis.text.y=element_text(colour=rgb(.0,.0,.0), size=12, face="bold") ,
+        panel.background=element_rect(fill=rgb(.99,.99,.99)), 
+        legend.text=element_text(size=5), 
+        legend.title=element_text(size=10), 
+        strip.text.x=element_text(size=5))
+      
+data(diamonds)
+ggplot() + geom_histogram(data=diamonds, aes(x=cut))
+ggplot()+geom_density(data=diamonds, aes(x=cut))
+ggplot()+geom_bar(data=diamonds, aes(x=cut))
+
+#rozkminic roznice miedzym funkcjami:
+#theme_update()
+#theme_get()
+#theme_set(new)
+```
+
+
+#### Szablony z pakietu ggthemes
+
+
+```{r}
+require(ggplot2)
+require(ggthemes)
+data(diamonds)
+   
+ggplot()+geom_density(data=diamonds, aes(x=x)) + theme_economist()  
+ggplot()+geom_density(data=diamonds, aes(x=x)) + theme_economist_white()  
+ggplot()+geom_density(data=diamonds, aes(x=x)) + theme_excel()	
+ggplot()+geom_density(data=diamonds, aes(x=x)) + theme_few()	
+ggplot()+geom_density(data=diamonds, aes(x=x)) + theme_foundation()	
+ggplot()+geom_density(data=diamonds, aes(x=x)) + theme_igray()	
+ggplot()+geom_density(data=diamonds, aes(x=x)) + theme_solarized()	
+ggplot()+geom_density(data=diamonds, aes(x=x)) + theme_stata()	
+ggplot()+geom_density(data=diamonds, aes(x=x)) + theme_tufte()	
+ggplot()+geom_density(data=diamonds, aes(x=x)) + theme_wsj()
+
+```
+
+
+#### Slynny niebieski kolor
+
+```{r}
+dob<-'rgb( 37/256  , 164/256 , 40/256 )'
+
+require(ggplot2)
+data(diamonds)
+f<-rgb(8/256,96/256,186/256) 
+ggplot()+geom_density(data=diamonds, aes(x=carat), fill=f, size=1) +
+  theme(
+    panel.border=element_rect(colour="black", fill=NA, size=2),
+    panel.grid.major=element_line(colour=rgb(.4,.4,.4), size=.3, linetype=1),
+    axis.title.y=element_text(face="bold", size=14),  
+    axis.title.x=element_text(face="bold", size=13) , 
+    axis.text.x=element_text(colour=rgb(.0,.0,.0), size=12, face="bold"), 
+    axis.text.y=element_text(colour=rgb(.0,.0,.0), size=12, face="bold") ,
+    panel.background=element_rect(fill=rgb(.99,.99,.99)), 
+    legend.text=element_text(size=5), 
+    legend.title=element_text(size=10), 
+    strip.text.x=element_text(size=5)) +
+  labs(fill="") 
+```
+
+
+## lattice
+
+
+```{r}
+# LATTICE  podstawowe prakiety graiczne----
+
+require(ggplot2)
+require(lattice)
+require(latticeExtra)
+
+d<-diamonds
+
+#podstawowe wykresy
+histogram(~x, d, breaks=100)
+densityplot(~x, d,  bw=0.1 )
+xyplot(x~y, d, pch=10)
+parallelplot(~d[1:1000,c('cut','color','x')], d) #dla jakosciowych i ilosciowych
+bwplot(x~cut, d)
+barchart(c(1,2,3,4)~c(2,3,4,3))
+dotplot(cut ~ price, d[1:50,] )
+qqmath(x~y, d)
+
+qq() #??
+levelplot(~cut, d) #??
+contourplot
+cloud
+wireframe
+splom
+rfs
+
+
+# skladnia formuly
+
+histogram(~x|cut, d)
+histogram(~x|cut+color, d, subset=(color%in%c("D", "E")))
+
+#ponizsze skladnie sa rownowazne
+histogram(~x|cut+color, d, subset=(color%in%c("D", "E")))
+histogram(~x|cut*color, d, subset=(color%in%c("D", "E")))
+
+xyplot(x~y, d,groups=cut)
+
+
+# ustawienia paretrow
+pch - wielkosc kropek
+bw - dokladnosc dopasowania wykresy gestosci
+breaks - szerokosc bloczka w histogramie
+layout - rozmieszczenie elementow (np: layout=c(2,3) )
+subset - podzbior (np. subset=(price>3000 & cut %in% c('a','b')) )
+groups - grupowanie kolorystyczne wykresu (nie dziala dla histogramu)
+
+```
+
+
+
+## p:rgl
+
+
+### Wykresy 3D-ogolne zasady
+
+```{r}
+
+#primitive
+require(rgl)
+rgl.points(x=c(1,3,6),y=c(2,4,1),z=c(5,7,4), color='red', size=10)  #tworze wykres z trzema punktami
+axes3d( labels=F) #dodaje osie.
+title3d(main='wykres', xlab='x', ylab='y', zlab='z', color='blue') #dodajem tytul wykresu oraz osi
+rgl.lines(x=c(1,2), y=c(3,2), z=c(4,3)) #dodaje odcinek
+
+rgl.triangles(x=c(1,2,2), y=c(3,2,1), z=c(4,3,4), color='yellow') #dodaje płytke
+
+rgl.quads(x=c(1,2,2,1), y=c(3,2,1,4), z=c(4,3,4,5), color='yellow')
+
+rgl.texts(x=c(1,2) ,y=c(2,3), z=c(4,5)  , text=c('a', 'b'))
+
+rgl.spheres(x=c(1,2) ,y=c(2,3), z=c(4,5), r=c(1,2), color=c('red'))
+
+
+
+
+#surface
+x<-c(1,2,3,4)
+z<-c(1,2,3,4)
+y<-matrix(c(1:16), ncol=4)
+rgl.surface(x=x, y=y, z=z)
+
+#wersja z kolorem
+x<-c(1,2,3,4)
+z<-c(1,2,3,4)
+y<-matrix(c(1:16), ncol=4)
+ylim <- range(y) #zakres wartosci y (wysokosci)
+ylen <- ylim[2] - ylim[1] + 1 #dlugosc zakresu wartosci y
+colorlut <- terrain.colors(ylen) # height color lookup table
+col <- colorlut[ y-ylim[1]+1 ] # assign colors to heights for each point
+rgl.surface(x=x, y=y, z=z, color=col)
+
+
+rgl.pop() #usuwa ostatnio dodany element
+rgl.clear()  #czysci okno
+
+#plot3d
+
+require(rgl)
+x  <-  rnorm(100)
+y  <-  rnorm(100)
+z  <-  0.2*x  -  0.3*y  +  rnorm(100,  sd=0.3)
+fit  <-  lm(z  ~  x  +  y)
+plot3d(x,y,z,  type='s',  col='red',  size=1)
+coefs  <-  coef(fit)
+a  <-  coefs['x']
+b  <-  coefs['y']
+c  <-  -1
+d  <-  coefs['(Intercept)']
+planes3d(a,  b,  c,  d,  alpha=0.5) #4 wielkosci bo rownanie w postaci a x + b y + c z + d = 0
+planes3d(2,  1,  1,  1,  alpha=0.5)
+
+
+open3d()
+```
+
+
+
+### Wykres gestosci
+
+Czarnobialy
+```{r}
+#wykres gestosci pod rgl
+require(graphics)
+x <- rnorm(1000)
+y <- 2 + x*rnorm(1000,1,.1) + rnorm(1000)
+library(MASS)
+den3d <- kde2d(x, y)
+
+length(den3d[[3]])
+
+require(rgl)
+
+x<-den3d[[1]]
+z<-den3d[[2]]
+y<-matrix(den3d[[3]],  ncol=length(x))
+rgl.surface(x=x,  y=y,  z=z)
+```
+
+
+Kolorowy
+```{r}
+#wykres gestosci pod rgl
+require(graphics)
+x <- rnorm(1000)
+y <- 2 + x*rnorm(1000,1,.1) + rnorm(1000)
+library(MASS)
+den3d <- kde2d(x, y)
+
+length(den3d[[3]])
+
+require(rgl)
+
+x<-den3d[[1]]
+z<-den3d[[2]]
+y<-matrix(den3d[[3]]*10,  ncol=length(x))  #pomnozone przez 10 zeby przeskalowac
+ylim  <-  range(y)  #zakres  wartosci  y  (wysokosci)
+ylen  <-  ylim[2]  -  ylim[1] + 1  #dlugosc  zakresu  wartosci  y
+colorlut  <-  terrain.colors(ylen)  #  height  color  lookup  table
+col  <-  colorlut[  y-ylim[1]+1  ]  #  assign  colors  to  heights  for  each  point
+rgl.surface(x=x,  y=y,  z=z, color=col)
+```
+
+
+### histogram 3D w rgl
+
+  
+
+```{r}
+library(rgl)
+demo(hist3d)    
+
+      
+##### Required functions 'binplot' and 'hist3d':
+ 
+ binplot.3d<-function(x,y,z,alpha=1,topcol="#ff0000",sidecol="#aaaaaa")
+ {
+       save <- par3d(skipRedraw=TRUE)
+         on.exit(par3d(save))
+           
+        #wpolczedne bloczkow histogramu
+         x1<-c(rep(c(x[1],x[2],x[2],x[1]),3),rep(x[1],4),rep(x[2],4))
+         z1<-c(rep(0,4),rep(c(0,0,z,z),4))
+         y1<-c(y[1],y[1],y[2],y[2],rep(y[1],4),rep(y[2],4),rep(c(y[1],y[2],y[2],y[1]),2))
+         x2<-c(rep(c(x[1],x[1],x[2],x[2]),2),rep(c(x[1],x[2],rep(x[1],3),rep(x[2],3)),2))
+         z2<-c(rep(c(0,z),4),rep(0,8),rep(z,8) )
+         y2<-c(rep(y[1],4),rep(y[2],4),rep(c(rep(y[1],3),rep(y[2],3),y[1],y[2]),2) )
+         rgl.quads(x1,z1,y1,col=rep(sidecol,each=4),alpha=alpha)
+         rgl.quads(c(x[1],x[2],x[2],x[1]),rep(z,4),c(y[1],y[1],y[2],y[2]),
+                    +               col=rep(topcol,each=4),alpha=1) 
+         rgl.lines(x2,z2,y2,col="#000000")
+       }
+
+ hist3d<-function(x,y=NULL,nclass="auto",alpha=1,col="#ff0000",scale=10)
+     {
+       save <- par3d(skipRedraw=TRUE)
+       on.exit(par3d(save))
+       xy <- xy.coords(x,y)
+       x <- xy$x
+       y <- xy$y
+       n<-length(x)
+       if (nclass == "auto") { nclass<-ceiling(sqrt(nclass.Sturges(x))) }
+       breaks.x <- seq(min(x),max(x),length=(nclass+1))
+       breaks.y <- seq(min(y),max(y),length=(nclass+1))
+       z<-matrix(0,(nclass),(nclass))
+       for (i in 1:nclass) 
+           {
+             for (j in 1:nclass) 
+                 {
+                   z[i, j] <- (1/n)*sum(x < breaks.x[i+1] & y < breaks.y[j+1] & 
+                                                                        x >= breaks.x[i] & y >= breaks.y[j])
+                   binplot.3d(c(breaks.x[i],breaks.x[i+1]),c(breaks.y[j],breaks.y[j+1]),
+                                                 scale*z[i,j],alpha=alpha,topcol=col)
+                   }
+             }
+     }
+
+ 
+```
+
+
+### rgl-rozszerzenia
+
+
+#### evd
+
+
+
+```{r}
+
+library(rgl)
+library(evd)
+data(lossalae)
+U=rank(lossalae[,1]+rnorm(nrow(lossalae), mean=0,sd=.001))/(nrow(lossalae)+1)
+V=rank(lossalae[,2])/(nrow(lossalae)+1)
+M=kde2d(qnorm(U),qnorm(V),n=35)
+library(rgl)
+persp3d(M$x,M$y,M$z,col='green', xlab="loss",ylab="alae",zlab="")
+ 
+```
+
+
+#### plot3Drgl
+
+Examples from manual
+
+```{r}
+
+## =======================================================================
+## perspective plots
+## =======================================================================
+ persp3Drgl(z = volcano, contour = list(side = "zmax"))
+
+# ribbon, in x--direction
+ V <- volcano[seq(1, nrow(volcano), by = 5), 
+              seq(1, ncol(volcano), by = 5)]  # lower resolution
+ ribbon3Drgl(z = V, ticktype = "detailed")
+ hist3Drgl(z = V, col = "grey", border = "black", lighting = TRUE)
+ 
+## Not run: 
+  cutrgl()    # select a rectangle
+  uncutrgl()
+
+## End(Not run)
+
+## =======================================================================
+## scatter points
+## =======================================================================
+
+ with(quakes, scatter3Drgl(x = long, y = lat, z = -depth, 
+   colvar = mag, cex = 3))
+
+ plotdev()   # plots same on oridinary device...
+ 
+## =======================================================================
+## 3D surface
+## =======================================================================
+
+ M  <- mesh(seq(0, 2*pi, length.out = 50), 
+            seq(0, 2*pi, length.out = 50))
+ u  <- M$x ; v  <- M$y
+
+ x  <- sin(u)
+ y  <- sin(v)
+ z  <- sin(u + v)
+
+# alpha makes colors transparent
+ surf3Drgl(x, y, z, colvar = z, border = "black", smooth  = TRUE, 
+   alpha = 0.2)
+
+## =======================================================================
+## volumetric data
+## =======================================================================
+ x <- y <- z <- seq(-4, 4, by = 0.2)
+ M <- mesh(x, y, z)
+
+ R <- with (M, sqrt(x^2 + y^2 + z^2))
+ p <- sin(2*R) /(R+1e-3)
+
+ slice3Drgl(x, y, z, colvar = p, col = jet.col(alpha = 0.5), 
+         xs = 0, ys = c(-4, 0, 4), zs = NULL, d = 2) 
+
+
+```
+
+
+
+## ggvis
+
+
+```{r}
+#instalacja pakietu
+#devtools::install_github("hadley/testthat")
+#devtools::install_github("rstudio/ggvis")
+# require(ggvis)
+#lista dem w pakiecie
+# demo(package='ggvis')
+
+
+```
+
+
+
+
+

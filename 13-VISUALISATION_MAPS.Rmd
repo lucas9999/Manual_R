@@ -1,0 +1,414 @@
+# PLOTS MAPS
+
+
+
+
+##  Sources with maps
+
+
+1. [gadm](http://gadm.org/) - a database of global administrative boundaries
+2. countries - polygons for all countries
+3. SRTM - hole-filled CGIAR-SRTM (90 m resolution) Projections
+4. alt - altitude (elevation) aggregated from SRTM 90 m resolution data between -60 and 60 latitude. 
+5. worldclim - a database of global interpolated climate data
+
+##  Administrative maps
+
+###  p:ggplot2
+
+
+Ploting only outline of the map.
+
+```{r}
+require(sp)
+require(ggplot2)
+require(maptools)
+
+#loading to the workspace variable 'gadm' from web site
+load(url("http://biogeo.ucdavis.edu/data/gadm2/R/POL_adm1.RData"))
+wojewodztwa <- gadm
+load(url("http://biogeo.ucdavis.edu/data/gadm2/R/POL_adm2.RData"))
+powiaty <- gadm
+
+
+#first way
+ggplot(wojewodztwa, aes(x = long, y = lat, group=group)) + geom_path()
+ggplot(powiaty, aes(x = long, y = lat, group=group)) + geom_path()
+
+
+
+#second way with ggmap function
+woj_fort <- fortify(wojewodztwa)
+ggplot(data=woj_fort, aes(map_id=id, x=long, y=lat, group=group)) + geom_map(map = woj_fort, fill='yellow') + geom_path()
+
+```
+
+
+
+Downloading shp files<br>
+
+Trzeba sciagnac plik z mapa, np. ze strony \href{http://gadm.org/country}{(gadm)}. W sciagnietym pliku mapy beda w roznych formatach. Jest rowniez potrzebny ponizej format shp. Mapa Polski jest dostepna w trzech wersjach:
+1. kontury samej polski
+2. podzial na wojewodztwa
+3. podzial na powiaty
+\end{enumerate}
+**Uwaga**. Zeby dobrze dzialalo nie wystarczy sam plik shp. Lepiej aby w katalogy byly pozostale pliki. Widocznie sa tez wykorzystywane.
+
+```{r, opts.label='k'}
+#polska z wojewodztwami
+require(maptools)
+polska_shp <- readShapePoly("C:/Users/ppp/Desktop/BIBLIA_R/MANUAL/2_WIZUALIZACJA/1_PODSTAWOWE_PAKIETY/demos/mapy/POL_adm1.shp")
+polska_map <- fortify(polska_shp)
+ggplot(polska_map, aes(x = long, y = lat, group=group)) + geom_path()
+```
+
+
+<br> Manual map: example from help
+```{r, o.l='ko', s.after=TRUE}
+ids <- factor(c("1.1", "2.1", "1.2", "2.2", "1.3", "2.3"))
+
+values <- data.frame(
+  id = ids,
+  value = c(3, 3.1, 3.1, 3.2, 3.15, 3.5)
+)
+
+positions <- data.frame(
+  id = rep(ids, each = 4),
+  x = c(2, 1, 1.1, 2.2, 1, 0, 0.3, 1.1, 2.2, 1.1, 1.2, 2.5, 1.1, 0.3,
+  0.5, 1.2, 2.5, 1.2, 1.3, 2.7, 1.2, 0.5, 0.6, 1.3),
+  y = c(-0.5, 0, 1, 0.5, 0, 0.5, 1.5, 1, 0.5, 1, 2.1, 1.7, 1, 1.5,
+  2.2, 2.1, 1.7, 2.1, 3.2, 2.8, 2.1, 2.2, 3.3, 3.2)
+)
+
+ggplot(values) + geom_map(aes(map_id = id), map = positions) +
+  expand_limits(positions)
+ggplot(values, aes(fill = value)) +
+  geom_map(aes(map_id = id), map = positions) +
+  expand_limits(positions)
+ggplot(values, aes(fill = value)) +
+  geom_map(aes(map_id = id), map = positions) +
+  expand_limits(positions) + ylim(0, 3)
+
+```
+
+
+
+
+<br> Extracting detaild information
+```{r, o.l='ko', s.before=TRUE}
+
+powiaty@data$ID_0
+powiaty@data$NAME_0
+powiaty@data$ID_1
+powiaty@data$NAME_1
+powiaty@data$ID_2
+powiaty@data$NAME_2
+powiaty@data$VARNAME_2
+
+
+wojewodztwa@data$ID_0
+wojewodztwa@data$NAME_0
+wojewodztwa@data$ID_1
+wojewodztwa@data$NAME_1
+wojewodztwa@data$VARNAME_1
+
+```
+
+
+
+
+<br> Named elements
+```{r}
+library(raster)
+library(rgdal)
+library(rgeos)
+library(ggplot2)
+library(dplyr)
+require(sp)
+
+
+load(url("http://biogeo.ucdavis.edu/data/gadm2/R/POL_adm1.RData"))
+wojewodztwa <- gadm
+
+polska_woj <- fortify(wojewodztwa)
+polska_woj$id <- as.integer(polska_woj$id)
+dat <- data.frame(id=1:(length(wojewodztwa@data$NAME_1)), wojewodztwa=wojewodztwa@data$VARNAME_1)
+
+polska_woj_df <- merge(polska_woj, dat, by='id')
+
+centers <- data.frame(gCentroid(wojewodztwa, byid=TRUE))
+centers$wojewodztwa <- dat$wojewodztwa
+
+ggplot() + 
+  geom_map(data=polska_woj_df, map=polska_woj_df, aes(map_id=id, x=long, y=lat, group=group), color='#ffffff', fill='#bbbbbb', size=0.25) + 
+  geom_text(data=centers, aes(label=wojewodztwa, x=x, y=y), size=3) + 
+  coord_map() + 
+  labs(x='', y='', title='Poland')
+
+```
+
+
+
+<br> Extracting subelements example 1
+
+```{r}
+
+require(sp)
+require(ggplot2)
+load(url("http://biogeo.ucdavis.edu/data/gadm2/R/POL_adm1.RData"))
+wojewodztwa <- gadm
+
+polska_woj<- fortify(wojewodztwa)
+polska_slaskie <- polska_woj[polska_woj[,'id']==13,]
+ggplot(polska_slaskie, aes(x=long, y=lat, group=group)) + geom_path()
+
+```
+
+
+
+<br> Extracting subelements example 2
+
+```{r}
+require(sp)
+require(ggplot2)
+load(url("http://biogeo.ucdavis.edu/data/gadm2/R/POL_adm2.RData"))
+powiaty <- gadm
+
+id_powiaty_slaskie <- powiaty@data %>% filter(ID_1==13) %>% dplyr::select(ID_2)
+
+polska_pow <- fortify(powiaty)
+
+powiaty_slaskie <- polska_pow %>% filter(id %in% as.character(unlist(id_powiaty_slaskie)))
+ggplot(powiaty_slaskie, aes(x=long, y=lat, group=group)) + geom_path()
+
+```
+
+
+
+<br> Maps with colors: example 1
+
+```{r}
+require(sp)
+require(ggplot2)
+load(url("http://biogeo.ucdavis.edu/data/gadm2/R/POL_adm1.RData"))
+wojewodztwa <- gadm
+polska_woj <- fortify(wojewodztwa)
+
+unemployment_data <- data.frame(id=rownames(wojewodztwa@data), unemployment=runif(16,min = 5,max = 12))
+
+polska_woj <- merge(polska_woj, unemployment_data, by='id')
+
+ggplot(polska_woj, aes(x=long, y=lat, group=group)) + 
+  geom_polygon(aes(fill=unemployment)) + 
+  geom_path(color='grey') +
+  scale_fill_gradient(low='light green', high='dark green') +
+  coord_map()
+
+
+```
+
+
+Maps with colors: example 2 with faceting
+
+```{r}
+require(sp)
+require(ggplot2)
+load(url("http://biogeo.ucdavis.edu/data/gadm2/R/POL_adm1.RData"))
+wojewodztwa <- gadm
+polska_woj <- fortify(wojewodztwa)
+
+unemployment_data <- data.frame(id=rep(rownames(wojewodztwa@data),2), unemployment=runif(32,min = 5,max = 12), year=rep(c(2020,2021), each=16) )
+
+polska_woj <- merge(polska_woj, unemployment_data, by='id')
+
+ggplot(polska_woj, aes(x=long, y=lat, group=group)) + 
+  geom_polygon(aes(fill=unemployment)) + 
+  geom_path(color='grey') +
+  scale_fill_gradient(low='light green', high='dark green') +
+  coord_map() + facet_grid(.~year)
+
+```
+
+
+
+
+<br>Maps with colors: example 3 descrete categories
+
+```{r, o.l='k', s.before=TRUE, s.after=TRUE}
+
+polska_woj <- fortify(wojewodztwa)
+
+unemployment_continuous <- runif(32,min = 4,max = 12)
+unemployment_discrete <- cut(unemployment_continuous, 
+                             breaks=c(4,6,8,10,12), 
+                             include.lowest=TRUE, 
+                             ordered_results=TRUE)
+
+
+require(plotrix)
+colors <- gray.colors(nlevels(unemployment_discrete), start = 0.9, end = .1)
+
+require(plyr)
+unemployment_colors <- as.character(mapvalues(unemployment_discrete, levels(unemployment_discrete), colors))
+
+unemployment_data <- data.frame(id=rep(rownames(wojewodztwa@data),2), unemployment=unemployment_discrete, year=rep(c(2020,2021), each=16) )
+
+polska_woj_1 <- merge(polska_woj, unemployment_data, by='id')
+
+ggplot(polska_woj_1, aes(x=long, y=lat, group=group)) + 
+  geom_polygon(aes(fill=unemployment)) + 
+  geom_path(color='black') +
+  scale_fill_manual(values = colors) +
+  coord_map() + facet_grid(.~year)
+
+```
+
+
+
+##  p:leaflet
+
+
+###  Interactive map in shiny with wojewodztwa
+
+
+```{r}
+
+require(shiny)
+require(l.shiny)
+require(ggplot2)
+require(DT)
+require(rhandsontable)
+require(leaflet)
+
+u <- shinyUI(fluidPage(
+	
+	leafletOutput('map1'),
+	textOutput('wojewodztwo')
+	
+))
+
+
+s <- function(input, output, session){
+	
+output$map1 <- renderLeaflet({
+	
+	gadm <- readRDS('C:/Users/ppp/Desktop/Temporary_files/POL_adm1.rds')
+
+	pal <- colorNumeric(
+  palette = "Blues",
+  domain = 1:16
+)
+	gadm <- readRDS('C:/Users/ppp/Desktop/Temporary_files/POL_adm1.rds')
+	
+	leaflet() %>% addTiles() %>% addPolygons(data=gadm, weight=2, fillColor = ~pal(1:16) , layerId = paste0("marker", 1:16) )
+# popup = ~pal(1:16), 
+})
+	
+
+output$wojewodztwo <- renderText({
+	z <- input$map1_shape_click$id
+	print(unlist(z))
+})
+
+}
+
+shinyApp(ui=u, server=s)
+
+
+```
+
+###  removing elements from map
+
+```{r}
+
+require(leaflet)
+
+
+library(shiny)
+
+ui <- fluidPage(leafletOutput("map1"))
+
+server <- function(input, output, session) {
+    output$map1 <- renderLeaflet({
+        leaflet() %>% addCircleMarkers(lng = runif(10), lat = runif(10), 
+            layerId = paste0("marker", 1:10))
+    })
+    
+    observeEvent(input$map1_marker_click, {
+        leafletProxy("map1", session) %>% removeMarker(input$map1_marker_click$id)
+    })
+}
+
+shinyApp(ui, server)
+
+
+```
+
+
+##  physical maps
+
+##  google static maps
+
+
+
+```{r}
+
+require(ggplot2)
+library(ggmap)
+al1 <- get_map(location = c(lon = -86.304474, lat = 32.362563), 
+  zoom = 11, 
+  maptype = 'terrain') #other options: "terrain", "satellite", "roadmap", "hybrid", "toner", "watercolor"
+
+w <- gglocator(n = 5, message = FALSE, xexpand = c(0.05, 0), yexpand = c(0.05, 0))
+
+ggmap(al1)+ geom_point(data=w, aes(x=lon, y=lat), size=8)
+
+
+#faceting
+
+w <- cbind(w, id=c(1,1,2,2,2))
+ggmap(al1)+ geom_point(data=w, aes(x=lon, y=lat), size=8) + facet_grid(.~id)
+
+```
+
+
+##  google dynamic maps
+
+
+##  p:Leaflet
+
+```{r}
+
+devtools::install_github("rstudio/leaflet")
+
+library(leaflet)
+m = leaflet() %>% addTiles()
+m  # a map with the default OSM tile layer
+
+
+#map with zoom
+m = m %>% setView(-93.65, 42.0285, zoom = 17)
+m
+
+
+#adding popup
+m %>% addPopups(-93.65, 42.0285, 'Here is the <b>Department of Statistics</b>, ISU')
+
+#adding circle with popuu
+m %>% addCircles(-93.65, 42.0285, popup = 'Here is the <b>Department of Statistics</b>, ISU')
+
+
+
+#adding points
+
+set.seed(123)
+m = leaflet() %>% addTiles()
+rand_lng = function(n = 10) rnorm(n, -93.65, .01)
+rand_lat = function(n = 10) rnorm(n, 42.0285, .01)
+
+# circles (units in metres)
+m %>% addCircles(rand_lng(50), rand_lat(50), radius = runif(50, 10, 200))
+
+
+```
+

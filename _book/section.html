@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Introduction to R</title>
+  <meta name="description" content="Introduction to R">
+  <meta name="generator" content="bookdown 0.6 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Introduction to R" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Introduction to R" />
+  
+  
+  
+
+<meta name="author" content="Łukasz Muszyński">
+
+
+<meta name="date" content="2018-02-18">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="tools-and-tricks.html">
+<link rel="next" href="r-chap1functions-by-packages.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Podstawy R-a</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> INTRO</a></li>
+<li class="part"><span><b>I <lfg>PROGRAMMING</lfg></b></span></li>
+<li class="chapter" data-level="2" data-path="syntax.html"><a href="syntax.html"><i class="fa fa-check"></i><b>2</b> SYNTAX</a><ul>
+<li class="chapter" data-level="2.1" data-path="syntax.html"><a href="syntax.html#variables-names"><i class="fa fa-check"></i><b>2.1</b> Variables names</a></li>
+<li class="chapter" data-level="2.2" data-path="syntax.html"><a href="syntax.html#vs"><i class="fa fa-check"></i><b>2.2</b> &lt;- vs =</a></li>
+<li class="chapter" data-level="2.3" data-path="syntax.html"><a href="syntax.html#using-quotation-marks-cudzysow"><i class="fa fa-check"></i><b>2.3</b> Using quotation marks [cudzysłów]</a></li>
+<li class="chapter" data-level="2.4" data-path="syntax.html"><a href="syntax.html#sterowanie-przeplywam-control-flow"><i class="fa fa-check"></i><b>2.4</b> Sterowanie przeplywam [control flow]</a><ul>
+<li class="chapter" data-level="2.4.1" data-path="syntax.html"><a href="syntax.html#petla-for"><i class="fa fa-check"></i><b>2.4.1</b> petla for</a></li>
+<li class="chapter" data-level="2.4.2" data-path="syntax.html"><a href="syntax.html#if"><i class="fa fa-check"></i><b>2.4.2</b> if</a></li>
+<li class="chapter" data-level="2.4.3" data-path="syntax.html"><a href="syntax.html#ifelse-czyli-wektorowa-wersja-if"><i class="fa fa-check"></i><b>2.4.3</b> ifelse (czyli wektorowa wersja if)</a></li>
+<li class="chapter" data-level="2.4.4" data-path="syntax.html"><a href="syntax.html#while"><i class="fa fa-check"></i><b>2.4.4</b> while</a></li>
+<li class="chapter" data-level="2.4.5" data-path="syntax.html"><a href="syntax.html#repeat"><i class="fa fa-check"></i><b>2.4.5</b> repeat</a></li>
+<li class="chapter" data-level="2.4.6" data-path="syntax.html"><a href="syntax.html#switch"><i class="fa fa-check"></i><b>2.4.6</b> switch</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="syntax.html"><a href="syntax.html#formulas"><i class="fa fa-check"></i><b>2.5</b> formulas</a><ul>
+<li class="chapter" data-level="2.5.1" data-path="syntax.html"><a href="syntax.html#informacje-wstepne"><i class="fa fa-check"></i><b>2.5.1</b> Informacje wstepne</a></li>
+<li class="chapter" data-level="2.5.2" data-path="syntax.html"><a href="syntax.html#przyklady-stosowania-formul"><i class="fa fa-check"></i><b>2.5.2</b> Przyklady stosowania formul</a></li>
+<li class="chapter" data-level="2.5.3" data-path="syntax.html"><a href="syntax.html#formula-a-tekst"><i class="fa fa-check"></i><b>2.5.3</b> Formula a tekst</a></li>
+<li class="chapter" data-level="2.5.4" data-path="syntax.html"><a href="syntax.html#wyciaganie-elementow-formuly"><i class="fa fa-check"></i><b>2.5.4</b> Wyciaganie elementow formuly</a></li>
+<li class="chapter" data-level="2.5.5" data-path="syntax.html"><a href="syntax.html#modyfikacja-formul"><i class="fa fa-check"></i><b>2.5.5</b> Modyfikacja formul</a></li>
+<li class="chapter" data-level="2.5.6" data-path="syntax.html"><a href="syntax.html#dynamiczne-tworzenie-formuly-liniowej-z-zadanych-elementow"><i class="fa fa-check"></i><b>2.5.6</b> Dynamiczne tworzenie formuly LINIOWEJ z zadanych elementow</a></li>
+</ul></li>
+<li class="chapter" data-level="2.6" data-path="syntax.html"><a href="syntax.html#language-bricks-expression-and-call"><i class="fa fa-check"></i><b>2.6</b> LANGUAGE BRICKS (Expression and call)</a><ul>
+<li class="chapter" data-level="2.6.1" data-path="syntax.html"><a href="syntax.html#evaluating-call-and-expressions"><i class="fa fa-check"></i><b>2.6.1</b> evaluating call and expressions</a></li>
+<li class="chapter" data-level="2.6.2" data-path="syntax.html"><a href="syntax.html#names"><i class="fa fa-check"></i><b>2.6.2</b> names</a></li>
+<li class="chapter" data-level="2.6.3" data-path="syntax.html"><a href="syntax.html#converting-call-and-expression"><i class="fa fa-check"></i><b>2.6.3</b> converting call and expression</a></li>
+<li class="chapter" data-level="2.6.4" data-path="syntax.html"><a href="syntax.html#creating-call"><i class="fa fa-check"></i><b>2.6.4</b> creating call</a></li>
+<li class="chapter" data-level="2.6.5" data-path="syntax.html"><a href="syntax.html#get-elements-of-expression"><i class="fa fa-check"></i><b>2.6.5</b> get elements of expression</a></li>
+<li class="chapter" data-level="2.6.6" data-path="syntax.html"><a href="syntax.html#get-elements-of-call"><i class="fa fa-check"></i><b>2.6.6</b> get elements of call</a></li>
+<li class="chapter" data-level="2.6.7" data-path="syntax.html"><a href="syntax.html#change-functions-parameters-in-call-expressions"><i class="fa fa-check"></i><b>2.6.7</b> change functions parameters in call expressions</a></li>
+<li class="chapter" data-level="2.6.8" data-path="syntax.html"><a href="syntax.html#dynamic-formulas"><i class="fa fa-check"></i><b>2.6.8</b> dynamic formulas</a></li>
+<li class="chapter" data-level="2.6.9" data-path="syntax.html"><a href="syntax.html#functions"><i class="fa fa-check"></i><b>2.6.9</b> Functions</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html"><i class="fa fa-check"></i><b>3</b> FUNCTIONS AND ENVIRONEMNTS</a><ul>
+<li class="chapter" data-level="3.1" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#functions-1"><i class="fa fa-check"></i><b>3.1</b> Functions</a><ul>
+<li class="chapter" data-level="3.1.1" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#types-of-functions"><i class="fa fa-check"></i><b>3.1.1</b> Types of functions</a></li>
+<li class="chapter" data-level="3.1.2" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#extracting-function-code"><i class="fa fa-check"></i><b>3.1.2</b> Extracting function code</a></li>
+<li class="chapter" data-level="3.1.3" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#functions-defining"><i class="fa fa-check"></i><b>3.1.3</b> Functions defining</a></li>
+<li class="chapter" data-level="3.1.4" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#unspecified-formal-arguments-argumenty-nadmiarowe"><i class="fa fa-check"></i><b>3.1.4</b> Unspecified formal arguments [argumenty nadmiarowe]</a></li>
+<li class="chapter" data-level="3.1.5" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#functions-arguments-without-quotation-marks"><i class="fa fa-check"></i><b>3.1.5</b> functions arguments without quotation marks</a></li>
+<li class="chapter" data-level="3.1.6" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#recursive-function"><i class="fa fa-check"></i><b>3.1.6</b> recursive function</a></li>
+<li class="chapter" data-level="3.1.7" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#create-infix-function"><i class="fa fa-check"></i><b>3.1.7</b> create infix function</a></li>
+<li class="chapter" data-level="3.1.8" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#replacement-functions-funkcje-podstawieniowe"><i class="fa fa-check"></i><b>3.1.8</b> replacement functions [funkcje podstawieniowe]</a></li>
+<li class="chapter" data-level="3.1.9" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#missing"><i class="fa fa-check"></i><b>3.1.9</b> missing</a></li>
+<li class="chapter" data-level="3.1.10" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#pmatch"><i class="fa fa-check"></i><b>3.1.10</b> pmatch</a></li>
+<li class="chapter" data-level="3.1.11" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#overloading-functions-przeciazanie-funkcji-concern-generic-functions"><i class="fa fa-check"></i><b>3.1.11</b> Overloading functions [przeciazanie funkcji]-(concern generic functions)</a></li>
+<li class="chapter" data-level="3.1.12" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#arguments-values-from-give-vector"><i class="fa fa-check"></i><b>3.1.12</b> Arguments values from give vector</a></li>
+<li class="chapter" data-level="3.1.13" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#conditionals-values-of-arguments"><i class="fa fa-check"></i><b>3.1.13</b> conditionals values of arguments</a></li>
+<li class="chapter" data-level="3.1.14" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#fformals"><i class="fa fa-check"></i><b>3.1.14</b> f:formals</a></li>
+<li class="chapter" data-level="3.1.15" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#functions-factory"><i class="fa fa-check"></i><b>3.1.15</b> functions factory</a></li>
+<li class="chapter" data-level="3.1.16" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#function-operator"><i class="fa fa-check"></i><b>3.1.16</b> function operator</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#environments"><i class="fa fa-check"></i><b>3.2</b> Environments</a></li>
+<li class="chapter" data-level="3.3" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#environment-and-variables-scope"><i class="fa fa-check"></i><b>3.3</b> Environment and variables scope</a><ul>
+<li class="chapter" data-level="3.3.1" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#types-of-environment-in-r"><i class="fa fa-check"></i><b>3.3.1</b> Types of environment in R</a></li>
+<li class="chapter" data-level="3.3.2" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#different-functions-to-work-with-environments"><i class="fa fa-check"></i><b>3.3.2</b> Different functions to work with environments</a></li>
+<li class="chapter" data-level="3.3.3" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#wyszukiwanie-i-usuwanie-zmiennych"><i class="fa fa-check"></i><b>3.3.3</b> wyszukiwanie i usuwanie zmiennych</a></li>
+<li class="chapter" data-level="3.3.4" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#exists-existsfunction-i-get"><i class="fa fa-check"></i><b>3.3.4</b> exists, existsFunction i get</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#macros"><i class="fa fa-check"></i><b>3.4</b> Macros</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="data-structures.html"><a href="data-structures.html"><i class="fa fa-check"></i><b>4</b> DATA STRUCTURES</a><ul>
+<li class="chapter" data-level="4.1" data-path="data-structures.html"><a href="data-structures.html#objects-attributes"><i class="fa fa-check"></i><b>4.1</b> Objects attributes</a></li>
+<li class="chapter" data-level="4.2" data-path="data-structures.html"><a href="data-structures.html#podzial-struktur"><i class="fa fa-check"></i><b>4.2</b> Podzial struktur</a></li>
+<li class="chapter" data-level="4.3" data-path="data-structures.html"><a href="data-structures.html#listy-atomowe"><i class="fa fa-check"></i><b>4.3</b> Listy atomowe</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="data-structures.html"><a href="data-structures.html#wektory"><i class="fa fa-check"></i><b>4.3.1</b> wektory</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="data-structures.html"><a href="data-structures.html#matrix"><i class="fa fa-check"></i><b>4.4</b> matrix</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="data-structures.html"><a href="data-structures.html#array-macierz-wielowymiarowa"><i class="fa fa-check"></i><b>4.4.1</b> Array (macierz wielowymiarowa)</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="data-structures.html"><a href="data-structures.html#listy-generyczne"><i class="fa fa-check"></i><b>4.5</b> Listy generyczne</a><ul>
+<li class="chapter" data-level="4.5.1" data-path="data-structures.html"><a href="data-structures.html#list"><i class="fa fa-check"></i><b>4.5.1</b> List</a></li>
+</ul></li>
+<li class="chapter" data-level="4.6" data-path="data-structures.html"><a href="data-structures.html#data.frames"><i class="fa fa-check"></i><b>4.6</b> data.frames</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="data-types.html"><a href="data-types.html"><i class="fa fa-check"></i><b>5</b> DATA TYPES</a><ul>
+<li class="chapter" data-level="5.1" data-path="data-types.html"><a href="data-types.html#missing-values-braki-danych"><i class="fa fa-check"></i><b>5.1</b> Missing values [Braki danych]</a></li>
+<li class="chapter" data-level="5.2" data-path="data-types.html"><a href="data-types.html#logical"><i class="fa fa-check"></i><b>5.2</b> <em>logical</em></a></li>
+<li class="chapter" data-level="5.3" data-path="data-types.html"><a href="data-types.html#numeric"><i class="fa fa-check"></i><b>5.3</b> <em>numeric</em></a></li>
+<li class="chapter" data-level="5.4" data-path="data-types.html"><a href="data-types.html#complex"><i class="fa fa-check"></i><b>5.4</b> <em>complex</em></a></li>
+<li class="chapter" data-level="5.5" data-path="data-types.html"><a href="data-types.html#character"><i class="fa fa-check"></i><b>5.5</b> <em>character</em></a></li>
+<li class="chapter" data-level="5.6" data-path="data-types.html"><a href="data-types.html#date"><i class="fa fa-check"></i><b>5.6</b> <em>date</em></a></li>
+<li class="chapter" data-level="5.7" data-path="data-types.html"><a href="data-types.html#posix"><i class="fa fa-check"></i><b>5.7</b> <em>POSIX</em></a></li>
+<li class="chapter" data-level="5.8" data-path="data-types.html"><a href="data-types.html#factor"><i class="fa fa-check"></i><b>5.8</b> <em>factor</em></a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="own-data-types-and-structures.html"><a href="own-data-types-and-structures.html"><i class="fa fa-check"></i><b>6</b> OWN DATA TYPES AND STRUCTURES</a></li>
+<li class="chapter" data-level="7" data-path="data-processing-philosopies.html"><a href="data-processing-philosopies.html"><i class="fa fa-check"></i><b>7</b> DATA PROCESSING PHILOSOPIES</a></li>
+<li class="chapter" data-level="8" data-path="data-processing-tricks.html"><a href="data-processing-tricks.html"><i class="fa fa-check"></i><b>8</b> DATA PROCESSING TRICKS</a></li>
+<li class="chapter" data-level="9" data-path="erros-debugging-profiling.html"><a href="erros-debugging-profiling.html"><i class="fa fa-check"></i><b>9</b> ERROS DEBUGGING PROFILING</a><ul>
+<li class="chapter" data-level="9.1" data-path="erros-debugging-profiling.html"><a href="erros-debugging-profiling.html#debuggowanie"><i class="fa fa-check"></i><b>9.1</b> debuggowanie</a></li>
+<li class="chapter" data-level="9.2" data-path="erros-debugging-profiling.html"><a href="erros-debugging-profiling.html#try"><i class="fa fa-check"></i><b>9.2</b> try</a></li>
+<li class="chapter" data-level="9.3" data-path="erros-debugging-profiling.html"><a href="erros-debugging-profiling.html#trycatch"><i class="fa fa-check"></i><b>9.3</b> tryCatch</a></li>
+<li class="chapter" data-level="9.4" data-path="erros-debugging-profiling.html"><a href="erros-debugging-profiling.html#funkcja-warning"><i class="fa fa-check"></i><b>9.4</b> Funkcja warning</a></li>
+<li class="chapter" data-level="9.5" data-path="erros-debugging-profiling.html"><a href="erros-debugging-profiling.html#stopstopifnot"><i class="fa fa-check"></i><b>9.5</b> stop/stopifnot</a></li>
+<li class="chapter" data-level="9.6" data-path="erros-debugging-profiling.html"><a href="erros-debugging-profiling.html#asserterror-assertwarning-assercondition"><i class="fa fa-check"></i><b>9.6</b> assertError assertWarning asserCondition</a></li>
+<li class="chapter" data-level="9.7" data-path="erros-debugging-profiling.html"><a href="erros-debugging-profiling.html#przerywanie-petli-jesli-wystapi-blad"><i class="fa fa-check"></i><b>9.7</b> przerywanie petli jesli wystapi blad</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="data-import-and-export-fromto-files.html"><a href="data-import-and-export-fromto-files.html"><i class="fa fa-check"></i><b>10</b> DATA IMPORT AND EXPORT FROM/TO FILES</a><ul>
+<li class="chapter" data-level="10.1" data-path="data-import-and-export-fromto-files.html"><a href="data-import-and-export-fromto-files.html#clipboard"><i class="fa fa-check"></i><b>10.1</b> clipboard</a></li>
+<li class="chapter" data-level="10.2" data-path="data-import-and-export-fromto-files.html"><a href="data-import-and-export-fromto-files.html#r-data"><i class="fa fa-check"></i><b>10.2</b> R data</a><ul>
+<li class="chapter" data-level="10.2.1" data-path="data-import-and-export-fromto-files.html"><a href="data-import-and-export-fromto-files.html#r-data-1"><i class="fa fa-check"></i><b>10.2.1</b> R Data</a></li>
+<li class="chapter" data-level="10.2.2" data-path="data-import-and-export-fromto-files.html"><a href="data-import-and-export-fromto-files.html#rds"><i class="fa fa-check"></i><b>10.2.2</b> RDS</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="data-import-and-export-fromto-files.html"><a href="data-import-and-export-fromto-files.html#csvtext"><i class="fa fa-check"></i><b>10.3</b> csv/text</a><ul>
+<li class="chapter" data-level="10.3.1" data-path="data-import-and-export-fromto-files.html"><a href="data-import-and-export-fromto-files.html#preadr"><i class="fa fa-check"></i><b>10.3.1</b> p:readr</a></li>
+</ul></li>
+<li class="chapter" data-level="10.4" data-path="data-import-and-export-fromto-files.html"><a href="data-import-and-export-fromto-files.html#excel"><i class="fa fa-check"></i><b>10.4</b> excel</a><ul>
+<li class="chapter" data-level="10.4.1" data-path="data-import-and-export-fromto-files.html"><a href="data-import-and-export-fromto-files.html#preadxl"><i class="fa fa-check"></i><b>10.4.1</b> p:readxl</a></li>
+</ul></li>
+<li class="chapter" data-level="10.5" data-path="data-import-and-export-fromto-files.html"><a href="data-import-and-export-fromto-files.html#basic-web-scraping"><i class="fa fa-check"></i><b>10.5</b> Basic web scraping</a></li>
+<li class="chapter" data-level="10.6" data-path="data-import-and-export-fromto-files.html"><a href="data-import-and-export-fromto-files.html#data-from-api"><i class="fa fa-check"></i><b>10.6</b> Data from api</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html"><i class="fa fa-check"></i><b>11</b> TOOLS AND TRICKS</a><ul>
+<li class="chapter" data-level="11.1" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#remove-duplicated-columns"><i class="fa fa-check"></i><b>11.1</b> Remove duplicated columns</a></li>
+<li class="chapter" data-level="11.2" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#get-name-of-elements-in-nested-list"><i class="fa fa-check"></i><b>11.2</b> get name of elements in nested list</a></li>
+<li class="chapter" data-level="11.3" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#moving-columns"><i class="fa fa-check"></i><b>11.3</b> moving columns</a></li>
+<li class="chapter" data-level="11.4" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#usuwanie-wartosci-nieskonczonych-z-ramek-danych"><i class="fa fa-check"></i><b>11.4</b> Usuwanie wartosci nieskonczonych z ramek danych</a></li>
+<li class="chapter" data-level="11.5" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#dynamiczne-wygenerowanie-pustej-ramki-danych"><i class="fa fa-check"></i><b>11.5</b> Dynamiczne wygenerowanie pustej ramki danych</a></li>
+<li class="chapter" data-level="11.6" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#dynamiczne-wygenerowanie-listy-pustych-data.frame"><i class="fa fa-check"></i><b>11.6</b> Dynamiczne wygenerowanie listy pustych data.frame</a></li>
+<li class="chapter" data-level="11.7" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#selecting-columns-by-condition"><i class="fa fa-check"></i><b>11.7</b> Selecting columns by condition</a></li>
+<li class="chapter" data-level="11.8" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#duplikaty-z-orginalami"><i class="fa fa-check"></i><b>11.8</b> DUPLIKATY z orginalami</a></li>
+<li class="chapter" data-level="11.9" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#dynamiczne-filtrowanie-po-kolumnach"><i class="fa fa-check"></i><b>11.9</b> DYNAMICZNE FILTROWANIE PO KOLUMNACH</a></li>
+<li class="chapter" data-level="11.10" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#przetapianie-character"><i class="fa fa-check"></i><b>11.10</b> PRZETAPIANIE CHARACTER</a></li>
+<li class="chapter" data-level="11.11" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#odwolywanie-sie-do-nazw-w-sapply"><i class="fa fa-check"></i><b>11.11</b> Odwolywanie sie do nazw w sapply</a></li>
+<li class="chapter" data-level="11.12" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#converting-lists-into-vectors-in-data.frames-"><i class="fa fa-check"></i><b>11.12</b> converting lists into vectors in data.frames—-</a></li>
+<li class="chapter" data-level="11.13" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#sumowanie-poprzednich-wartosci"><i class="fa fa-check"></i><b>11.13</b> SUMOWANIE POPRZEDNICH WARTOSCI</a></li>
+<li class="chapter" data-level="11.14" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#usuwanie-z-wektora-wartosci-odstajacych-przy-pomocy-boxplot-wartosci-odstajace.-jak-to-uogolnic-na-ramke-danych"><i class="fa fa-check"></i><b>11.14</b> USUWANIE Z WEKTORA WARTOSCI ODSTAJACYCH PRZY POMOCY BOXPLOT (WARTOSCI ODSTAJACE). Jak to uogólnic na ramke danych?</a></li>
+<li class="chapter" data-level="11.15" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#patent-na-sortowanie-stringow-z-cyframi"><i class="fa fa-check"></i><b>11.15</b> patent na sortowanie stringow z cyframi</a></li>
+<li class="chapter" data-level="11.16" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#wstawienie-kolumny-miedzy-kolumny-ramki-danych"><i class="fa fa-check"></i><b>11.16</b> wstawienie kolumny miedzy kolumny ramki danych</a></li>
+<li class="chapter" data-level="11.17" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#dodawanie-tego-samego-elementu-do-wszystkich-rekordow-w-grupie-problem-powstal-przy-liczeniu-woe"><i class="fa fa-check"></i><b>11.17</b> dodawanie tego samego elementu do wszystkich rekordow w grupie (problem powstal przy liczeniu WoE)</a></li>
+<li class="chapter" data-level="11.18" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#dividing-data.frames-by-vectors"><i class="fa fa-check"></i><b>11.18</b> Dividing data.frames by vectors</a></li>
+<li class="chapter" data-level="11.19" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#zagniezdzenie-sapply-w-lappy"><i class="fa fa-check"></i><b>11.19</b> zagniezdzenie sapply w lappy</a></li>
+<li class="chapter" data-level="11.20" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#dzialanie-na-wierszach-wewnatrz-grup-jedna-z-lepszych-wersji"><i class="fa fa-check"></i><b>11.20</b> DZIALANIE NA WIERSZACH WEWNATRZ GRUP (jedna z lepszych wersji)</a></li>
+<li class="chapter" data-level="11.21" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#relacja-grupy-w-podggrupa-sumy-wszystkich-podgrup"><i class="fa fa-check"></i><b>11.21</b> RELACJA GRUPY W PODGGRUPA SUMY WSZYSTKICH PODGRUP</a></li>
+<li class="chapter" data-level="11.22" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#dodawanie-komentrzy-osobno-do-kazdej-kolumny-w-ramce-danych"><i class="fa fa-check"></i><b>11.22</b> dodawanie komentrzy osobno do kazdej kolumny w ramce danych</a></li>
+<li class="chapter" data-level="11.23" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#frep-vs-freplicate"><i class="fa fa-check"></i><b>11.23</b> f:rep vs f:replicate</a></li>
+<li class="chapter" data-level="11.24" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#closest-value"><i class="fa fa-check"></i><b>11.24</b> Closest value</a><ul>
+<li class="chapter" data-level="11.24.1" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#ogolnie-najblizsze"><i class="fa fa-check"></i><b>11.24.1</b> ogolnie najblizsze</a></li>
+<li class="chapter" data-level="11.24.2" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#najwyzej-najblizsze"><i class="fa fa-check"></i><b>11.24.2</b> najwyzej najblizsze</a></li>
+<li class="chapter" data-level="11.24.3" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#najnizej-sprawdziczy-czy-dobrze-dziala"><i class="fa fa-check"></i><b>11.24.3</b> najnizej-sprawdziczy czy dobrze dziala</a></li>
+</ul></li>
+<li class="chapter" data-level="11.25" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#wyszukiwanie-zakresu-dat-tygodnia-z-ktorego-sa-daty"><i class="fa fa-check"></i><b>11.25</b> WYSZUKIWANIE ZAKRESU DAT TYGODNIA Z KTOREGO SA DATY</a></li>
+<li class="chapter" data-level="11.26" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html#na-problems-in-mapping-and-joining"><i class="fa fa-check"></i><b>11.26</b> NA problems in mapping and joining</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="section.html"><a href="section.html"><i class="fa fa-check"></i><b>12</b> </a></li>
+<li class="chapter" data-level="13" data-path="r-chap1functions-by-packages.html"><a href="r-chap1functions-by-packages.html"><i class="fa fa-check"></i><b>13</b> `r CHAP(1,’Functions by packages</a><ul>
+<li class="chapter" data-level="13.1" data-path="r-chap1functions-by-packages.html"><a href="r-chap1functions-by-packages.html#fdo.call"><i class="fa fa-check"></i><b>13.1</b> f:do.call</a></li>
+<li class="chapter" data-level="13.2" data-path="r-chap1functions-by-packages.html"><a href="r-chap1functions-by-packages.html#faggregate"><i class="fa fa-check"></i><b>13.2</b> f:aggregate</a></li>
+<li class="chapter" data-level="13.3" data-path="r-chap1functions-by-packages.html"><a href="r-chap1functions-by-packages.html#fby"><i class="fa fa-check"></i><b>13.3</b> f:by</a></li>
+<li class="chapter" data-level="13.4" data-path="r-chap1functions-by-packages.html"><a href="r-chap1functions-by-packages.html#fouter"><i class="fa fa-check"></i><b>13.4</b> f:outer</a></li>
+<li class="chapter" data-level="13.5" data-path="r-chap1functions-by-packages.html"><a href="r-chap1functions-by-packages.html#fsummary"><i class="fa fa-check"></i><b>13.5</b> f:summary</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="misselenious.html"><a href="misselenious.html"><i class="fa fa-check"></i><b>14</b> Misselenious</a><ul>
+<li class="chapter" data-level="14.1" data-path="misselenious.html"><a href="misselenious.html#elementarne-funkcje"><i class="fa fa-check"></i><b>14.1</b> Elementarne funkcje</a></li>
+<li class="chapter" data-level="14.2" data-path="misselenious.html"><a href="misselenious.html#ciagi"><i class="fa fa-check"></i><b>14.2</b> Ciagi</a></li>
+<li class="chapter" data-level="14.3" data-path="misselenious.html"><a href="misselenious.html#rangowanie"><i class="fa fa-check"></i><b>14.3</b> Rangowanie</a></li>
+<li class="chapter" data-level="14.4" data-path="misselenious.html"><a href="misselenious.html#operacje-mnogosciowe"><i class="fa fa-check"></i><b>14.4</b> Operacje mnogosciowe</a></li>
+<li class="chapter" data-level="14.5" data-path="misselenious.html"><a href="misselenious.html#funkcja-expand-grid"><i class="fa fa-check"></i><b>14.5</b> funkcja expand grid</a></li>
+<li class="chapter" data-level="14.6" data-path="misselenious.html"><a href="misselenious.html#finteraction"><i class="fa fa-check"></i><b>14.6</b> f:interaction</a></li>
+</ul></li>
+<li class="part"><span><b>II <lfg>VISUALISATION&lt;</lfg></b></span></li>
+<li class="chapter" data-level="15" data-path="visualisation-philosopies.html"><a href="visualisation-philosopies.html"><i class="fa fa-check"></i><b>15</b> VISUALISATION PHILOSOPIES</a></li>
+<li class="chapter" data-level="16" data-path="plots-graphs.html"><a href="plots-graphs.html"><i class="fa fa-check"></i><b>16</b> PLOTS GRAPHS</a></li>
+<li class="chapter" data-level="17" data-path="plots-maps.html"><a href="plots-maps.html"><i class="fa fa-check"></i><b>17</b> PLOTS MAPS</a></li>
+<li class="chapter" data-level="18" data-path="plots-mont-common.html"><a href="plots-mont-common.html"><i class="fa fa-check"></i><b>18</b> PLOTS MONT COMMON</a></li>
+<li class="chapter" data-level="19" data-path="visualisation-other-issues.html"><a href="visualisation-other-issues.html"><i class="fa fa-check"></i><b>19</b> VISUALISATION OTHER ISSUES</a></li>
+<li class="part"><span><b>III <lfg>ADDS-ON</lfg></b></span></li>
+<li class="chapter" data-level="20" data-path="forking.html"><a href="forking.html"><i class="fa fa-check"></i><b>20</b> FORKING</a><ul>
+<li class="chapter" data-level="20.1" data-path="forking.html"><a href="forking.html#sql-databases"><i class="fa fa-check"></i><b>20.1</b> SQL Databases</a><ul>
+<li class="chapter" data-level="20.1.1" data-path="forking.html"><a href="forking.html#load-file-with-sql-code"><i class="fa fa-check"></i><b>20.1.1</b> Load file with sql code</a></li>
+<li class="chapter" data-level="20.1.2" data-path="forking.html"><a href="forking.html#configuration-of-connection-between-r-and-database-with-sql-server-as-an-example-for-odbc-drivers"><i class="fa fa-check"></i><b>20.1.2</b> Configuration of connection between R and database with sql server as an example (for ODBC drivers</a></li>
+<li class="chapter" data-level="20.1.3" data-path="forking.html"><a href="forking.html#oracle"><i class="fa fa-check"></i><b>20.1.3</b> ORACLE</a></li>
+<li class="chapter" data-level="20.1.4" data-path="forking.html"><a href="forking.html#sql-server"><i class="fa fa-check"></i><b>20.1.4</b> SQL Server</a></li>
+<li class="chapter" data-level="20.1.5" data-path="forking.html"><a href="forking.html#prpostresql"><i class="fa fa-check"></i><b>20.1.5</b> p:RPostreSQL</a></li>
+<li class="chapter" data-level="20.1.6" data-path="forking.html"><a href="forking.html#other-things"><i class="fa fa-check"></i><b>20.1.6</b> Other things</a></li>
+</ul></li>
+<li class="chapter" data-level="20.2" data-path="forking.html"><a href="forking.html#non-sql-databases"><i class="fa fa-check"></i><b>20.2</b> NON SQL Databases</a></li>
+<li class="chapter" data-level="20.3" data-path="forking.html"><a href="forking.html#python"><i class="fa fa-check"></i><b>20.3</b> Python</a></li>
+<li class="chapter" data-level="20.4" data-path="forking.html"><a href="forking.html#c"><i class="fa fa-check"></i><b>20.4</b> C</a></li>
+<li class="chapter" data-level="20.5" data-path="forking.html"><a href="forking.html#c-1"><i class="fa fa-check"></i><b>20.5</b> C++</a></li>
+<li class="chapter" data-level="20.6" data-path="forking.html"><a href="forking.html#symphy"><i class="fa fa-check"></i><b>20.6</b> Symphy</a></li>
+</ul></li>
+<li class="chapter" data-level="21" data-path="interactive-apps.html"><a href="interactive-apps.html"><i class="fa fa-check"></i><b>21</b> INTERACTIVE APPS</a></li>
+<li class="chapter" data-level="22" data-path="interactive-apps-1.html"><a href="interactive-apps-1.html"><i class="fa fa-check"></i><b>22</b> INTERACTIVE APPS</a></li>
+<li class="chapter" data-level="23" data-path="work-organisation.html"><a href="work-organisation.html"><i class="fa fa-check"></i><b>23</b> WORK ORGANISATION</a></li>
+<li class="chapter" data-level="24" data-path="reports-and-presentations.html"><a href="reports-and-presentations.html"><i class="fa fa-check"></i><b>24</b> REPORTS AND PRESENTATIONS</a></li>
+<li class="chapter" data-level="25" data-path="reports-and-presentations-1.html"><a href="reports-and-presentations-1.html"><i class="fa fa-check"></i><b>25</b> REPORTS AND PRESENTATIONS</a></li>
+<li class="chapter" data-level="26" data-path="reports-and-presentations-2.html"><a href="reports-and-presentations-2.html"><i class="fa fa-check"></i><b>26</b> REPORTS AND PRESENTATIONS</a></li>
+<li class="chapter" data-level="27" data-path="reports-and-presentations-3.html"><a href="reports-and-presentations-3.html"><i class="fa fa-check"></i><b>27</b> REPORTS AND PRESENTATIONS</a></li>
+<li class="appendix"><span><b><lfg> APPENDICES </lfg></b></span></li>
+<li class="chapter" data-level="A" data-path="uwagi-dla-eweliny.html"><a href="uwagi-dla-eweliny.html"><i class="fa fa-check"></i><b>A</b> Uwagi dla Eweliny</a></li>
+<li class="chapter" data-level="B" data-path="oznaczenia.html"><a href="oznaczenia.html"><i class="fa fa-check"></i><b>B</b> Oznaczenia</a><ul>
+<li class="chapter" data-level="B.1" data-path="oznaczenia.html"><a href="oznaczenia.html#oznaczenia-odpisowe"><i class="fa fa-check"></i><b>B.1</b> Oznaczenia odpisowe</a></li>
+<li class="chapter" data-level="B.2" data-path="oznaczenia.html"><a href="oznaczenia.html#oznaczenia-w-kodzie"><i class="fa fa-check"></i><b>B.2</b> Oznaczenia w kodzie</a><ul>
+<li class="chapter" data-level="B.2.1" data-path="oznaczenia.html"><a href="oznaczenia.html#packages-names-before-functions-names"><i class="fa fa-check"></i><b>B.2.1</b> Packages names before functions names</a></li>
+<li class="chapter" data-level="B.2.2" data-path="oznaczenia.html"><a href="oznaczenia.html#sytem-of-making-variables-names"><i class="fa fa-check"></i><b>B.2.2</b> Sytem of making variables names</a></li>
+<li class="chapter" data-level="B.2.3" data-path="oznaczenia.html"><a href="oznaczenia.html#system-of-making-comments"><i class="fa fa-check"></i><b>B.2.3</b> System of making comments</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="C" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>C</b> References</a></li>
+<li class="chapter" data-level="D" data-path="skroty-klawiaturowe.html"><a href="skroty-klawiaturowe.html"><i class="fa fa-check"></i><b>D</b> Skroty klawiaturowe</a></li>
+<li class="chapter" data-level="E" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html"><i class="fa fa-check"></i><b>E</b> Dobre nawyki</a><ul>
+<li class="chapter" data-level="E.1" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#skladnia-w-kodzie"><i class="fa fa-check"></i><b>E.1</b> skladnia w kodzie</a></li>
+<li class="chapter" data-level="E.2" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#home-i-end"><i class="fa fa-check"></i><b>E.2</b> Home i End</a></li>
+<li class="chapter" data-level="E.3" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#rozdzialy"><i class="fa fa-check"></i><b>E.3</b> Rozdzialy</a></li>
+<li class="chapter" data-level="E.4" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#snippets"><i class="fa fa-check"></i><b>E.4</b> snippets</a></li>
+<li class="chapter" data-level="E.5" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#projects"><i class="fa fa-check"></i><b>E.5</b> Projects</a></li>
+</ul></li>
+<li class="chapter" data-level="F" data-path="other-things-1.html"><a href="other-things-1.html"><i class="fa fa-check"></i><b>F</b> Other things</a><ul>
+<li class="chapter" data-level="F.1" data-path="other-things-1.html"><a href="other-things-1.html#packages-instalation"><i class="fa fa-check"></i><b>F.1</b> <strong>Packages instalation</strong></a></li>
+<li class="chapter" data-level="F.2" data-path="other-things-1.html"><a href="other-things-1.html#my-packages"><i class="fa fa-check"></i><b>F.2</b> My packages</a></li>
+<li class="chapter" data-level="F.3" data-path="other-things-1.html"><a href="other-things-1.html#categories-for-index-for-the-future-when-adding-index-is-possible"><i class="fa fa-check"></i><b>F.3</b> Categories for index (for the future when adding index is possible)</a></li>
+</ul></li>
+<li class="chapter" data-level="G" data-path="things-to-do.html"><a href="things-to-do.html"><i class="fa fa-check"></i><b>G</b> Things to do</a></li>
+<li class="chapter" data-level="H" data-path="dictionary.html"><a href="dictionary.html"><i class="fa fa-check"></i><b>H</b> Dictionary</a><ul>
+<li class="chapter" data-level="H.1" data-path="dictionary.html"><a href="dictionary.html#en-pl"><i class="fa fa-check"></i><b>H.1</b> EN-PL</a></li>
+<li class="chapter" data-level="H.2" data-path="dictionary.html"><a href="dictionary.html#pl-en"><i class="fa fa-check"></i><b>H.2</b> PL-EN</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="references-1.html"><a href="references-1.html"><i class="fa fa-check"></i>References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Introduction to R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="section" class="section level1">
+<h1><span class="header-section-number">Chapter 12</span> </h1>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="tools-and-tricks.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="r-chap1functions-by-packages.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": true,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"],
+"linkedin": true
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/10-TOOLS_AND_TRICKS.Rmd",
+"text": "Edit"
+},
+"download": ["bookdown-Manual_R.pdf", "bookdown-Manual_R.epub"],
+"toc": {
+"collapse": "section",
+"depth": 4
+}
+});
+});
+</script>
+
+</body>
+
+</html>

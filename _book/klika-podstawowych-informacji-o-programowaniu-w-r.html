@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Introduction to R</title>
+  <meta name="description" content="Introduction to R">
+  <meta name="generator" content="bookdown 0.6 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Introduction to R" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Introduction to R" />
+  
+  
+  
+
+<meta name="author" content="Ewelina Macioł-Huć">
+
+
+<meta name="date" content="2018-02-17">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="index.html">
+<link rel="next" href="sterowanie-przeplywam-control-flow.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Podstawy R-a</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Informacja wstępna</a></li>
+<li class="part"><span><b>I PROGRAMOWANIE</b></span></li>
+<li class="chapter" data-level="2" data-path="klika-podstawowych-informacji-o-programowaniu-w-r.html"><a href="klika-podstawowych-informacji-o-programowaniu-w-r.html"><i class="fa fa-check"></i><b>2</b> Klika podstawowych informacji o programowaniu w R</a><ul>
+<li class="chapter" data-level="2.1" data-path="klika-podstawowych-informacji-o-programowaniu-w-r.html"><a href="klika-podstawowych-informacji-o-programowaniu-w-r.html#o-jezyku-r"><i class="fa fa-check"></i><b>2.1</b> O jezyku R</a></li>
+<li class="chapter" data-level="2.2" data-path="klika-podstawowych-informacji-o-programowaniu-w-r.html"><a href="klika-podstawowych-informacji-o-programowaniu-w-r.html#nazwy-zmiennych"><i class="fa fa-check"></i><b>2.2</b> Nazwy zmiennych</a></li>
+<li class="chapter" data-level="2.3" data-path="klika-podstawowych-informacji-o-programowaniu-w-r.html"><a href="klika-podstawowych-informacji-o-programowaniu-w-r.html#uzywaniu-cudzyslowia"><i class="fa fa-check"></i><b>2.3</b> Uzywaniu cudzyslowia</a></li>
+<li class="chapter" data-level="2.4" data-path="klika-podstawowych-informacji-o-programowaniu-w-r.html"><a href="klika-podstawowych-informacji-o-programowaniu-w-r.html#braki-danych"><i class="fa fa-check"></i><b>2.4</b> Braki danych</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html"><i class="fa fa-check"></i><b>3</b> Sterowanie przeplywam [control flow]</a><ul>
+<li class="chapter" data-level="3.1" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#petla-for"><i class="fa fa-check"></i><b>3.1</b> petla for</a></li>
+<li class="chapter" data-level="3.2" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#if"><i class="fa fa-check"></i><b>3.2</b> if</a></li>
+<li class="chapter" data-level="3.3" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#ifelse-czyli-wektorowa-wersja-if"><i class="fa fa-check"></i><b>3.3</b> ifelse (czyli wektorowa wersja if)</a></li>
+<li class="chapter" data-level="3.4" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#while"><i class="fa fa-check"></i><b>3.4</b> while</a></li>
+<li class="chapter" data-level="3.5" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#repeat"><i class="fa fa-check"></i><b>3.5</b> repeat</a></li>
+<li class="chapter" data-level="3.6" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#switch"><i class="fa fa-check"></i><b>3.6</b> switch</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="formulas.html"><a href="formulas.html"><i class="fa fa-check"></i><b>4</b> formulas</a><ul>
+<li class="chapter" data-level="4.1" data-path="formulas.html"><a href="formulas.html#informacje-wstepne"><i class="fa fa-check"></i><b>4.1</b> Informacje wstepne</a></li>
+<li class="chapter" data-level="4.2" data-path="formulas.html"><a href="formulas.html#przyklady-stosowania-formul"><i class="fa fa-check"></i><b>4.2</b> Przyklady stosowania formul</a></li>
+<li class="chapter" data-level="4.3" data-path="formulas.html"><a href="formulas.html#formula-a-tekst"><i class="fa fa-check"></i><b>4.3</b> Formula a tekst</a></li>
+<li class="chapter" data-level="4.4" data-path="formulas.html"><a href="formulas.html#wyciaganie-elementow-formuly"><i class="fa fa-check"></i><b>4.4</b> Wyciaganie elementow formuly</a></li>
+<li class="chapter" data-level="4.5" data-path="formulas.html"><a href="formulas.html#modyfikacja-formul"><i class="fa fa-check"></i><b>4.5</b> Modyfikacja formul</a></li>
+<li class="chapter" data-level="4.6" data-path="formulas.html"><a href="formulas.html#dynamiczne-tworzenie-formuly-liniowej-z-zadanych-elementow"><i class="fa fa-check"></i><b>4.6</b> Dynamiczne tworzenie formuly LINIOWEJ z zadanych elementow</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="funkcje.html"><a href="funkcje.html"><i class="fa fa-check"></i><b>5</b> Funkcje</a><ul>
+<li class="chapter" data-level="5.1" data-path="funkcje.html"><a href="funkcje.html#anchor"><i class="fa fa-check"></i><b>5.1</b> Types of functions</a></li>
+</ul></li>
+<li class="part"><span><b>II Part II</b></span><ul>
+<li class="chapter" data-level="5.2" data-path="funkcje.html"><a href="funkcje.html#podzial-struktur"><i class="fa fa-check"></i><b>5.2</b> Podzial struktur</a></li>
+<li class="chapter" data-level="5.3" data-path="funkcje.html"><a href="funkcje.html#listy-atomowe"><i class="fa fa-check"></i><b>5.3</b> Listy atomowe</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="funkcje.html"><a href="funkcje.html#wektory"><i class="fa fa-check"></i><b>5.3.1</b> wektory</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="funkcje.html"><a href="funkcje.html#matrix"><i class="fa fa-check"></i><b>5.4</b> matrix</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="funkcje.html"><a href="funkcje.html#array-macierz-wielowymiarowa"><i class="fa fa-check"></i><b>5.4.1</b> Array (macierz wielowymiarowa)</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="funkcje.html"><a href="funkcje.html#listy-generyczne"><i class="fa fa-check"></i><b>5.5</b> Listy generyczne</a><ul>
+<li class="chapter" data-level="5.5.1" data-path="funkcje.html"><a href="funkcje.html#list"><i class="fa fa-check"></i><b>5.5.1</b> List</a></li>
+</ul></li>
+<li class="chapter" data-level="5.6" data-path="funkcje.html"><a href="funkcje.html#data.frames"><i class="fa fa-check"></i><b>5.6</b> data.frames</a></li>
+<li class="chapter" data-level="5.7" data-path="funkcje.html"><a href="funkcje.html#typ-logical"><i class="fa fa-check"></i><b>5.7</b> Typ <em>logical</em></a></li>
+<li class="chapter" data-level="5.8" data-path="funkcje.html"><a href="funkcje.html#typ-numeric"><i class="fa fa-check"></i><b>5.8</b> Typ <em>numeric</em></a></li>
+<li class="chapter" data-level="5.9" data-path="funkcje.html"><a href="funkcje.html#typ-complex"><i class="fa fa-check"></i><b>5.9</b> Typ <em>complex</em></a></li>
+<li class="chapter" data-level="5.10" data-path="funkcje.html"><a href="funkcje.html#typ-character"><i class="fa fa-check"></i><b>5.10</b> Typ <em>character</em></a></li>
+<li class="chapter" data-level="5.11" data-path="funkcje.html"><a href="funkcje.html#typ-date"><i class="fa fa-check"></i><b>5.11</b> Typ <em>date</em></a></li>
+<li class="chapter" data-level="5.12" data-path="funkcje.html"><a href="funkcje.html#typ-posix"><i class="fa fa-check"></i><b>5.12</b> Typ <em>POSIX</em></a></li>
+<li class="chapter" data-level="5.13" data-path="funkcje.html"><a href="funkcje.html#typ-factor"><i class="fa fa-check"></i><b>5.13</b> Typ <em>factor</em></a></li>
+</ul></li>
+<li class="appendix"><span><b>Dodatki</b></span></li>
+<li class="chapter" data-level="A" data-path="oznaczenia.html"><a href="oznaczenia.html"><i class="fa fa-check"></i><b>A</b> Oznaczenia</a><ul>
+<li class="chapter" data-level="A.1" data-path="oznaczenia.html"><a href="oznaczenia.html#oznaczenia-odpisowe"><i class="fa fa-check"></i><b>A.1</b> Oznaczenia odpisowe</a></li>
+<li class="chapter" data-level="A.2" data-path="oznaczenia.html"><a href="oznaczenia.html#oznaczenia-w-kodzie"><i class="fa fa-check"></i><b>A.2</b> Oznaczenia w kodzie</a></li>
+<li class="chapter" data-level="A.3" data-path="oznaczenia.html"><a href="oznaczenia.html#skladnia-w-kodzie"><i class="fa fa-check"></i><b>A.3</b> skladnia w kodzie</a></li>
+<li class="chapter" data-level="A.4" data-path="oznaczenia.html"><a href="oznaczenia.html#home-i-end"><i class="fa fa-check"></i><b>A.4</b> Home i End</a></li>
+<li class="chapter" data-level="A.5" data-path="oznaczenia.html"><a href="oznaczenia.html#rozdzialy"><i class="fa fa-check"></i><b>A.5</b> Rozdzialy</a></li>
+<li class="chapter" data-level="A.6" data-path="oznaczenia.html"><a href="oznaczenia.html#snippets"><i class="fa fa-check"></i><b>A.6</b> snippets</a></li>
+<li class="chapter" data-level="A.7" data-path="oznaczenia.html"><a href="oznaczenia.html#projects"><i class="fa fa-check"></i><b>A.7</b> Projects</a></li>
+<li class="chapter" data-level="A.8" data-path="oznaczenia.html"><a href="oznaczenia.html#instalacja-pakietow"><i class="fa fa-check"></i><b>A.8</b> <strong>Instalacja pakietow</strong></a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Introduction to R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="klika-podstawowych-informacji-o-programowaniu-w-r" class="section level1">
+<h1><span class="header-section-number">Chapter 2</span> Klika podstawowych informacji o programowaniu w R</h1>
+<div id="o-jezyku-r" class="section level2">
+<h2><span class="header-section-number">2.1</span> O jezyku R</h2>
+<ol style="list-style-type: decimal">
+<li>R jest jezykiem ktory posiada typowanie dynamiczne. Typowanie dynamiczne to przypisywanie typow do wartosci przechowywanych w zmiennych w trakcie dzialania programu. Przy zastosowaniu typowania dynamicznego, zmienne nie posiadaja typow przypisanych statycznie, czyli przed uruchomieniem programu np. w trakcie kompilacji. W takiej sytuacji typ zmiennej wynika z wartosci jaka dana zmienna przechowuje. Jest to jeden ze sposobow na zwolnienie programisty z obowiazku deklarowania typow zmiennych. Ulatwia to operacje na zmiennych, utrudnia natomiast kontrola integralnosci programu. Zmienna moze w roznych momentach wykonania programu przechowywac wartosci roznych typow.</li>
+<li>R jest jezykiem ktory pozwala na programowanie strukturalne, funkcyjne i obiektowe.</li>
+<li>R jest jezykiem imperatywnym a nie deskryptywnym.</li>
+<li>Domyślnie program R pracuje w trybie interpretowanym a nie kompilowanym. Praca w trybie kompilowanym jest możliwa np. dzieki p:complier.</li>
+</ol>
+</div>
+<div id="nazwy-zmiennych" class="section level2">
+<h2><span class="header-section-number">2.2</span> Nazwy zmiennych</h2>
+<ol style="list-style-type: decimal">
+<li>Nie dopuszcza sie rozpoczynania nazw zmiennych od cyfr. Ponadto niedopuszczalne sa znaki takie jak / * + - &amp; ^ [ ( { ? : ;</li>
+<li>Dopuszczelne jest stosowanie podkreslnikow oraz kropek, rowniez na poczatku. Zmienna z kropka na poczatku maja pewna wlanosc opisana w ksiazce Gagoleskiego. Zmienna taka bedzie tzw zmienna ukryta i nie bedzie np. widziana domyslnie przez f:ls ktora wyswietla liste zmiennych.</li>
+<li>W przypadku tworzenia nazw zmiennych warto odwolac sie do regul podanych przez Wickhama w tzw. ‘Style Guide’ w jego podreczniku do zaawansowanego programowania w R.</li>
+</ol>
+</div>
+<div id="uzywaniu-cudzyslowia" class="section level2">
+<h2><span class="header-section-number">2.3</span> Uzywaniu cudzyslowia</h2>
+<p>Mozna uzywac pojedynczego <code>'</code> i podwojnego <code>&quot;</code> Wazne jest pamietanie o tym jak stosuje sie cudzyslow w podawaniu argumentow funkcji. Tutaj moga wystapic rozne sytuacja. W wiekszosci funkcji podawanie nazwy argumentu bez cudzyslowia oznacza albo 1. odwolanie sie do zdefiniowanej wczesniej zmiennej albo 2. uzywamy go gdzy podajac argument definiujemy obiekt</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wektor &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>) <span class="co"># definiuje zmienna</span>
+
+<span class="co"># ad 1 : tutaj wektor to odwolanie do zmienne ktora </span>
+<span class="kw">sum</span>(wektor) 
+
+<span class="co"># ad 2:tworze obiekt w trakcie podawania argumentu </span>
+<span class="kw">sum</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>))
+
+
+<span class="co"># nastepny przyklad dla f:char</span>
+ciag_tekstowy &lt;-<span class="st"> &#39;ala ma kota&#39;</span>
+
+<span class="kw">char</span>(ciag_tekstowy) <span class="co">#zwraca dlugosc tekstu</span>
+
+<span class="kw">char</span>(<span class="st">&#39;ala ma kota&#39;</span>) <span class="co">#dlugosc tekstu stworzonego w trakcie podawania argumentu</span></code></pre></div>
+<p>Ale przeanalizujemy teraz ponizszy przypadek:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#tworze tabela z dwoma kolumnami</span>
+tabela&lt;-<span class="st"> </span><span class="kw">data.frame</span>(  <span class="dt">kolumna_A =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>
+                            , <span class="dt">kolumna_B =</span> <span class="dv">11</span><span class="op">:</span><span class="dv">20</span>)
+
+
+<span class="co"># celowo jest tak na odwrot ponizej z nazwami</span>
+kolumna_B &lt;-<span class="st"> &#39;kolumna_A&#39;</span>
+
+<span class="co"># ta funkcja wykona nam operacja dodania nowej kolumny o nazwie &quot;suma&quot; to naszej tabeli</span>
+dplyr<span class="op">::</span><span class="kw">mutate</span>( tabela <span class="co"># tutaj podaje nazwe moje tabeli i dziala to jak poprzednio</span>
+                            ,<span class="dt">suma =</span> kolumna_B <span class="op">*</span><span class="st"> </span><span class="dv">10</span> ) <span class="co"># chce stworzyc nowa kolumne poprzez pomnozenie wartosci innej kolumny przez 10 i tutaj niestety  zasada dzilania jest juz inna</span></code></pre></div>
+<p>Powyzej problem polega na tym, ze bedziemy miec zrobiony iloczynu po kolumnie_B a nie kolumnie_A. f:summarise nie traktuje nazwy “kolumna_B” jako odwolania do zdefiniowanej wczesniej zmiennej o nazwie komlumna_B do ktorej przypisalismy nazwe “kolumna_A” !!!.</p>
+<p>Takie rozwiazanie jest wprowadzone dla wygody zeby nie meczyc sie z cudzyslowiem. Ale pytanie co zrobic jezli jednak bedziemy chcieli zdefiniowac kolumne potrzebna do iloczyny poprzed odwolanie sie do zdefiniowanej wczesniej zmiennej. To bedzie nam potrzebne np. wtedy kiedy w kodzie nie bedziemy z gory wiedziec jaka kolumne bedziemy chcieli zastosowac i zostanie to okreslone w innym miejsu programu, gdzie wybor przypiszemy wlasnie do zmiennej do ktorej bedzie sie trzeba odwolac. Niestety rozwiazania tego problemu jest dosyc skomplikowany zagadnieniem zwiaznanym z manipulowaniem elementami samej skladni jezyka. p:dplyr ma swoj wlasny system rozwiazania tego problemu ktory pokaze wlasnie przy omawianiu tego pakietu. Ponizej natomiast przedstawie jedno z mozliwych uniwersalnych rozwiazan:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># jeszcze raz to co w poprzednim chunku ale odwolamy sie do kolumny poprzez zmienna</span>
+
+<span class="co">#tworze tabela z dwoma kolumnami</span>
+tabela&lt;-<span class="st"> </span><span class="kw">data.frame</span>(  <span class="dt">kolumna_A =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>
+                            , <span class="dt">kolumna_B =</span> <span class="dv">11</span><span class="op">:</span><span class="dv">20</span>)
+
+
+<span class="co"># celowo jest tak na odwrot ponizej z nazwami</span>
+kolumna_B &lt;-<span class="st"> &#39;kolumna_A&#39;</span>
+
+lazyeval<span class="op">::</span><span class="kw">lazy_eval</span>(lazyeval<span class="op">::</span><span class="kw">interp</span>(<span class="op">~</span>dplyr<span class="op">::</span><span class="kw">mutate</span>(tabela, <span class="dt">sum =</span> kolumna <span class="op">*</span><span class="st"> </span><span class="dv">10</span>), <span class="dt">kolumna =</span> <span class="kw">as.name</span>(kolumna_B)))</code></pre></div>
+<p>Jak widac powyzej mamy juz zastosowano kolumne_A do wyliczen ale skladnie jest dosyc skomplikowana. Na szczecie wiekszosc funkcji dla ktorych argumenty definiuje sie w taki sposob nalezy do p:dlyr a tam jest inne duzo wygodniejsze rozwiazanie, ktore pokaze pozniej.</p>
+<p><strong>Podawanie argumentow funkcji</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># podajac argujenty mozna podawac ich nazwy</span>
+<span class="kw">mean</span>(  <span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>
+         , <span class="dt">trim =</span> <span class="dv">0</span>
+         , <span class="dt">na.rm =</span> <span class="ot">FALSE</span>)
+
+<span class="co"># ale jezeli zachowujemy kolejnosc jak jest to domyslnie w funkcji mozemy nazwy pominac. </span>
+<span class="kw">mean</span>(  <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>
+         , <span class="dv">0</span>
+         , <span class="ot">FALSE</span>)
+
+<span class="co"># mozemy podac argumenty w innej kolejnosci ale wtedy musimy uzywac nazw</span>
+<span class="kw">mean</span>(  <span class="dt">trim =</span> <span class="dv">0</span>
+         , <span class="dt">na.rm =</span> <span class="ot">FALSE</span>
+         , <span class="dt">x =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span>)</code></pre></div>
+</div>
+<div id="braki-danych" class="section level2">
+<h2><span class="header-section-number">2.4</span> Braki danych</h2>
+<p>W jezyku R odpowiednikiem NULL-a SQL-owego, czyli braku danych jest <code>NA</code> i <code>NaN</code>. <code>NaN</code> od <code>NA</code> rozni sie tym, ze stosuje sie go do oznaczenia sytuacji kiedy nie mamy danych bo dzialanie bylo niewykonalne np. dzielenie zera przez zero (0/0). W R istnieje też słowo <code>NULL</code>, ale nie jest to brak danych ale nazwa obiekt w strukturze jezyka R ktory spelnia rozne funkcje.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wektor &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="ot">NA</span>, <span class="ot">NA</span>, <span class="dv">3</span>) <span class="co"># wektor z dwoma brakami danych</span>
+
+<span class="co"># ponizej dostaniemy NaN</span>
+<span class="dv">0</span><span class="op">/</span><span class="dv">0</span> </code></pre></div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="sterowanie-przeplywam-control-flow.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/01-Skladnia.Rmd",
+"text": "Edit"
+},
+"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

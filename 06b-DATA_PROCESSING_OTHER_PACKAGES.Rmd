@@ -1,0 +1,17 @@
+# DATA OTHER PACKAGES
+
+
+## sqldf
+
+Be careful with syntax. If syntax os to complex (you use advanced syntax), function will automatically try to connect with database.
+
+
+```{r}
+# In this example I use f:top
+
+require(diamonds)
+sqldf::sqldf('select top 10 * from diamonds' , method='auto')
+
+```
+
+

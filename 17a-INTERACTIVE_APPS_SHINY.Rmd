@@ -1,0 +1,2853 @@
+# INTERACTIVE APPS SHINY
+
+main website about shiny:
+http://shiny.rstudio.com/
+
+tutorial for shiny:
+https://shiny.rstudio.com/tutorial/
+
+## Code location
+
+### Separated files
+
+W ramach 'shiny' tworzymy dwa zwykle pliki R i zapisujemy do stworzonego wczesniej katalogu. Katalog moze miec dowolna nazwe i lokalizacje. Pierwszy plik musi miec nazwe 'ui' a drugi 'server'. Opcjonalanie mozemy dodac trzeci plik o nazwie 'global'. Nazwy nie moga byc zmienione, bo program nie odnajdzie plikow. W pierwszy definiujemy ogolna strukture strony internetowej. W drugim tworzymy kod wykonujacy obliczenia. W trzecim globalne zmienne ktore mozna wykorzystac przy przetwarzaniu kodu w dwoch pozostalych plikach. Od wersji R-studio 98.800 do uruchomienia programu wykorzystuje sie przycisk 'Run' z zielona strzelka (w miejscu gdzie dla zwyklego dokumentu pdf jest przycisk 'knit'). Wcześniej nie było takiej opcji i trzeba bylo sie posluzyc innym sposobem, .tzn, do uruchomienia strony wykorzystujemy polecenie zawierajace sciezke dostepu do katalogu z plikami:
+`runApp('C:/Users/ppp/Desktop/shiny1')`. Polecenie musi byc umieszczone w pliku 'server'. Jednak w momencie odpalania strony samo polecenie nie może byc zapisane w pliku. Tzn. najpierw zapisujemy plik 'server' po zmianach, a nastepnie wklejamy polecenie i je odpalamy. 
+przyklad:
+
+ui:
+```{r}
+shinyUI()
+```
+server:
+```{r}
+require(shiny)
+shinyServer()
+
+# runApp('C:/Users/ppp/Desktop/wykresy_shiny/shinysky') # do recznego aplikacji bez przycisku w R-studio.
+```
+
+### All in one file
+
+```{r, play=TRUE}
+server <- function(input, output) {
+  output$distPlot <- renderPlot({
+    hist(rnorm(input$obs), col = 'darkgray', border = 'white')
+  })
+}
+
+ui <- shinyUI(fluidPage(
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput("obs", "Number of observations:", min = 10, max = 500, value = 100)
+    ),
+    mainPanel(plotOutput("distPlot"))
+  )
+))
+
+require(shiny)
+shinyApp(ui = ui, server = server)
+```
+
+
+
+## UI - basic elements and layout
+
+
+### General layout of page
+
+
+**(1) Basic**
+```{r}
+shinyUI(ui = basicPage())
+```
+
+
+**(2) sidebarLayout**
+```{r}
+shinyUI(ui = sidebarLayout(  sidebarPanel()
+                           , mainPanel = )
+       )
+```
+
+
+**(3) Grid**
+```{r}
+shinyUI(ui = fluidPage( titlePanel('title')
+                       ,fluidRow(
+                           # numbers must sum up to 12 (here 4 + 8 = 12)
+                           column(4, ...)
+                          ,column(8, ...)
+                        )
+                       )
+       )
+```
+
+<br><lfsb>Tip</lfsb>
+<div class="btn-info"> Przy zagniezdzaniu kolumn lepiej uzyc f:fixedRow. Wtedy przy zanieżdżonych szerokosc kolumn zaniezdzonych sumuje sie nie do 12 ale do szerokosci kolumny n </div><br>
+
+  
+```{r}
+fixedRow(
+  column(9,
+    "Level 1 column",
+    fixedRow(
+      column(6,
+        "Level 2"
+      ),
+      column(3,
+        "Level 2"
+      )
+    )
+  )
+)
+```
+
+
+
+**(6) flow**
+
+
+```{r, comment = 'WORKING CODE'}
+ 
+require(shiny)
+
+ui <- shinyUI(pageWithSidebar(    
+  headerPanel("Tab Switch Demo"),
+  sidebarPanel(     
+    flowLayout( # elements are alligned left to right and top to bottom
+      numericInput("rows", "How many rows?", 5),
+      selectInput("letter", "Which letter?", LETTERS),
+      sliderInput("value", "What value?", 0, 100, 50)
+    ),
+    splitLayout( #Lays out elements horizontally, dividing the available horizontal space into equal parts
+      numericInput("rows1", "How many rows?", 5),
+      selectInput("letter1", "Which letter?", LETTERS),
+      sliderInput("value1", "What value?", 0, 100, 50)
+    ),
+    inputPanel( #flowLayout with grey border and light grey backgroud
+      numericInput("rows2", "How many rows?", 5),
+      selectInput("letter2", "Which letter?", LETTERS),
+      sliderInput("value2", "What value?", 0, 100, 50)
+    ),
+    
+    radioButtons("dist", "Distribution type:",
+                 c("Normal" = "norm",
+                   "Uniform" = "unif",
+                   "Log-normal" = "lnorm",
+                   "Exponential" = "exp"), inline=TRUE),
+    
+    
+    checkboxGroupInput("variable", "Variable:",
+                       c("Cylinders" = "cyl",
+                         "Transmission" = "am",
+                         "Gears" = "gear"), inline=TRUE),
+    sliderInput(inputId = 'slid', label = 'slider1', min = 50, max=100, value = 70, width='70px')
+    
+  ),
+  mainPanel()  
+))
+
+server <- function(input, output)
+  
+shinyApp(ui, server)
+
+```
+
+
+**(5) navbarPage** page with downdrop menu
+```{r}
+shinyUI(
+
+  navbarPage(inverse = FALSE, # for colors
+             HTML('title'), 
+  
+    #button without downdrop
+    tabPanel(HTML('MENU')),
+    
+    #buttons with downdrop in navigation bar (navbar)
+    navbarMenu( "More"  #name of downdrop button
+               ,tabPanel("Summary1", ...) # in the place of dots put content of the page you want to dispay after clicking tab
+               ,tabPanel("Summary1", ...)
+               ,"----" # separator
+               ,"Section header" # section
+               ,tabPanel("Table", ...)
+               ,tabPanel("Plot", ...)
+              )
+    )
+)
+
+
+```
+
+
+**(6) boostrap** ( For users who are proficient in HTML/CSS, and know how to lay out pages in Bootstrap. Create a Shiny UI page that loads the CSS and JavaScript for Bootstrap, and has no content in the page body (other than what you provide))
+```{r}
+shinyUI(ui = bootstrapPage(..., title = NULL, responsive = NULL, theme = NULL))
+)
+```
+
+
+**(7) shinydashboar** See in chapter about extensions for shiny.
+
+
+### Basic NON_INPUT elements
+
+**(1) well**
+```{r}
+
+shiny::wellPanel(...)
+
+```
+
+
+**(2) conditionalPanel**
+
+```{r, play = TRUE}
+
+require(shiny)
+
+ui <- shinyUI(basicPage(
+  
+   numericInput('n', 'n', value = 1, min = 0, max = 100)
+  
+  ,conditionalPanel(
+         condition = "input.n == 1 | input.n == 2 " # input.n %in% c(1,2) does not work !!!!
+        ,selectInput("br", "br", c("Sturges", "Scott", "Freedman-D")
+        ))
+))
+
+server <- function(input, output)
+
+shinyApp(ui, server)
+
+```
+
+
+
+
+
+
+**(3) tabset**
+Creating tabsets
+```{r, play=TRUE}
+
+ui <- shinyUI(basicPage(
+tabsetPanel(
+   tabPanel("Plot",    list(plotOutput("plot1"), plotOutput("plot1") ) ) #jezeli jest wiele elementow to podaje je  w liscie
+  ,tabPanel("Summary", verbatimTextOutput("summary"))
+  ,tabPanel("Table",   tableOutput("table"))
+  ,type = c("tabs", "pills")
+  ,id = 'tab_id' # If provided, you can use input$id in your server logic to determine which of the current tabs is active.
+  ,selected = "Table" # 'Table' tab is selected
+  
+)
+))
+server <- function(input, output)
+shinyApp(ui, server)
+
+```
+
+Dynamically adding/removing tabs
+```{r, play=TRUE}
+
+# example app for inserting/removing a tab
+ui <- fluidPage(
+  sidebarLayout(
+    sidebarPanel(
+      actionButton("add", "Add 'Dynamic' tab"),
+      actionButton("remove", "Remove 'Foo' tab")
+    ),
+    mainPanel(
+      tabsetPanel(id = "tabs",
+                  tabPanel("Hello", "This is the hello tab"),
+                  tabPanel("Foo", "This is the foo tab"),
+                  tabPanel("Bar", "This is the bar tab")
+      )
+    )
+  )
+)
+server <- function(input, output, session) {
+  observeEvent(input$add, {
+    insertTab(inputId = "tabs",
+              tabPanel("Dynamic", "This a dynamically-added tab"),
+              target = "Bar"
+    )
+  })
+  observeEvent(input$remove, {
+    removeTab(inputId = "tabs", target = "Foo")
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+
+
+
+### Basic INPUT elements
+
+
+gellery of basic widgets for shiny:
+https://shiny.rstudio.com/gallery/widget-gallery.html
+
+
+
+`selectInput` i `selectizeInput` (pole do wybierania wartosci z listy rozwijanej):
+
+<br><lfr>Warning!</lfr>
+<div class="btn-danger"> Dla nie zaznaczenia niczego tworzymy wartosc wyboru pusta `''`. Jezeli mamy wielokrotny wybor to wtedy zwraca do servera `NULL`, a jezeli jednokrotny to pusty tekst `''` </div><br>
+
+```{r, play = TRUE}
+ui <- shinyUI(basicPage(
+              
+  selectInput(  inputId = 's1' #nazwa elementu do ktorej bedziemy sie odwolywac w pliku servera
+              , label   = 's1' #nazwa elementu widoczna dla uzytkownika
+              , selectize = TRUE # nie jest potrzebne dla pustego wyboru (brak wyboru jakiejkolwiek wartosci z listy)
+              , multiple  = TRUE # Jezeli zaznaczanych jest wiele wartosci, to select zwroci zwykly wektor c(...)
+              , selected  = 'A' # podaje wartosc do servera a nie wyswietlany label. Jezeli damy 'NULL'to nic nie bedzie zaznaczone
+              , choices = c( 'a'     = 'A' # widoczne jest 'a' a do servera zwraca 'A'
+                            ,'b'     = 'B'
+                            ,'nic'   = '' # jezeli nic nie wybiore
+                            ,'nic_2' = NA # zwroci tekst "NA" a nie brak danych NA
+                            )) 
+  ,verbatimTextOutput('s1_out')
+))
+
+server <- function(input, output, session) {
+  output$s1_out <- renderPrint(input$s1)
+}
+
+shinyApp(ui, server)
+
+
+    selectInput(
+      inputId = 'zm1', #nazwa do ktorej bedziemy sie odwolywac w pliku servera
+      label   = c("Lista rozwijana"), #nazwa listy rozwinajej
+      choices = c(  "z" = "d"
+                  , "d" = "b"
+                  , "g" = "g"), #elementy do wyboru i ich etykiety
+      selected = NULL, #co ma byc domyslnie zaznaczone. Jezeli damy 'NULL'to nic.
+      multiple = FALSE)  #czy mozna zaznaczac wiele elementow. Domyslnie FALSE. Jezeli zaznaczanych jest wiele wartosci select prawdopodobnie zwroci zwykly wektor 'c(...)'
+```
+
+
+`dateInput`
+
+```{r}
+dateInput("date", label = h3("Date input"), value = "2014-01-01")
+```
+
+`dateRangeInput`
+```{r}
+dateRangeInput("dates", label = "Date range") # by default both date are set to current date
+
+dateRangeInput(  'dates'
+               , width = '300px' #szerokow w procentach ('100%') lub pixelach ('400px'), lub centymetrach ('2cm'), lub milimetrach ('20mm'), lub 'auto'
+               , separator = 'to'
+               , format = 'yyy-mm-dd'
+               , language = 'en' # dostepny jest tez polski 'pl'
+               , weekstart = 0 # 0-Sunday. Jaki dzien jest pierwszym dniem tygodnia.
+               , startview = 'month' # okno kalendarzyka na jakim interwale ma byc po otwarciu
+               , start = as.Date('2017-12-31')
+               , end   = as.Date('2018-12-31')
+               , min   = as.Date('2012-12-31')
+               , max   = as.Date('2020-12-31'))
+
+```
+
+`radioButtons`
+
+```{r}
+
+radioButtons(  inputId      = 
+             , label        = 
+             
+               , choices      = c('choiceName' = 'choiceValue')
+             # alternativelly you can provide separated vector for both choiceNames and choiceValues
+             # , choiceNames  = 
+             # , choiceValues = 
+             
+             , selected     = 'choiceValue' #no choiceName !!!
+             , inline       = 
+             , width        = 
+)
+
+```
+
+
+
+`checkboxGroupInput`
+
+```{r}
+checkboxGroupInput(  "checkGroup"
+                   , inline   = 
+                   , label    = h3("Checkbox group")
+                   , choices  = list("Choice 1" = 1, "Choice 2" = 2, "Choice 3" = 3)
+                   , selected = 1
+                   )
+```
+
+
+`textarea` pole textowe o zmiennym rozmiarze
+
+```{r}
+tags$textarea(id="foo", rows=3, cols=40, "Default value")
+```
+
+
+
+
+### basic OUTPUT element
+
+Shiny package:
+
+1. renderDataTable() <-> dataTableOutput()
+2. renderImage()     <-> imageOutput()
+3. renderPlot()      <-> plotOutput()
+4. renderPrint()     <-> verbatimTextOutput()
+5. renderTable()     <-> tableOutput()
+6. renderText()      <-> textOutput
+7. renderUI()        <-> uiOutput()
+
+Extensions:
+
+1. rhandsontable::rhandsontable() <-> rhandsontable::rHandsontableOutput()
+2. DT::renderDataTable()          <-> DT::dataTableOutput()
+
+
+
+## UI - modifying
+
+
+### CSS
+
+Loading external files
+```{r}
+tags$link(  rel="stylesheet"
+          , type="text/css"
+          , href="C:/Users/ppp/Desktop/SHINY/Wstepne_analizy/css/plik_1.css")
+# or
+includeCSS(path='C:/Users/ppp/Desktop/SHINY/Wstepne_analizy/css/plik_1.css')
+
+
+```
+
+
+Using CSS styles
+```{r}
+# frame
+div(  id = 'div_1'  #id is optional
+    , class="span11"
+    , sliderInput('ble',label='ble',min=0,max=10,step=1,value=4))
+
+# parafraph
+p(  id = 'a' #id is optional
+  , class = 'b'
+  , HTML('bleble'))
+```
+
+
+Using CSS directly
+```{r}
+# (1)
+textInput('sep','sep'), tags$style(type='text/css', "#sep { width: 25px;}")
+
+# (2)
+textInput('dec','dec'), tags$style(type='text/css', "#dec { width: 100px;}")
+
+# (3) MODYFIKACJA GLOBALNA USTAWIEN DLA WSZYSTKICH INPUTOW DANEJ KATEGORII
+ tags$head(
+        tags$style(type="text/css", "label.radio { display: inline-block; }", ".radio input[type=\"radio\"] { float: none; }"),
+        tags$style(type="text/css", "select { max-width: 200px; }"),
+        tags$style(type="text/css", "textarea { max-width: 85px; }"),
+        tags$style(type="text/css", ".jslider { max-width: 200px; }"),
+        tags$style(type='text/css', ".well { max-width: 310px; }"),
+        tags$style(type='text/css', ".span4 { max-width: 310px; }")
+      )
+
+# (4) MODYFIKACJA HEADERA
+  
+tags$head(
+tags$style(type='text/css', 
+           ".textInput {font-size: 20px} ")),
+  
+# (5) MODYFIKACJA LABEL W PRZYCISKU (with html, no CSS)
+sliderInput ("lambda1", label=div(HTML("Choose &-lambda;:")), min=0, max=10, value=1.1, step=0.1)
+ 
+```
+
+
+
+
+
+
+
+### tags
+
+```{r}
+
+ui <- shinyUI(basicPage(
+              
+   div(style='color:red;', HTML('frame'))
+  ,span('a') # it is like div but with the difference that it is an INLINE element
+  ,h1('big header') #headers
+  
+  ,h6('small header')
+  ,a(href='http://www.wp.pl', 'Click Here!') # href fo rlinks
+  ,img(src = 'C:/Users/memy/Desktop/dla_Ewelinki/Manual_R/figures/create_project.png', alt='no photo') 
+  ,code('code')
+  ,br() # break line <br>
+  ,em('emphesized text') # Renders as emphasized text
+  ,strong('bolded text')
+  ,hr('a') # horizontal rule [linia pozioma]
+  ,pre('Text in a pre elementis displayed in a fixed-width font, and it preserves both spaces and line breaks') # preformatted text
+  
+))
+
+server <- function(input, output, session) {
+}
+
+shinyApp(ui, server)
+
+```
+```{r}
+tagList( tags$h1("Title")
+        ,tags$h2("Header text")
+        ,tags$p("Text here"))
+```
+
+
+
+### UI - dynamically generating from server
+
+See part about server side processing
+
+
+
+## Server 
+
+
+### General remarks
+
+
+* Kod pisany w 'reactive' oddzialuje na konsole R-a. Warunkiem jest to ze sam reactive musi byc wywolany przez inny blok ktory generuje jakos ouput.Tej cechy nie posiada observe, ktory wykonuje kod nawet jesli nie jest wywolany. 
+
+<br><br>
+
+
+
+### scoping rules
+
+
+1. Zmienne na ktorych pracuje sie w blokach reaktywnych (render, observer itp.), **NIE sa widziane** poza nimi. 
+2. Zmienne zdefiniowane poza blokami reaktywnymi **sa widziane w blokach**
+3. Zmienne zdefiniowane w pliku 'global' sa widziane w plikach 'ui' i 'server'
+4. Operator przypisania globalnego. Patrz dalsze przyklady. Przy pomocy operatora przypisania globalnego `<<-` mozna zapisac wartosc do zmiennej aby byla widziana w kolejnej sesji. Zmienne mozna tak zapisywac rowniez w blokach. Ale nalezy pamietac ze w bloku mozemy nadpisac globalnie zmienna zdefiniowana poza blokami. Tzn. nadpisanie w bloku globalnie zmiennej pochodzacej z innego bloku nie jest mozliwe (patrz punkt pierwszy).
+4. Wyniki z calych blokow mozna przypisywac do zmiennych. W takim wypadku zmienna taka jest widoczna w innych blokach. Z bloku jest przypisywana wartosc zogdna z regula nawiasow klamrowych (tzn ostatnie wyrazenie z klamry). 
+5. Do zmiennych ktore powstaly przez przypisanie wartosci z bloku, w innym bloku odwolujemy sie poprzez wypisanie jej z nawiasami okraglymi np:<br> `zmienna()[[2]]`.
+
+
+### problems list 
+
+
+**list of some problems**
+
+
+patterns for actionButtons:
+http://shiny.rstudio.com/articles/action-buttons.html
+
+
+(1)
+dwa przyciski - jeden element - jedna zmienna przyjmuje 2 wartosci: jedna dla nacisniecia jednego przycisku druga grugiego. Robimy to w observerze na poczatku. Potem sprawdzmy wartosc i wiemy co bylo nacisniete
+
+(2)
+dwa outputy jedna lokalizacja - tutaj trzeba dynamicznego UI oraz zagniezdzenie obu outputow w observe
+
+(3)
+generowanie output w petli: zagniezdzamy petle w observerze. Trzeba pamietac o funkcji local.
+
+(4)
+nauka angielskiego - modul do wyswietlania i oceniania znajomosci. Musi byc globalny licznik
+
+
+```{r}
+
+
+z1 <- numeric(0)
+z2 <- numeric(0)
+z3 <- numeric(0)
+z4 <- numeric(0)
+z5 <- numeric(0)
+
+ui <- fluidPage(actionButton('a1'), verbatimTextOutput('v1'))
+
+se <- function(input, output, session){
+  
+    observeEvent(input$a1,{z1 <-  runif(1)})
+    observeEvent(input$a1,{z2 <- -1; z2 <<- runif(1)})
+    observeEvent(input$a1,{z3 <- -1; observe(observe(z3 <<- runif(1)))})
+    observeEvent(input$a1,{z4 <- -1; assign('z4', value=runif(1), envir = .GlobalEnv)})
+    observeEvent(input$a1,{z5 <- -1; observe(observe( assign('z5', value=runif(1), envir = .GlobalEnv) ) )})
+  
+    output$v1 <- renderPrint({
+      input$a1
+      print(list(  z1 # brak wplywu
+                 , z2 # zmienia sie
+                 , z3 # brak wplywu
+                 , z4 #zmiena sie
+                 , z5 #zmienia sie
+                 )
+            ) 
+    })
+    
+}
+
+shinyApp(ui, se)
+
+
+```
+
+
+
+
+
+### reactive i observer
+
+
+#### f:reactiveVal i reactiveVals
+
+<br><lfg>Useful</lfg>
+<div class="btn-success"> f:reactiveVal vs f:reactiveValues() - syntax differences: </div><br>
+
+```{r}
+one_var   <- reactiveVal()
+one_var(10) # assigning values
+one_var() # extracting values
+
+many_vars <- reactiveValues(a=1, b=2, c=3)
+many_vars$a <- 10 #assigning values
+many_vars$a # estracting values
+
+```
+
+W zmiennej reactiveVal mamy cos takiego, ze jezeli zmieniamy jej wartosc to wszyskie elementy ktore odwoluja sie do niej sa o tym informowane. 
+  
+Przyklad dla *output*
+```{r, play=TRUE}
+
+ui <- shinyUI(basicPage(actionButton('a1','a1'), verbatimTextOutput('v1')))
+
+sv <- function(input, output, session){
+  r_val <- reactiveVal()
+  observeEvent(input$a1, {r_val(runif(1))}) # zdarzenie modyfikujace r_val
+  output$v1 <- renderPrint({print(r_val() )}) 
+}
+shinyApp(ui, sv)
+```
+
+
+
+  
+
+Przyklad dla *observer*
+
+```{r, play=TRUE}
+
+ui <- shinyUI(basicPage(actionButton('a1','a1')))
+
+sv <- function(input, output, session){
+  r_val <- reactiveVal()
+  observeEvent(input$a1, {r_val(runif(1))}) # zdarzenie modyfikujace r_val
+  observe({
+    saveRDS(r_val(), file = '_17/usunac.RDS') # observer ktory bedzie poinformowany o zmianie wartosci r_val
+  })
+}
+shinyApp(ui, sv)
+```
+
+
+
+
+Nastepny przyklad
+
+<br><lfsb>Tip</lfsb>
+  <div class="btn-info"> Uzycie reactiveVal dla rozwiazania problemy gdzie dwoma przycikami steruje jednym outputem. Wersja bez f:isolate </div><br>
+
+
+```{r, play=TRUE}
+require(shiny)
+
+ui <- shinyUI(basicPage(
+  
+  actionButton('b1', 'b1')
+  ,actionButton('b2', 'b2')
+  
+  ,verbatimTextOutput('v1')
+  
+))
+
+server <- function(input, output, session){
+  
+  a <- reactiveValues(selection=NULL)
+  observeEvent(input$b1, {a$selection <- 1})
+  observeEvent(input$b2, {a$selection <- 2})
+  
+  output$v1 <- renderPrint({
+    
+    button_selection <- a$selection
+    
+    if(button_selection == 1){
+      print('b1')
+    }else if(button_selection == 2){
+      print('b2')
+    }
+  })
+}
+shinyApp(ui = ui, server = server)
+```
+
+
+Do f:reactiveVal mozna tez stosowac isolate. Powyzszy przyklad po drobnej modyfikacji:
+```{r, play=TRUE}
+
+require(shiny)
+
+ui <- shinyUI(basicPage(
+
+   actionButton('b1', 'b1')
+  ,actionButton('b2', 'b2')
+  ,actionButton('action', 'action') # dadajemy trzeci przycisk bo dwa poprzednie beda zaizolowane
+  ,verbatimTextOutput('v1')
+  
+))
+
+server <- function(input, output, session){
+
+  a <- reactiveValues(selection=NULL)
+  observeEvent(input$b1, {a$selection <- 1})
+  observeEvent(input$b2, {a$selection <- 2})
+  
+  output$v1 <- renderPrint({
+    
+    button_selection <- isolate(a$selection) # tutaj dodajemy izolacje
+    
+    input$action # trzeci przycisk dodany ze wzgledu na izolacje
+    
+    if(button_selection == 1){
+      print('b1')
+    }else if(button_selection == 2){
+      print('b2')
+    }
+  })
+}
+shinyApp(ui = ui, server = server)
+
+```
+
+
+#### reactive
+
+*reactive* syntax. Zgodnie z regula klamrowa zwracana jest ostatnia linijka. Jezeli nie umiescimy w niej zmiennej to *reactive* nam nic nie zwroci
+
+
+
+
+```{r, play=TRUE}
+
+ui <- shinyUI(basicPage(actionButton('a1','a1'), verbatimTextOutput('v1')))
+
+se <- function(input, output, session){
+  
+  # list
+  r1 <- reactive({
+    input$a1
+    l <- list(a=runif(1), b=runif(1))
+    l
+  })
+  
+  
+  #one variable
+  r2 <- reactive({
+                  input$a1
+                  x <- runif(1)
+                  x
+                 })
+  
+  # extracting
+  output$v1 <- renderPrint({
+    print(list(
+      # r1()$l takie cos nam niczego nie zwroci !!!
+       r1()$a      #1
+      ,r1()['a']   #2
+      ,r1()[1]     #3
+      ,r2()        #4
+    ))
+  })
+}
+
+shinyApp(ui, se)
+
+
+```
+
+
+'reactive' tak jak 'rectiveVal' i 'reactiveVals' potrafi pchac:
+  
+```{r, play = TRUE}
+
+ui <- shinyUI(basicPage(  
+                          actionButton('a1', 'a1')
+                        , verbatimTextOutput('v1')))
+se <- function(input, output, session) {
+  a <- reactive({a <- runif(1) 
+                 input$a1 # ten przycisk bedzie pchal dzialanie reactive
+                 a
+                })
+  output$v1 <- renderPrint({print(a())})
+}
+
+shinyApp(ui, se)
+```
+
+
+Natomiast output nie potrafi ciagnac (to co powyzej z drobna modyfikacja):
+  
+```{r, play = TRUE}
+
+ui <- shinyUI(basicPage(  
+    actionButton('a1', 'a1')
+  , verbatimTextOutput('v1')))
+se <- function(input, output, session) {
+  a <- reactive({a <- runif(1) 
+  # input$a1 # blokuje przycisk pchajacy
+  a
+  })
+  output$v1 <- renderPrint({
+    input$a1 # przycik ktory powinien NIBY ciagnac
+    print(a())
+    })
+}
+
+shinyApp(ui, se)
+
+```
+
+
+complex chaining of *reactve*. First conclusion is that reactive can push reactive. Next is that we can fork *reactive* elements.
+
+```{r, play = TRUE}
+
+ui <- shinyUI(basicPage(actionButton('a1', 'a1'), verbatimTextOutput('v1')))
+
+se <- function(input, output, session){
+  r1 <- reactive({
+    input$a1
+    runif(1)
+  })
+  
+  r2 <- reactive({
+    input$a1
+    c(runif(1), r1())
+  })
+  
+  r3a <- reactive({
+    c(runif(1), r2())
+  })
+  
+  r3b <- reactive({
+    # we have no input$a1 here !!! we are pushed by r2()
+    c(runif(1), r2())
+  })
+  
+  output$v1 <- renderPrint({
+    list(r1(), r2(), r3a(), r3b())
+  })
+  
+}
+shinyApp(ui, se)
+
+```
+
+
+#### observe
+
+*observe* order of execution.
+
+```{r, play = TRUE}
+
+library(shiny)
+
+z1 <- numeric(0)
+z2 <- numeric(0)
+ui <- fluidPage(actionButton('a1','a1'), verbatimTextOutput('v1'))
+
+server <- function(input, output, session) {
+  #z1
+  observe(priority = 2, x = {input$a1; z1 <<- 200 + runif(1)})
+  observe(priority = 1, x = {input$a1; z1 <<- 100 + runif(1)}) # this observe will be executed bofore previous!
+  
+  #z2
+  observe(priority = 3, x = {input$a1; z2 <<- 400 + runif(1)})
+  observe(priority = 4, x = {input$a1; z2 <<- 500 + runif(1)})
+  
+  output$v1 <- renderPrint({input$a1; print(list(z1,z2))})
+  
+}
+
+shinyApp(ui, server)
+
+```
+
+*observe* suspension
+
+```{r}
+
+server <- function(input, output) {
+  
+  z <- reactive({
+    
+    input$action
+    
+    z <- input$obs  
+    w <- rnorm(n=z)
+    w
+    
+  })
+  
+  obs_1 <- observe({
+    write.table(x = z(), file = 'C:/Users/ppp/Desktop/plik.txt')
+  }
+  , suspended=TRUE)
+  
+  obs_2 <- observe({
+    if(input$action %% 2 == 0) obs_1$resume()
+  }) #make 'obs_1' not suspended
+  
+  obs_2 <- observe({
+    if(input$action %% 2 != 0) obs_1$suspend()
+  }) #make 'obs_1' suspended
+  
+}
+
+```
+Using above syntax we can also change priority of *observe*
+```{r}
+obs_2 <- observe({
+  if(input$action %% 2 != 0) obs_1$setPriority(priority = 0)
+})
+```
+
+
+Sprawdzenie czy observe jest zawieszony
+
+```{r, eval=FALSE}
+
+
+s <- function(input, output, session){
+  
+  obs <- observe({}, suspended = TRUE)
+  
+  output$t <- renderPrint({
+    obs$.suspended
+  })
+  
+}
+
+
+
+u <- shinyUI(fluidPage(
+  
+  verbatimTextOutput('t')
+  
+))
+
+shinyApp(u, s)
+
+```
+
+
+### dynamic ui
+
+#### simple examples
+
+Simple example (uiOutput not generated separately)
+```{r}
+
+ui <- fluidPage(
+  
+   actionButton('a1', 'a1')
+  ,numericInput('n1', 'n1', value = 1, min = 1, max = 100, step = 10)
+  ,uiOutput('ui1')
+  
+)
+
+se <- function(input, output, session){
+  
+  output$ui1 <- renderUI({
+    
+    default <- input$n1
+    
+    tagList(
+       sliderInput('s1', 's1', value = default, min = 1, max = 100, step = 1)
+    )
+  })
+}
+shinyApp(ui, se)
+
+```
+
+Many separated dynamically generated ui (also uiOutput!!!)
+```{r, play=TRUE}
+
+u <- shinyUI(fluidPage(uiOutput('o3')))
+
+
+s <- function(input, output, session){
+  
+  observe({
+    
+    output$o1 <- renderUI({
+      checkboxInput('c1','c1',value = TRUE)
+    })
+    
+    
+    output$o2 <- renderUI({
+      checkboxInput('c2','c2',value = FALSE)
+    })
+    
+    
+  })
+  
+  output$o3 <- renderUI({
+    list(uiOutput('o1'), uiOutput('o2') )
+  })
+  
+}
+
+shinyApp(u,s)
+```
+
+#### Complicated nesting dynamically generated ui
+
+Niestety bezposrednia zaleznosc *sel_1* od *c1* w ramach jednego *renderUI* jest niemozliwa.
+```{r, play=TRUE}
+
+require(shiny)
+require(ggplot2)
+d <- head(diamonds)
+m <- head(mtcars)
+
+s <- function(input,output, session){
+  
+  output$o1 <- renderUI({
+    
+    list(
+      checkboxInput('c1', 'c1', value = TRUE),
+      selectInput('sel_1', 'sel_1', choices = if(input$c1) names(d) else names(m) ))
+    
+  }) 
+}
+
+u <- shinyUI(fluidPage(
+  
+  actionButton('a1','a1'),
+  uiOutput('o1')
+  
+))
+
+shinyApp(u, s)
+
+```
+<br>
+Koniecznie jest rozbicie elementow
+
+```{r, play=TRUE}
+
+require(shiny)
+require(ggplot2)
+d <- head(diamonds)
+m <- head(mtcars)
+
+s <- function(input,output, session){
+  
+  output$o1 <- renderUI({
+    checkboxInput('c1', 'c1', value = TRUE)
+  })
+  
+  output$o2 <- renderUI({
+    
+    list(
+      selectInput('sel_1', 'sel_1', choices = if(input$c1) names(d) else names(m) ))
+  })
+  
+}
+
+u <- shinyUI(fluidPage(
+  
+    actionButton('a1','a1')
+  , uiOutput('o1'),
+  , uiOutput('o2')
+  
+))
+
+shinyApp(u, s)
+
+```
+
+
+Next complecated nesting
+
+```{r, play = TRUE}
+
+
+ui <- fluidPage(
+  
+  uiOutput('ui1')
+  
+)
+
+se <- function(input, output, session){
+  
+  output$ui1 <- renderUI({
+    
+    tagList(
+       numericInput('n1', 'n1', min = 1, max = 100, step = 10, value = 1)
+      ,renderUI({
+          tagList(
+            sliderInput('s1', 's1', min = 1, max = 100, value = input$n1)
+          )
+       })
+    )
+    
+  })
+  
+}
+
+shinyApp(ui, se)
+
+```
+
+
+#### dynamic ui in loop
+
+Dynamicznie inputy, render i outputy (3 rzeczy na raz), w tym inputy dynamicznie po stronie ui a nie servera !!!
+Przyklad ze strony: https://shiny.rstudio.com/gallery/creating-a-ui-from-a-loop.html
+
+```{r, play = TRUE}
+
+library(shiny)
+require(dplyr)
+
+ui <- fluidPage(
+  title = 'Creating a UI from a loop',
+  
+  sidebarLayout(
+    sidebarPanel(
+      
+      # generowanie dynamicznej ilosci selectow
+      lapply(1:5, function(i) {
+        selectInput(paste0('a', i), paste0('SelectA', i),
+                    choices = sample(LETTERS, 5))
+      })
+    ),
+    
+    mainPanel(
+      verbatimTextOutput('a_out'),
+      
+      # UI output
+      lapply(1:10, function(i) {
+        uiOutput(paste0('b', i))
+      })
+    )
+  )
+)
+
+se <- function(input, output, session) {
+  
+  # note we use the syntax input[['foo']] instead of input$foo, because we have
+  # to construct the id as a character string, then use it to access the value;
+  # same thing applies to the output object below
+  
+  # mamy jeden renderPrint ktory musi sobie poradzic z pobieraniem dynamicznej iloscio inputow
+  output$a_out <- renderPrint({
+    res <- lapply(1:5, function(i) input[[paste0('a', i)]]) # tutaj mamy dynamiczna ilosc inputow
+    str(setNames(res, paste0('a', 1:5)))
+  })
+  
+  
+  # generowanie dynamicznej ilosci outputow
+  lapply(1:10, function(i) {
+    
+    output[[paste0('b', i)]] <- renderUI({
+      strong(paste0('Hi, this is output B#', i))
+    })
+    
+  })
+}
+
+shinyApp(ui, se)
+
+```
+
+
+
+
+
+
+Simple example with many plots
+
+```{r, play = TRUE}
+
+ui <- fluidPage(
+  
+   numericInput('n1', 'n1', value = 1, min = 1, max = 6)
+  ,uiOutput('ui_1')
+)
+
+
+se <- function(input, output, session){
+  observe({
+    
+    il_wyk <- input$n1
+    
+    # dynamiczne rendery
+    lapply(1:il_wyk, function(i){
+      
+      output[[paste0('nazwa', i)]] <- renderPlot({
+        # ggplot() + geom_histogram(data=data.frame(sample(x = 1:1000, size = 50, replace = TRUE)))
+        hist(sample(x = 1:1000, size = 50, replace = TRUE))
+      })
+      
+    })
+    
+    
+    # dynamiczne outputy
+    output$ui_1 <- renderUI({
+    
+      lapply(1:il_wyk, function(i){
+        
+        plotOutput(paste0('nazwa', i))
+          
+      })
+    })
+  })
+}
+
+shinyApp(ui, se)
+
+```
+
+
+Dynamic tabs
+
+```{r}
+
+require(shiny)
+require(ggplot2)
+r
+
+g <- 1
+
+u <- shinyUI(fluidPage(
+  
+  sliderInput('slid','slid',min=1, max=4, value=1),
+  uiOutput('wynik'),
+  actionButton('a1', 'a1')
+  
+))
+
+s <- function(input, output, session) {
+  
+  output$wynik <- renderUI({
+    
+    # namest for tabs
+    tabnames <- paste0('z_',1:input$slid)
+    
+    # dynamic generating plots
+    if(g > input$slid){ # ten warunek powoduje ze jak zwiekszam ilosc wykresowo sliderem to nie znikaja wykresy z juz istniejacych tabs-ow
+      for(i in (input$slid + 1):g ){ # tutaj licznik nie jest od 1 !!!
+        output[[paste0('z_',i)]] <- renderPlot({})
+      }
+    }
+    
+    g <<- input$slid
+    
+    tabs <- list(NULL)
+    
+    # dynamic generating tabs with dynamically generated plotoutput (two things at one)
+    for (i in 1:input$slid) tabs[[i]] <- tabPanel(tabnames[i], plotOutput(tabnames[i]), value = tabnames[i])
+    
+    tabs$id <- "tab0"
+    do.call(tabsetPanel, tabs)
+    
+  })
+  
+  observe({
+    
+    if(input$a1 > 0){
+      
+      z <- isolate(input$tab0) # selected tab
+      
+      output[[z]] <- renderPlot({
+        hist(sample(1:100, size = 50, replace=TRUE))
+      })
+    }
+  })
+}
+
+shinyApp(u,s)
+```
+
+
+
+#### Dynamic navbar
+
+```{r, play=TRUE}
+
+l.s::l.s.packages_basic()
+
+elements <- tribble(~nav, ~tab
+										,'t1','a'
+										,'t1','b'
+										,'t2','c'
+										,'t2','d'
+										,'t2','e'
+										)
+
+
+# example app for prepending/appending a navbarMenu
+ui <- navbarPage("Navbar page", id = "tabs",
+								 tabPanel("Home",
+								 				 actionButton("prepend", "Prepend a navbarMenu"),
+								 				 actionButton("append", "Append a navbarMenu")
+								 )
+)
+
+
+server <- function(input, output, session) {
+
+	observe( {
+		
+		input$append
+		
+		elements_list <- elements %>% dplyr::group_by(nav) %>% tidyr::nest(.key = 'elements')
+		
+		for(i in 1:nrow(elements_list) ){
+			
+			id_nav <- elements_list[i,'nav'] %>% unnest %>% pull
+			
+			appendTab(inputId = "tabs", navbarMenu(title = id_nav)) #, tabPanel(paste0(id_nav,'ts1' ),  value = paste0(id_nav,'_ts1') ) )
+								
+			for(j in 1:nrow(unnest(elements_list[i,'elements']))){
+
+				id_tab <- elements_list[i,'elements'] %>% unnest %>% .[j,'tab'] %>% pull
+
+				appendTab(inputId = 'tabs', menuName = id_nav, tabPanel(id_tab, id_tab) )
+
+			}
+			
+		}
+
+	})
+}
+
+shinyApp(ui, server)
+	
+
+```
+
+
+
+## modules
+
+### simple examples
+
+```{r, play = TRUE}
+require(shiny)
+
+# input element in UI
+f_Ui_Input <- function(id){
+  ns <- NS(id)
+  tagList(
+    sliderInput(ns('s1'), 's1', value = 2, min = 2, max = 100, step = 20)
+  )
+}
+
+# output elements in UI
+f_Ui_Output <- function(id){
+  ns <- NS(id)
+  plotOutput(ns('plot'))
+}
+
+# server elements
+f_Server <- function(input, output, session){
+  
+  output$plot <- renderPlot({
+    plot_1 <- input$s1
+    plot(1:plot_1)
+  })
+}
+
+
+
+# PROGRAM GLOWNY Z MODULAMI
+
+server <- function(input, output, session){
+  
+  shiny::callModule(f_Server, 'ui_1')
+}
+
+# IM!!
+# takie cos NIE ZADZIALA (cos co zadziala jest dalej)
+ui_NIEZADZIALA <- shinyUI({
+  basicPage(
+    f_Ui_Input('ui_1'),
+    plotOutput('plot') # tutaj jest problem z odwolaniem do 'plot' ktory jest w innym namespace IM!!
+  )
+})
+
+# cos takiego zadziala
+ui_ZADZIALA <- shinyUI({
+  basicPage(
+    f_Ui_Input('ui_1'),
+    f_Ui_Output('ui_1')
+  )
+})
+
+shinyApp(ui_NIEZADZIALA, server)
+shinyApp(ui_ZADZIALA, server)
+```
+
+
+
+
+
+
+Teraz w module zrobie tylko jeden reactive w serwerze. 
+
+```{r}
+
+# robie tylko modulowy server
+f_sever1 <- function(input, output, session){
+  
+  wynik <- reactive({
+    s1 <- input$s1
+    s1
+  })
+  wynik
+  
+}
+
+
+# glowne UI
+ui <- shinyUI({
+  basicPage(
+    f_Ui_Input('ui_1'),
+    plotOutput('plot')
+  )
+})
+
+# glowny server
+server_2 <- function(input, output, session){
+  
+  liczba_do_wykresu <- callModule(f_sever1, 'ui_1')
+  
+  output$plot <- renderPlot({
+    
+    plot(1:liczba_do_wykresu())
+  
+  })
+}
+
+
+shinyApp( ui # ui jest zwykle
+         , server_2)
+
+```
+
+
+
+### General logic of modules
+
+```{r}
+# dla modulow typu UI dziala to tak:
+
+innerUI <- function(id) {
+  ns <- NS(id)
+  "This is the inner UI"
+}
+
+outerUI <- function(id) {
+  ns <- NS(id)
+  wellPanel(
+    innerUI(ns("inner1"))
+  )
+}
+
+
+  
+# dla modulow z logika serverowa dziala tak:
+  
+inner <- function(input, output, session) {
+    # inner logic
+}
+
+outer <- function(input, output, session) {
+  innerResult <- callModule(inner, "inner1")
+  # outer logic
+}
+
+```
+
+
+### Important!!! passing input from outside of the module
+
+```{r}
+
+# module UI Outputs
+f1 <- function(id){
+	
+	ns <- NS(id)
+	tagList(  verbatimTextOutput(ns('print_1'))
+					, verbatimTextOutput(ns('print_2')))
+}
+
+# module Server
+f2 <- function(  input
+               , output
+               , session
+               , a   # a is an extra argument where I will pass values IM!!
+               , b){ # b is an extra argument where I will pass values IM!!
+  # v2: function(input, output, session, a)
+	output$print_1 <- renderPrint({
+		
+		c1 <- a()
+		# v2: a()[[1]] 
+		
+		if(c1){
+			z <- 1
+		}else{
+			z <- 2
+		}
+		
+		z
+	})
+	
+	output$print_2 <- renderPrint({
+		
+		c2 <- b()
+		# v2: a()[[1]] 
+		
+		if(c2){
+			z <- 1
+		}else{
+			z <- 2
+		}
+		
+		z
+	})
+}
+
+# Main UI
+u4 <- shinyUI(fluidPage(
+
+	 checkboxInput('c1', 'c1', value = FALSE)
+	,checkboxInput('c2', 'c2', value = FALSE)
+	,f1('test')
+))
+
+# Main Server
+s4 <- function(input, output, session){
+	
+	callModule(  f2
+	           , 'test'
+	           , reactive(input$c1)  # passing arguments IMPORTANT!
+	           , reactive(input$c2)) # passing arguments IMPORTANT!
+	#v2: callModule(f2, 'test', reactive(list(input$c1, input$c2)))
+}
+
+shinyApp(u4, s4)
+
+```
+
+
+
+## debugging
+
+### validate
+
+
+Example: use f:validate to give a message that ggplot doesn't work. 
+
+```{r, play=TRUE}
+
+u <- shinyUI(fluidPage(
+  
+   actionButton('a1','a1')
+  ,plotOutput('p1')
+  
+))
+
+
+s <- function(input, output, session){
+  
+output$p1 <- renderPlot({
+  input$a1
+  validate( need( try( print( qplot(data=diamonds, x=aa ))) ,'problem' ) )
+})
+  
+}
+
+shinyApp(u, s)
+
+```
+
+
+
+## p:miniUI
+
+## Example
+
+Simple working example of gadget (not integrated as Addins in RStudio)
+
+```{r}
+
+library(shiny)
+library(miniUI)
+library(ggplot2)
+
+ggbrush <- function(data, xvar, yvar) {
+
+  ui <- miniPage(
+    gadgetTitleBar("Drag to select points"),
+    miniContentPanel(
+      # The brush="brush" argument means we can listen for
+      # brush events on the plot using input$brush.
+      plotOutput("plot", height = "100%", brush = "brush")
+    )
+  )
+
+  server <- function(input, output, session) {
+
+    # Render the plot
+    output$plot <- renderPlot({
+      # Plot the data with x/y vars indicated by the caller.
+      ggplot(data, aes_string(xvar, yvar)) + geom_point()
+    })
+
+    # Handle the Done button being pressed.
+    observeEvent(input$done, {
+      # Return the brushed points. See ?shiny::brushedPoints.
+      stopApp(brushedPoints(data, input$brush))
+    })
+  }
+
+  runGadget(ui, server)
+}
+
+# just run gadget
+ggbrush(mtcars, "hp", "mpg")
+
+# run gadget in paneViewer
+runGadget(ui, server, viewer = paneViewer(minHeight = 500))
+
+```
+
+### How to install it as as Addins 
+
+
+http://rstudio.github.io/rstudioaddins/
+
+If you want to create your own RStudio addins, all you need to do is:
+
+1. Create an R package,
+2. Create some R functions, and
+3. Create a file at inst/rstudio/addins.dcf **in your package directory**,
+
+dcf extension: Digital Rights Management
+
+Each Addin shoud have file with content like this:
+```
+Name: Insert %in%
+Description: Inserts `%in%` at the cursor position.
+Binding: insertInAddin
+Interactive: false
+```
+
+
+
+### rstudioapi - interaction with code
+
+1. getActiveDocumentContext()	- Returns information about the currently active RStudio document. See below for more details.
+2. insertText(location, text, id = NULL) -	Insert text at a specific location within a document.
+3. setDocumentContext(text, id = NULL) - Set the contents of a document open in RStudio.
+
+
+The list returned from getActiveDocumentContext() provides the following information about the active RStudio document:
+
+1. id — The unique document id.
+3. path — The path to the document on disk.
+3. contents — The contents of the document.
+4. selection — A list of selections.
+
+```{r}
+
+
+
+
+```
+
+
+
+
+## Shiny webPages
+
+
+## Shiny and markdown
+
+See: https://rmarkdown.rstudio.com/authoring_shiny.html
+
+
+### inputs and renders
+
+First simplified way with inputs and renders
+```{r}
+inputPanel(
+  selectInput("n_breaks", label = "Number of bins:",
+              choices = c(10, 20, 35, 50), selected = 20),
+  
+  sliderInput("bw_adjust", label = "Bandwidth adjustment:",
+              min = 0.2, max = 2, value = 1, step = 0.2)
+)
+
+renderPlot({
+  hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
+       xlab = "Duration (minutes)", main = "Geyser eruption duration")
+  
+  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+  lines(dens, col = "blue")
+})
+```
+
+### Full app from directory
+```{r}
+shinyAppDir(
+system.file("examples/06_tabsets", package = "shiny"),
+options = list(
+  width = "100%", height = 550
+)
+)
+```
+
+### Full app defined in markdow
+```{r}
+
+z <- 100 # IM!! wariable will be seen inside our app
+
+shinyApp(
+
+ ui = fluidPage(
+    actionButton('a1','a1')
+   ,verbatimTextOutput('v1')
+ )
+
+,server = 
+  function(input, output, session){
+    output$v1 <- renderPrint({
+      input$a1
+      list(runif(1), z)
+    })
+  }
+)
+
+```
+
+
+
+## Extensions
+
+
+### p:DT
+
+
+#### list basic options
+
+```{r}
+
+
+datatable(data
+          , options = list()
+          , class = "display"
+          , callback  = JS("return table;")
+          , rownames
+          , colnames
+          , container
+          , caption   = NULL
+          , filter    = c("none", "bottom", "top")
+          , escape    = TRUE
+          , style     = "default"
+          , width     = NULL
+          , height    = NULL
+          , elementId = NULL
+          , fillContainer = getOption("DT.fillContainer", NULL)
+          , autoHideNavigation = getOption("DT.autoHideNavigation", NULL)
+          , selection  = c("multiple", "single", "none")
+          , extensions = list()
+          , plugins    = NULL
+          , editable  = FALSE)
+
+
+```
+
+
+#### editable
+
+
+Here no interaction with server side so changes are not saved!!!
+
+```{r, play=TRUE}
+
+library(shiny)
+require(DT)
+
+ui <- fluidPage( DT::DTOutput('dt1')
+                ,verbatimTextOutput('v1'))
+
+server <- function(input, output, session) {
+  output$dt1 <- renderDT({DT::datatable( head(iris)
+                                        , editable = TRUE
+                                        )}, server = TRUE) # server=TRUE  IM!!
+
+  
+  output$v1 <- renderPrint({
+      info = input$dt1_cell_edit
+      str(info)
+      # extracting info about cell we have edited
+      i = info$row 
+      j = info$col
+      v = info$value
+      list(i, j, v)
+  })
+}
+shinyApp(ui, server)
+
+```
+
+
+How to save changes on the server side
+
+1. First of all we have to know about event: input$x2_**cell_edit** . 
+2. Secondly there is a f:replaceData and f:dataTableProxy
+3. DT in opitons must have to set editable=TRUE
+
+See: https://yihui.shinyapps.io/DT-edit/
+
+In this example there are three tables with different setting. 
+```{r, play=TRUE}
+
+library(shiny)
+library(DT)
+
+shinyApp(
+  
+  ui = fluidPage(
+    title = 'Double-click to edit table cells',
+    
+    # our three tables
+    fluidRow(column(12, h1('Client-side processing'), hr(), DTOutput('x1'))),
+    fluidRow(column(12, h1('Server-side processing'), hr(), DTOutput('x2'))),
+    fluidRow(column(12, h1('Server-side processing (no row names)'), hr(), DTOutput('x3')))
+  ),
+  
+  server = function(input, output, session) {
+    d1 = iris
+    d1$Date = Sys.time() + seq_len(nrow(d1))
+    
+    d2 = d3 = d1 # we have three data sets for each of our three tables
+
+    options(DT.options = list(pageLength = 5)) # we can set global options for DT !!!
+
+    output$x1 = renderDT(d1, selection = 'none', server = FALSE, editable = TRUE)
+    output$x2 = renderDT(d2, selection = 'none', editable = TRUE)
+    output$x3 = renderDT(d3, selection = 'none', rownames = FALSE, editable = TRUE)
+
+    # creates a proxy object that can be used to manipulate an existing DataTables instance in a Shiny app, e.g. select rows/columns, or add rows.
+    proxy2 = dataTableProxy('x2')
+
+    observeEvent(input$x2_cell_edit, {
+      info = input$x2_cell_edit
+      str(info)
+      # extracting info about cell we have edited
+      i = info$row 
+      j = info$col
+      v = info$value
+      
+      # in next two lines we will update data
+      d2[i, j] <<- DT::coerceValue(v, d2[i, j])
+      replaceData(proxy2, d2, resetPaging = FALSE)  # important
+    })
+
+    
+    proxy3 = dataTableProxy('x3')
+
+    observeEvent(input$x3_cell_edit, {
+      info = input$x3_cell_edit
+      str(info)
+      i = info$row
+      j = info$col + 1  # column index offset by 1
+      v = info$value
+      d3[i, j] <<- DT::coerceValue(v, d3[i, j])
+      replaceData(proxy3, d3, resetPaging = FALSE, rownames = FALSE)
+    })
+  }
+)
+
+```
+
+
+#### selcting columns and rows
+
+rows
+```{r, play = TRUE}
+
+ui <- fluidPage(
+   DT::DTOutput('dt1')
+  ,verbatimTextOutput('v1')
+)
+
+server <- function(input, output, session) {
+  
+  output$dt1 <- renderDT({
+    head(diamonds, 20)
+  })
+  output$v1 <- renderPrint({
+    input$dt1_rows_selected # if nothing is selected we get NULL
+  })
+}
+shinyApp(ui, server)
+```
+
+columns
+```{r, play = TRUE}
+
+ui <- fluidPage(
+   DT::DTOutput('dt1')
+  ,verbatimTextOutput('v1')
+)
+
+server <- function(input, output, session) {
+  
+  output$dt1 <- renderDT({
+      datatable(  head(diamonds, 20)
+                , selection = list(target = 'column')) #IM!!
+  })
+  output$v1 <- renderPrint({
+    input$dt1_columns_selected # if nothing is selected we get NULL
+  })
+}
+shinyApp(ui, server)
+```
+
+
+
+rows and columns
+
+calls
+```{r, play = TRUE}
+
+ui <- fluidPage(
+   DT::DTOutput('dt1')
+  ,verbatimTextOutput('v1')
+)
+
+server <- function(input, output, session) {
+  
+  output$dt1 <- renderDT({
+      datatable(  head(diamonds, 20)
+                , selection = list(target = 'cell')) #IM!!
+  })
+  output$v1 <- renderPrint({
+    input$dt1_cell_clicked # if nothing is selected we get NULL
+  })
+}
+shinyApp(ui, server)
+```
+
+#### getting information about table
+
+1. **input$tableId_cell_clicked**: information about the cell being clicked of the form  list(row = row_index, col = column_index, value = cell_value) (example)
+2. **input$tableId_rows_current**: the indices of rows on the current page
+3, **input$tableId_rows_all**: the indices of rows on all pages (after the table is filtered by the search strings)
+4. **input$tableId_search**: the global search string
+5. **input$tableId_search_columns**: the vector of column search strings when column filters are enabled
+6. **input$tableId_state**: the state information of the table (a list containing the search string, ordering and paging information; it is available only if the option stateSave = TRUE is applied to the table)
+
+
+
+```{r, play = TRUE}
+
+fluidPage(
+
+  title = 'Select Table Rows',
+
+  h1('A Client-side Table'),
+
+  fluidRow(
+    column(6, DT::dataTableOutput('x1')),
+    column(6, plotOutput('x2', height = 500))
+  ),
+
+  hr(),
+
+  h1('A Server-side Table'),
+
+  fluidRow(
+    column(9, DT::dataTableOutput('x3')),
+    column(3, verbatimTextOutput('x4'))
+  )
+
+)
+
+library(shiny)
+library(DT)
+
+shinyServer(function(input, output, session) {
+
+  output$x1 = DT::renderDataTable(cars, server = FALSE)
+
+  # highlight selected rows in the scatterplot
+  output$x2 = renderPlot({
+    s = input$x1_rows_selected
+    par(mar = c(4, 4, 1, .1))
+    plot(cars)
+    if (length(s)) points(cars[s, , drop = FALSE], pch = 19, cex = 2)
+  })
+
+  # server-side processing
+  mtcars2 = mtcars[, 1:8]
+  output$x3 = DT::renderDataTable(mtcars2, server = TRUE)
+
+  # print the selected indices
+  output$x4 = renderPrint({
+    s = input$x3_rows_selected
+    if (length(s)) {
+      cat('These rows were selected:\n\n')
+      cat(s, sep = ', ')
+    }
+  })
+
+})
+
+
+```
+
+
+
+### p:rhandsontable
+
+rhandsontable in shiny: https://jrowen.github.io/rhandsontable/#shiny
+
+Basic Input
+
+```{r}
+
+ui <- fluidPage(
+  rHandsontableOutput('rh1')  
+)
+
+se <- function(input, output, session){
+  output$rh1 <- renderRHandsontable({
+    # defining data set
+    DF = data.frame( integer   = 1:10
+                    ,numeric   = rnorm(10)
+                    ,logical   = rep(TRUE, 10)
+                    ,character = LETTERS[1:10]
+                    ,factor    = factor(  letters[1:10]
+                                        , levels = letters[10:1]
+                                        , ordered = TRUE)
+                    ,factor_allow = factor( letters[1:10]
+                                           ,levels = letters[10:1]
+                                           ,ordered = TRUE)
+                    ,date = seq(  from = Sys.Date()
+                                , by = "days"
+                                , length.out = 10)
+                    ,stringsAsFactors = FALSE)
+    
+    rhandsontable(  DF
+                  , width = 600
+                  , height = 300) %>%
+        # modifying selected columns
+        hot_col( "factor_allow" # column name
+                , allowInvalid = TRUE) # attributes of column
+    
+  })
+}
+shinyApp(ui, se)
+
+```
+
+
+
+Interactive input
+```{r, play=TRUE}
+
+ui <- fluidPage(
+  
+  rHandsontableOutput('rh1')
+)
+  
+  
+se <- function(input, output, session){
+  
+  output$rh1 <- rhandsontable::renderRHandsontable({
+    
+    if( is.null( input$rh1)){ # jezeli pierwsze uruchomienie i tabela nie istnieje
+        data <- data.frame(a=FALSE, b=TRUE, c=letters[1:10], d=1:10, e = 1:10)
+        rhandsontable(data)
+    }else{
+        hot <- hot_to_r( input$rh1) # sciagniecie wartosci z wyswietlonej tabeli
+        hot %<>% mutate(e=10 * d) # values in column 'e' are calculated using values from column 'd'
+        rhandsontable(hot)
+    }
+  })
+}
+
+
+shinyApp(ui, se)
+```
+
+
+
+Sparlines
+
+```{r, play=TRUE}
+
+ui <- fluidPage(
+  
+  rHandsontableOutput('rh1')
+)
+
+se <- function(input, output, session){
+  
+  output$rh1 <- renderRHandsontable({
+        
+    # creating part of data withour chars 
+    DF = data.frame(  val   = 1:10
+                    , bool  = TRUE
+                    , big   = LETTERS[1:10]
+                    , small = letters[1:10]
+                    , dt    = seq(from = Sys.Date(), by = "days", length.out = 10)
+                    , stringsAsFactors = FALSE)
+    
+    # adding column 'chart' with charts (called sparklines)
+    DF$chart = c(sapply( 1:5 # five element on each chart
+                        ,function(x) jsonlite::toJSON(list( values=rnorm(10)
+                                                           ,options = list(type = "bar")))),
+                 sapply( 1:5 # five element on each chart
+                        ,function(x) jsonlite::toJSON(list( values=rnorm(10)
+                                                           ,options = list(type = "line")))))
+    
+    rhandsontable(DF, rowHeaders = NULL, width = 550, height = 300) %>%
+      hot_col("chart", renderer = htmlwidgets::JS("renderSparkline"))
+  })
+  
+}
+shinyApp(ui, se)
+
+```
+
+
+
+
+#### brushing
+
+See: https://shiny.rstudio.com/articles/plot-interaction.html
+
+
+Getin information aboout action:
+
+1. input$plot_**click**
+2. input$plot_**dblclick**
+3. input$plot_**hover**
+4. input$plot_**brush**
+
+It works also with p:ggplot2
+
+Click, hover and brush
+```{r}
+
+ui <- basicPage(
+  
+  #ui plot - here I select option for type of interaction
+  plotOutput(  outputId = "plot1"
+              ,click    = "plot_click" # IM!!
+              ,dblclick = "plot_dblclick"
+              ,hover    = "plot_hover"
+              ,brush    = "plot_brush"
+  )
+  , br()
+  , tabsetPanel(
+       tabPanel("click",   verbatimTextOutput("click"))
+      ,tabPanel("dbclick", verbatimTextOutput("dbclick"))
+      ,tabPanel("hover",   verbatimTextOutput("hover"))
+      ,tabPanel("brush",   verbatimTextOutput("brush"))
+      ,tabPanel("brushed_points", verbatimTextOutput("brushed_points"))
+  )
+)
+
+
+server <- function(input, output) {
+  
+  # rendering plot
+  output$plot1 <- renderPlot({
+    plot(mtcars$wt, mtcars$mpg)
+  })
+
+  # info about interaction
+  output$click   <- renderPrint({input$plot_click})
+  output$dbclick <- renderPrint({input$plot_dblclick})
+  output$hover   <- renderPrint({input$plot_hover})
+  output$brush   <- renderPrint({input$plot_brush})
+  output$brushed_points <- renderPrint({ # IM!!
+        brushedPoints(  mtcars
+                      , input$plot_brush
+                      , xvar = "wt"
+                      , yvar = "mpg"
+                      , allRows = FALSE) # If TRUE, the input data frame will have a new column, selected_, which indicates whether the row was inside the brush (TRUE) or outside the brush (FALSE)
+  })
+}
+shinyApp(ui, server)
+```
+
+
+### p:shinyalerts
+
+simplified version od shiny *modalDialog*. 
+
+```{r, play=TRUE}
+library(shiny)
+library(shinyalert)
+
+ui <- fluidPage(
+  useShinyalert(),  # Set up shinyalert
+  actionButton("preview", "Preview")
+)
+
+server <- function(input, output, session) {
+  observeEvent(input$preview, {
+    # Show a modal when the button is pressed
+    shinyalert("Oops!", "Something went wrong.", type = "error")
+  })
+}
+
+shinyApp(ui, server)
+
+```
+
+
+
+### p:shinyAce
+
+
+```{r, play=TRUE}
+library(shiny)
+require(shinyAce)
+
+ui <- fluidPage(
+  div( # div to change width od Editor
+    aceEditor(  outputId = "myEditor"
+            , value = "Initial text for editor here"
+            , mode="r" # use f:getAceModes to see all available modes
+            , theme="ambiance" # use f:getAceThemes to see all available themes
+            , height = '300px'
+            , fontSize = 12
+            , showLineNumbers = TRUE
+            , selectionId = 'selected_elements'
+            , cursorId = 'cursor_change'
+            )
+    ,style = 'width:400px;')
+  ,actionButton('a1','a1')
+  ,verbatimTextOutput('v1')
+)
+
+server <- function(input, output, session) {
+  
+  output$v1 <- renderPrint({
+    input$a1
+    code <- isolate(input$myEditor)
+    eval(parse(text=code))
+  })
+  
+}
+
+shinyApp(ui, server)
+
+```
+
+
+### HIT!!! p:shinyWidgets
+
+```{r, play=TRUE}
+
+require(shiny)
+require(shinyWidgets)
+
+ui <- fluidPage(
+  
+   switchInput('si')
+  ,materialSwitch('ms')
+  ,pickerInput(
+    inputId = "id", 
+    label = "Select/deselect all options", 
+    choices = LETTERS, options = list(`actions-box` = TRUE), 
+    multiple = TRUE)
+  ,checkboxGroupButtons(
+      inputId = "somevalue", label = "Make a choice :", 
+      choices = c("Choice A", "Choice B", " Choice C", "Choice D"), 
+      justified = TRUE, status = "primary",
+      checkIcon = list(yes = icon("ok", lib = "glyphicon"), no = icon("remove", lib = "glyphicon"))
+    )
+  ,dropdownButton(
+    tags$h3("List of Input"),
+    selectInput(inputId = 'xcol', label = 'X Variable', choices = names(iris)),
+    selectInput(inputId = 'ycol', label = 'Y Variable', choices = names(iris), selected = names(iris)[[2]]),
+    sliderInput(inputId = 'clusters', label = 'Cluster count', value = 3, min = 1, max = 9),
+    circle = TRUE, status = "danger", icon = icon("gear"), width = "300px",
+    tooltip = tooltipOptions(title = "Click to see inputs !")
+  )
+  ,radioGroupButtons(inputId = "somevalue", choices = c("A", "B", "C"))
+  ,actionBttn(  'a1'
+              , 'a1'
+              , icon  = 
+              , style = 'simple' # simple, bordered, minimal, stretch, jelly, gradient, fill, material-circle, material-flat, pill, float, unite
+              , color = 'warning' # default, primary, warning, danger, success, royal
+              , size  = 'md' # xs,sm, md, lg
+              , block = FALSE) # full width button
+)
+
+se <- function(input, output, session){}
+
+shinyApp(ui, se)
+
+```
+
+
+Gallery of buttons
+```{r, play=TRUE}
+
+library(shiny)
+
+ui <- fluidPage(
+  
+   actionBttn('a1','a1', icon = icon(name = 'address=book'))
+  ,actionBttn('a2','a2', style = 'simple', color = 'success')
+  ,actionBttn('a3','a3', style = 'bordered', color = 'success')
+  ,actionBttn('a4','a4', style = 'minimal', color = 'success')
+  ,actionBttn('a5','a5', style = 'stretch', color = 'success')
+  ,actionBttn('a6','a6', style = 'jelly', color = 'success')
+  ,actionBttn('a7','a7', style = 'gradient')
+  ,actionBttn('a8','a8', style = 'fill')
+  ,actionBttn('a9','a9', style = 'material-circle')
+  ,actionBttn('a10','a10', style = 'material-flat')
+  ,actionBttn('a11','a11', style = 'pill')
+  ,actionBttn('a12','a12', style = 'float', color = 'success')
+  ,actionBttn('a13','a13', style = 'unite')
+)
+server <- function(input, output, session) {}
+shinyApp(ui, server)
+```
+
+
+
+### p:htmlwidgets
+
+https://shiny.rstudio.com/articles/#extensions
+
+### p:shinydashboard
+
+
+<br><lfr>Warning!</lfr>
+<div class="btn-danger"> to generate dynamically manuItem use renderMenu and sidebarMenuOutput!!! NOT renderUI !!!! </div><br>
+```{r, play=TRUE}
+require(shinydashboard)
+
+u <- dashboardPage(
+
+dashboardHeader(title = "Basic dashboard", disable = FALSE),
+
+#to generate dynamically manuItem use renderMenu and sidebarMenuOutput!!! NOT renderUI !!!!
+dashboardSidebar(disable = FALSE,
+                 sidebarMenu(
+                    menuItem( text    = "Dashboard" 
+                             ,tabName = "plot"  #tabName correspond witd the same value in tabItem!!!
+                             ,icon    = icon("dashboard"))
+                   ,menuItem( text       = "Widgets"
+                             ,icon       = icon("th")
+                             ,tabName    = "text"
+                             ,badgeLabel = "new" 
+                             ,badgeColor = "green")
+           )),
+
+dashboardBody(
+              tabItems( #tabItemx is optional if we want to display boex in dynamic configuration dependent on buttons in menuItem
+              tabItem( tabName = 'plot' #tabName correspond witd the same value in MenuItem!!!
+                      ,box(  title = 'plot_box'
+                           , plotOutput("plot1", height = 250) 
+                           , width = '100%', solidHeader = TRUE)),
+              tabItem( tabName = 'text' 
+                      ,box(  title = 'text_box'
+                           , textInput('text', 'text', '')
+                           , width = '100%', solidHeader = TRUE))
+              )
+)
+)
+
+
+
+s <- function(input, output, session){
+        output$plot1 <- renderPlot({
+            ggplot() + geom_density(data=diamonds, aes(x=price))
+        })
+}
+    
+shinyApp(u, s)
+```
+
+
+Dynamic menu
+
+```{r}
+
+library(shiny)
+# ========== Dynamic sidebarMenu ========== example from help
+ui <- dashboardPage(
+  dashboardHeader(title = "Dynamic sidebar"),
+  dashboardSidebar(
+    sidebarMenuOutput("menu")
+  ),
+  dashboardBody()
+)
+
+server <- function(input, output) {
+  output$menu <- renderMenu({
+    sidebarMenu(
+      menuItem("Menu item", icon = icon("calendar"))
+    )
+  })
+}
+shinyApp(ui, server)
+```
+
+
+
+## My apps
+
+### RAS
+
+#### Building modules manual
+
+
+**Most simple example**
+```{r, play=TRUE}
+
+# modules -----------------------------------------------------------------
+
+
+
+plots_UI <- function(  id                  # f:callModule refers to this label.
+										 , label = 'my_plot'){ # This is not an ID !!!
+	
+	# f:ns for creating unique ID
+	ns <- NS(id) 
+	
+	# list of inputs (remember about putting id into f:ns)
+	tagList(
+		 actionButton(ns('run'), 'run')
+		,plotOutput(ns('plot'))
+	)
+}
+	
+	
+	
+plots_server <- function(  input
+												 , output
+												 , session
+												 , api_save_input_values # saving information about inputs values
+												 , Notes){ # for notes
+	
+	output$plot <- renderPlot({
+    input$run
+		hist(rnorm(1000))
+	})
+}
+
+
+# calling modules inside shiny app ----------------------------------------
+
+
+library(shiny)
+
+ui <- fluidPage(
+	plots_UI('plot_gg_test')
+)
+
+
+server <- function(input, output, session) {
+  callModule(  plots_server
+  					 , 'plot_gg_test'
+  					 , reactive(input$api_save_input_values)
+  					 , reactive(input$Notes))
+}
+
+shinyApp(ui, server)
+```
+
+
+
+**error info**
+```{r, play=TRUE}
+# modules -----------------------------------------------------------------
+
+
+
+plots_UI <- function(  id                  # f:callModule refers to this label.
+										 , label = 'my_plot'){ # This is not an ID !!!
+	
+	# f:ns for creating unique ID
+	ns <- NS(id) 
+	
+	# list of inputs (remember about putting id into f:ns)
+	tagList(
+		 actionButton(ns('run'), 'run')
+		# ,numericInput(ns('value'), value = 1, min = 10, max=1000, step = 50, label = 'sample size')
+		,textInput(ns('value'), value = '1')
+		,plotOutput(ns('plot'))
+	)
+}
+
+	
+	
+plots_server <- function(  input
+												 , output
+												 , session
+												 , api_save_input_values # saving information about inputs values
+												 , Notes){ # for notes
+	
+	output$plot <- renderPlot({
+    input$run
+		error_info(inherits(tryCatch(hist(rnorm(as.numeric(input$value))), error = function(e) e ), 'error'), 'blad')
+	})
+}
+
+
+# calling modules inside shiny app ----------------------------------------
+
+
+library(shiny)
+
+ui <- fluidPage(
+	plots_UI('plot_gg_test')
+)
+
+
+server <- function(input, output, session) {
+  callModule(  plots_server
+  					 , 'plot_gg_test'
+  					 , reactive(input$api_save_input_values)
+  					 , reactive(input$Notes))
+}
+
+shinyApp(ui, server)
+
+```
+
+
+**Dynamic tabs**
+```{r, play=TRUE}
+
+# modules -----------------------------------------------------------------
+
+
+
+plots_UI <- function(  id                  # f:callModule refers to this label.
+										 , label = 'my_plot'){ # This is not an ID !!!
+	
+	# f:ns for creating unique ID
+	ns <- NS(id) 
+	
+	# list of inputs (remember about putting id into f:ns)
+	tagList(
+		 actionButton(ns('run'), label = 'run')
+		,numericInput(ns('value'), value = 1, min = 10, max=1000, step = 50, label = 'sample size')
+		,sliderInput(ns('slid_den'), min = 1, max = 5, value = 1, label = 'tabs number')
+		,uiOutput(ns('Plot'))
+	)
+}
+
+	
+	
+plots_server <- function(  input
+												 , output
+												 , session
+												 , api_save_input_values # saving information about inputs values
+												 , Notes){ # for notes
+	
+	# dynamic rendering tabs
+	output$Plot <- renderUI({
+		ns <- session$ns
+		l.shiny.tabs_without_subtabs(  tab_name     = 'Plot.den_gg.tab.' # this must be unique for each use of function
+																	 , dynamic      = TRUE
+																	 , number       = 5
+																	 , slider_input = input$slid_den
+																	 , ns           = ns)
+		
+	})
+	
+	# rendering plot in selected tab
+	observe({
+		  input$run
+			selected_main_tab <- isolate(input$Plot.den_gg.tab.0)
+			output[[paste0(selected_main_tab,'_t')]] <- renderPlot({
+					hist(rnorm(input$value))
+			})
+	})
+	
+}
+
+
+# calling modules inside shiny app ----------------------------------------
+
+
+library(shiny)
+
+ui <- fluidPage(
+	plots_UI('plot_gg_test')
+)
+
+
+server <- function(input, output, session) {
+  callModule(  plots_server
+  					 , 'plot_gg_test'
+  					 , reactive(input$api_save_input_values)
+  					 , reactive(input$Notes))
+}
+
+shinyApp(ui, server)
+
+
+
+```
+
+
+**Static tabs**
+```{r, play=TRUE}
+
+# modules -----------------------------------------------------------------
+
+
+
+plots_UI <- function(  id                  # f:callModule refers to this label.
+										 , label = 'my_plot'){ # This is not an ID !!!
+	
+	# f:ns for creating unique ID
+	ns <- NS(id) 
+	
+	# list of inputs (remember about putting id into f:ns)
+	tagList(
+		 actionButton(ns('run'), label = 'run')
+		,numericInput(ns('value'), value = 1, min = 10, max=1000, step = 50, label = 'sample size')
+		# ,sliderInput(ns('slid_den'), min = 1, max = 5, value = 1, label = 'tabs number')
+		,uiOutput(ns('Plot'))
+	)
+}
+
+	
+	
+plots_server <- function(  input
+												 , output
+												 , session
+												 , api_save_input_values # saving information about inputs values
+												 , Notes){ # for notes
+	
+	# dynamic rendering tabs
+	output$Plot <- renderUI({
+		ns <- session$ns
+		l.shiny.tabs_without_subtabs(  tab_name     = 'Plot.den_gg.tab.' # this must be unique for each use of function
+																	 , dynamic      = FALSE
+																	 , number       = 5
+																	 , slider_input = NULL
+																	 , ns           = ns)
+		
+	})
+	
+	# rendering plot in selected tab
+	observe({
+		  input$run
+			selected_main_tab <- isolate(input$Plot.den_gg.tab.0)
+			output[[paste0(selected_main_tab,'_t')]] <- renderPlot({
+					hist(rnorm(input$value))
+			})
+	})
+	
+}
+
+
+# calling modules inside shiny app ----------------------------------------
+
+
+library(shiny)
+
+ui <- fluidPage(
+	plots_UI('plot_gg_test')
+)
+
+
+server <- function(input, output, session) {
+  callModule(  plots_server
+  					 , 'plot_gg_test'
+  					 , reactive(input$api_save_input_values)
+  					 , reactive(input$Notes))
+}
+
+shinyApp(ui, server)
+
+```
+
+
+
+
+
+
+```{r, play=TRUE}
+
+# modules -----------------------------------------------------------------
+
+plots_UI <- function(  id                  # f:callModule refers to this label.
+										 , label = 'my_plot'){ # This is not an ID !!!
+	
+	# f:ns for creating unique ID
+	ns <- NS(id) 
+	
+	# list of inputs (remember about putting id into f:ns)
+	tagList(
+		 actionButton(ns('save_idle'), label = 'run_and_save_idle')
+		,actionButton(ns('save_incrementally'), label = 'run_and_save_incrementally')
+	)
+}
+
+
+									
+	
+plots_server <- function(  input
+												 , output
+												 , session
+												 , api_save_input_values # saving information about inputs values
+												 , Notes){ # for notes
+	
+	observe({
+		
+	data <- dplyr::sample_n(mtcars, 10)
+	
+	# rendering plot in selected tab
+	observeEvent(input$save_idle, {
+		
+		# zapis w trybie idle
+		l.shiny.api.save_data(  data      = data
+													,	data_name = 'data_2' # name of data (if there is only one kind of data set to save it is recomended to give empty data_name)
+													, name      = 'super_Plot' # name of module
+													, if_add_input_val = if(is.null(api_save_input_values)) NULL else api_save_input_values() # this cannot be just input$api_save_input_values because it is from the outide of the module
+													, notes_input = if(is.null(Notes)) NULL else Notes() # this cannot be just input$Notes because this from the outside of the module
+													, api_env         = api_env
+													, selected_navbar = NULL # selected_navbar
+													, save_mode       = TRUE
+													, isolate(input$Plot_den_gg.select_variable)
+													, isolate(input$slid)
+		)
+		
+	})
+		
+		
+		# zapis w trybie nie idle
+	observeEvent(input$save_incrementally,{
+			l.shiny.api.save_data(  data      = NULL # nie podaje danych bo tutaj tylko kopiuje dane z idle
+														,	data_name = 'data_2' # name of data (if there is only one kind of data set to save it is recomended to give empty data_name)
+														, name             = 'super_Plot' # name of module
+														, if_add_input_val = if(is.null(api_save_input_values)) NULL else api_save_input_values() # this cannot be just input$api_save_input_values because it is from the outide of the module
+														, notes_input = if(is.null(Notes)) NULL else Notes()  # this cannot be just input$Notes because this from the outside of the module
+														, api_env         = api_env
+														, selected_navbar = NULL # selected_navbar
+														, save_mode       = FALSE # save_mode()# this cannot be just input$save_mode because this is from the outside of the module
+														, isolate(input$Plot_den_gg.select_variable)
+														, isolate(input$slid)
+			)
+	}, label = 'save_no_idle')
+	})
+}
+
+
+# calling modules inside shiny app ----------------------------------------
+
+
+library(shiny)
+
+ui <- fluidPage(
+	plots_UI('plot_gg_test')
+)
+
+
+server <- function(input, output, session) {
+  callModule(  plots_server
+  					 , 'plot_gg_test'
+  					 , reactive(input$api_save_input_values)
+  					 , reactive(input$Notes))
+}
+
+shinyApp(ui, server)
+
+
+
+```
+
+
+
+
+```{r, play=TRUE}
+
+require(l.RAS)
+
+f1 <- function(){
+	
+	x <- 10000
+	
+	l.RAS::interp_assign_from_local_to_global(destination_variable = 'zw', value_to_assign = x)
+	
+	l.RAS::interp_assign_from_global_to_local(destination_variable = 'bb', value_to_assign = zw)
+	
+	print(bb)
+	
+}
+
+f1()
+
+```
+
+
+
+**Executing code from input**
+```{r, play=TRUE}
+validate(need(try(eval(parse(text=paste0('names_data <- names(', input$api_df_processing_data, ')') ))) 
+	  							, 'such data set does not exist'))
+```
+
+
+
+
+
+
+
+
+
+
+
+  

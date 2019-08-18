@@ -1,0 +1,1274 @@
+# FUNCTIONS AND ENVIRONEMNTS
+
+
+## Functions 
+
+### Types of functions
+
+Types of functions we can meet (this division is not exclusive)
+
+1. **Primitive** vs **closure**: Primitive functions are only found in the base package, and since they operate at a low level, they can be more efficient (primitive replacement functions don’t have to make copies), and can have different rules for argument matching (e.g. switch and call). This, however, comes at a cost of behaving differently from all other functions in R. Hence R core generally avoids creating them unless there is no other option. Jest jeszcze kategoria 'internal' podobna do 'primitive'. Duzo o 'internal' i 'primitive' jest w artukule Wickhama *R’s C interface* ([link](http://adv-r.had.co.nz/C-interface.html)), oraz na stronie ([link](http://www.biosino.org/R/R-doc/R-ints/_002eInternal-vs-_002ePrimitive.html))
+2. **Generic functions** - Generic functions (objects from or extending class genericFunction) are EXTENDET function objects, containing information used in creating and dispatching methods for this function. They also identify the package associated with the function and its methods. Generalnie sa to funkcje kore mozna przeciazac (staja sie tak jakby metodami dla klas obiektow).
+3. **Replacement functions** [funkcje podstawieniowe]. Funkcje uzywajace operatora przypisania `<-` slozace do wygodnego modyfikowania wlasciwosci obiektu. 
+
+Warto tez poczytac o **infix operator**: https://www.datamentor.io/r-programming/infix-operator
+
+
+```{r}
+#czy funkcja jest 'primitive':
+is.primitive('mean')
+
+# Czy funkcja jest 'generic':
+require(methods)
+isGeneric('mean')
+
+
+#to jest chyba lista primitive functions
+nms <- names(methods:::.BasicFunsList)   
+
+```
+
+
+
+
+### Extracting function code
+
+
+Extracting methods depends on type of function
+
+1. Just press F2-not always give you detailed code
+
+2. If it is primitive or internal function use f:show_c_course(pryr).<br>
+`pryr::show_c_source(.Internal(mean(x)))`  <br>
+`pryr::show_c_source(.Primitive(sum(x)))`
+
+3. If it is S3 method use f:getS3method(utils)-see example below: 
+
+```{r}
+# Extractig code from s3 method
+
+#step 1-check if it is s3 object
+require(pryr)
+pryr::ftype(weighted.mean)
+
+# step 2-see all classes
+methods(weighted.mean)
+
+# step 3-find class you are interested in. Usually 'default' has more intresting code. 
+require(utils)
+getS3method(f = 'weighted.mean', class = 'default')
+
+```
+
+4. If it is S4 method use f:getMethod('methods')
+```{r}
+require(Matrix) # pakiet z funkcja ktora ma metode S4
+
+# sprawdzam czy niteresujaca funkcja jest typu S4
+pryr::ftype(chol2inv)
+
+# wyswietlam jakie sa dostepne metody dla tej funkcji
+showMethods(chol2inv) # funkcja chol2inv 
+
+# wyswietl kod dla metody chol2inv
+getMethod('chol2inv', 'C')
+
+findMethod('chol2inv', 'diagonalMatrix')
+
+```
+
+
+### Functions defining
+
+
+
+```{r}
+z <- function(x, y, z=10)  #z is default value. Names 'x', 'y' i 'z' refers only to variables INSIDE function.
+{
+ 
+  a <- 10 #przypisanie lokalne
+  b <<- 100 #przypisanie globalne
+  
+  return() #to co ma byc zwrocone. Moze to byc dowolny typ danych (macierz, lista, wektor itp)
+}
+```
+
+
+### Unspecified formal arguments [argumenty nadmiarowe]
+
+
+
+```{r}
+z <- function(x,...) #argumenty nadmiarowe beda przekazane do funkcji zagniezdzonej
+{
+  g(y, w, ...)
+}
+```
+Przyklad:
+
+```{r}
+www <- function(x,...)
+{
+  z <- list(...)
+  return(x + z[[2]])
+}
+www(x=2, y=100, u=300)
+```
+
+
+How to check if we passed any argument?
+
+```{r}
+fff <- function(...){
+	if(length(list(...))==0){
+		print('there is nothing')
+	}else{
+		print('there is something')
+	}
+}
+```
+
+
+
+
+### functions arguments without quotation marks
+
+
+
+
+#### Dla okreslonej ilosci argumentow
+
+
+```{r}
+
+z <- function(x){
+  z <- deparse(substitute(x))
+  return(z)
+}
+z(tr)
+
+
+ # exapmple 1
+l.fff <- function(a) {
+  z <- deparse(substitute(a))
+  diamonds[1:10, z]
+}
+
+l.fff(cut)
+
+
+# example 2
+l.fff1 <- function(a) {
+  abc <- deparse(substitute(a))
+  dplyr::select(.data = diamonds[1:10,], eval(parse(text=abc )) )
+}
+
+l.fff1(cut)
+
+#warning - proble with Handley's functions
+l.fff1 <- function(a) {
+  z <- deparse(substitute(a))
+  dplyr::select(.data = diamonds[1:10,], eval(parse(text=z )) ) # it will return always "z" variable
+}
+
+l.fff1(cut)
+
+
+
+```
+
+<br>
+This solution works for both arguments with quotations marks and without it.
+```{r}
+
+
+# example 3
+get_column <- function(zmienna){
+  if('character' %in% class(substitute(zmienna))){
+    zmienna_ost <- zmienna
+  }else{
+    zmienna_ost <- deparse(substitute(zmienna))
+  }
+  diamonds[1:10, zmienna_ost]
+}
+
+get_column(cut)
+get_column("cut")
+
+
+
+```
+
+
+
+
+#### Dla nieokreslonej ilosci argumentow
+
+```{r}
+
+foo <- function(a, ...) {
+    arg <- deparse(substitute(a))
+    dots <- substitute(list(...))[-1]
+    c(arg, sapply(dots, deparse))
+}
+
+x <- 1
+y <- 2
+z <- 3
+
+foo(x,y,z)
+```
+
+
+### recursive function
+
+
+
+#### f:Recall
+f:Recall is useful when you will need to rename function
+```{r}
+fib <- function(n)
+  if(n<=2) { if(n>=0) 1 else 0 } else Recall(n-1) + Recall(n-2)
+fibonacci <- fib; rm(fib)
+## renaming wouldn't work without Recall
+fibonacci(10) # 55
+
+```
+<br>
+If not you can use name of function for recursion:
+```{r}
+
+fib <- function(n)
+  if(n<=2) { if(n>=0) 1 else 0 } else fib(n-1) + fib(n-2)
+fib(10)
+
+```
+
+
+<br>
+Ciag fibbociego w dwoch wersjach
+```{r}
+
+
+
+
+fib_1 <- function(n){
+  
+  if(n<=2){ 
+    if(n>=0) 1 else 0 
+  }
+  else{
+    fib_1(n-1) + fib_1(n-2)
+  }
+}
+fib_1(5)
+
+
+
+fib_2 <- function(n){
+  
+  if(n<=2){ 
+    if(n>=0) return(1) else return(0)
+  }
+  else{
+    a <- fib_2(n-1)
+    b <- fib_2(n-2)
+    return(list(fib_2(n-1)[[1]] + fib_2(n-2)[[1]], a, b ))
+  }
+}
+
+fib_2(6)
+fib_2(6) %>% listviewer::jsonedit()
+
+
+```
+
+
+<br>
+Pouczajacy przykad funkcji rekurencyjnej do liczenia sumy skumulowej w roznych wariantach.
+
+```{r}
+
+# suma rekurencyjna - ciagniecie w dol
+
+f1 <- function(s=0,x){
+  if(x<1){
+    return(s)
+  }else{
+    s<-s+x
+    f1(s=s,x=x-1)
+  }
+}
+
+
+
+f1(0,10)
+
+
+
+# suma rekurencyjna - normalna rekurencja
+
+f2 <- function(x){
+  if(x<1){
+   return(0) 
+  }else{
+    x+f2(x-1)
+  }
+}
+
+f2(10)
+
+
+# suma rekurencyjna - zwykla rekurencja plus zapis sanych o poszczegolnych sumach i poszczegolnych dodawanych wartosiach
+
+f3 <- function(x){
+  
+  if(x < 1){
+    return(list(0,0))
+  }else{
+    list(x+f3(x-1)[[1]], x, f3(x-1))
+  }
+  
+}
+
+f3(10)
+
+
+# przypadek w ktorym dostaniemy ostateczna sume i element dodany poprzedni element. Dlaczego dostaniemy tylk tylt???
+
+f4 <- function(x){
+  
+  if(x < 1){
+    return(list(0,0))
+  }else{
+    list(x+f4(x-1)[[1]], x-1)
+  }
+  
+}
+ 
+f4(10)
+
+
+```
+
+<br>
+Ciagniecie informacji w gore dla listy
+```{r}
+
+lista <- list(a=5, b=list(c=20, d=list(e=50, f=100)))
+
+f5 <- function(x){
+  
+  if(is.numeric(x)){
+    x
+  }else{
+    list(sum( unlist(x) ), lapply(x, f5) )  
+  }
+}
+
+f5(lista)
+
+```
+
+
+
+
+### create infix function
+
+
+
+
+```{r}
+
+'%moje_dzialanie%' <- function(x,y)   #in real syntax use tits instead of  single quote
+{
+z <- x^2+y^3
+return(z)
+}
+x = 10
+y = 20
+x%moje_dzialanie%y
+```
+<br>
+
+### replacement functions [funkcje podstawieniowe]
+Przy definiowaniu funkcji w nazwie  musi byc symbol *<-*. Na końcu musi byc podany argument *value*.
+
+```{r}
+
+#example 1: ponizsza funkcja konwertuje wartosci powyzej 50 na inf.
+
+'cutoff<-' <- function(x, value){ #in real syntax use tits instead of  single quote
+x[x > value] <- Inf
+x
+}
+
+x <- 1:100
+cutoff(x) <- 50
+x
+
+
+
+#example 2: the following function allows you to modify the second element of a vector:
+
+
+'second<-' <- function(x, value) { #in real syntax use tits instead of  single quote
+  x[2] <- value
+  x
+}
+x <- 1:10
+second(x) <- 5L
+x
+
+
+```
+<br>
+
+
+### missing
+
+
+```{r}
+myplot <- function(x, y) {
+                if(missing(y)) {
+                        y <- x
+                        x <- 1:length(y)
+                }
+                plot(x, y)
+        }
+```
+
+
+
+### pmatch
+
+
+```{r}
+pmatch("m",   c("mean", "median", "mode")) # returns NA
+pmatch("med", c("mean", "median", "mode")) # returns 2
+```
+
+
+### Overloading functions [przeciazanie funkcji]-(concern generic functions)
+
+For more information see: objective orientated programing.
+
+```{r}
+
+plot.logical=function(obiekt) #overloading f:plot for 'logical' data type.
+{
+    
+}
+
+```
+
+
+
+### Arguments values from give vector
+
+
+
+
+```{r}
+center <- function(x, type = c('mean', 'median', 'trimmed')) {
+  type <- match.arg(type)
+  switch(type,
+         mean = mean(x),
+         median = median(x),
+         trimmed = mean(x, trim = .1))
+}
+x <- c(runif(100))
+center(x, 'mean')
+center(x, 'median')
+center(x,'ble') #wywali blad bo nie ma tego na liscie
+```
+
+
+
+```{r}
+require(tables)
+tabular( (Species + 1) ~ (n=1) + Format(digits=2)*(Sepal.Length + Sepal.Width)*(mean + sd), data=iris )
+
+```
+
+
+```{r}
+require(tables)
+require(xtable)
+z1 <- tabular( (Species + 1) ~ (n=1) + Format(digits=2)*(Sepal.Length + Sepal.Width)*(mean + sd), data=iris , html=F)
+
+html(tabular( (Species + 1) ~ (n=1) + Format(digits=2)*(Sepal.Length + Sepal.Width)*(mean + sd), data=iris ))
+
+
+require(tables)
+mydf <- data.frame(rowFactor1 = sample(letters[1:2], 100, replace = TRUE), 
+                colFactor1 = sample(LETTERS[1:2], 100, replace = TRUE), 
+                x = rnorm(100), 
+                rowFactor2 = sample(1:2, 100, replace = TRUE), 
+                colFactor2 = sample(1:2, 100, replace = TRUE))
+
+tab1 <- tabular(Heading()*RowFactor(rowFactor2, spacing = 1, 
+                        levelnames = c("rowLabel1", "rowLabel2"))*
+                Heading()*RowFactor(rowFactor1, 
+                        levelnames = c("b1", "b2")) ~ 
+                Heading()*Factor(colFactor2, 
+                        levelnames = c("colLabel1", "colLabel2") )*
+                Heading()*Factor(colFactor1, 
+                        levelnames = c("a1", "a2"))*
+                Heading()*(x)*Heading()*(mean), 
+        data = mydf)
+  
+  
+html(tab1)
+
+
+
+```
+
+
+
+
+
+```{r, o.l='h'}
+
+require(xtable)
+require(ggplot2)
+
+print(xtable(head(diamonds)), type='html', html.table.attributes='class="sortable"')
+
+```
+<div id="content">
+  <ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+  <li class="active"><a href="#red" data-toggle="tab">Red</a></li>
+    <li><a href="#orange" data-toggle="tab">Orange</a></li>
+    <li><a href="#yellow" data-toggle="tab">Yellow</a></li>
+    <li><a href="#green" data-toggle="tab">Green</a></li>
+    <li><a href="#blue" data-toggle="tab">Blue</a></li>
+  </ul>
+  <div id="my-tab-content" class="tab-content">
+  <div class="tab-pane active" id="red">
+  asdfdsafdsaf
+  <p>red red red red red red</p>
+  </div>
+  <div class="tab-pane" id="orange">
+  
+
+
+  <p>orange orange orange orange orange</p>
+  </div>
+  <div class="tab-pane" id="yellow">
+  sadfsdaf
+  <p>yellow yellow yellow yellow yellow</p>
+  </div>
+  <div class="tab-pane" id="green">
+  sadfvdasf
+  <p>green green green green green</p>
+  </div>
+  <div class="tab-pane" id="blue">
+  weefsdaf 
+  <p>blue blue blue blue blue</p>
+  </div>
+  </div>
+</div>
+
+
+
+
+### conditionals values of arguments
+
+```{r}
+
+f <- function(x, y=ifelse(x<10,0,10)){
+  print(y)
+}
+
+f(5)
+
+f(20)
+
+```
+
+
+
+### f:formals
+
+
+```{r}
+
+#lista argumentow funkcji
+formals(lm)
+
+#> przypisanie wartosci zmiennych 
+
+#przyklad_1
+f <- function(x) a+b
+formals(f) <- alist(a = , b = 3) # function(a, b = 3) a+b
+f(2) # result = 5
+
+#przyklad 2
+b <- 40
+f <- function(x) 100 * x + b
+formals(f) <- alist(x=10, b=30)
+f()
+f()
+#<
+
+
+```
+
+
+
+<br>
+Wyciagane argumentow funkcje w jej srodku
+
+```{r}
+
+function_1 <- function(a, b, c){
+  
+  formals(sys.function())
+  
+}
+
+function_1()
+
+```
+
+
+
+
+### functions factory
+
+
+```{r}
+#creating function witch output is albo a function 
+poisson_nll <- function(x) {
+  n <- length(x)
+  sum_x <- sum(x)
+  function(lambda) { #returned function
+    n * lambda - sum_x * log(lambda) # + terms not involving lambda
+  }
+}
+
+
+x1 <- c(41, 30, 31, 38, 29, 24, 30, 29, 31, 38)
+x2 <- c(6, 4, 7, 3, 3, 7, 5, 2, 2, 7, 5, 4, 12, 6, 9)
+
+#create new functions
+nll1 <- poisson_nll(x1)  
+nll2 <- poisson_nll(x2)
+
+#using new functions
+nll1(c(1,20))
+nll2(c(1,20))
+```
+
+<br> How to check body of new function
+```{r}
+#raw body
+nll1
+
+#substituted value of x (when we produce new function they differ in x)
+as.list(environment(nll1))
+```
+
+
+### function operator
+
+
+```{r, o.l='ko'}
+
+chatty <- function(f) {
+  function(x, ...) {
+    res <- f(x, ...)
+    cat("Processing ", x, "\n", sep = "")
+    res
+  }
+}
+f <- function(x) x ^ 2
+s <- c(3, 2, 1)
+chatty(f)(1)
+
+```
+
+
+## Environments
+
+
+
+
+## Environment and variables scope
+### Types of environment in R
+
+
+
+1. srodowisko gdzie obiekt jest przechowywany [chyba binding environment] (wyszukujemy f:ls)
+2. srodowisko gdzie obiekt zostal utworzony [enclosing environment] (dla obietow ktore sa funkcjami  uzywamy f:environment(obiekt). W przypadku np. danych to pojęcie chyba nie ma zastosowania. Do czego miałaby się przydać informacja o miejscu utworzeniu zmiennej? Wystarczy jej lokalizacja).
+3. srodowisko ktore wywolalo obiekt [calling environments] (f:parent.frame) 
+4. srodowisko parent [parent einvironment]( dotyczy srodowisk. f:parent.env )
+5. srodowisko wykonywania operacji [execution environment] (f:environment() )
+
+Uwga ad. punkt 2. f:environment ktora jako argument ma podana funkcje zwraca ta kutra jest aktualnie dostepna w przestrzeni. Jezeli chcemy odwolac sie do konkretnej przestrzeni stosujemy np: `environment(plyr::summarise)`
+
+"The enclosing environment determines how the function finds values; the binding environments determine how we find the function"
+
+
+
+
+#### srodowisko gdzie obiekt jest przechowywany
+
+
+<div> <div>
+
+```{r}
+#kom do identyfikacji obiektu uzywamy funkcji
+
+#lista zmiennych w srodowisku globalnym
+ls(envir = .GlobalEnv)  <small class='Sblack'>Uwaga!: odwolanie do srodowiska globalnego przez `.GlobalEnv`</small>
+
+#> odwolanie do zmiennych w innym srodowisku
+new_env <- new.env(parent = .GlobalEnv) #tworze srodowisko
+assign(x = 'x', value = 1:10, envir = new_env) # w srodowisku tworze wektor 'x' o wartosciach 1:10
+ls(envir=new_env) #lista zmiennych w nowym srodowisku o nazwie 'new_env'
+#<
+```
+
+
+
+#### srodowisko gdzie obiekt zostal utworzony
+
+
+
+```{r}
+
+funkcja_bylejaka <- function(){
+  print(100)
+}
+environment(funkcja_bylejaka)
+
+```
+
+
+
+#### srodowisko ktore wywolalo obiekt
+
+
+```{r}
+
+funkcja_1 <- function(){
+  funkcja_2()
+  environment() # wyciagam nazwe sorowiska f:funkcja_1
+}
+
+
+funkcja_2 <- function(){
+  print(100)
+  print(parent.frame()) # wyciagam nazwe srodowiska funkcji ktore wywolala f:funkcja_2. Jest to f:funkcja_1
+}
+
+funkcja_1()
+
+
+```
+
+<br>
+Srodowisko ktore wywolalo funkcje-informacje wyciagana we wnetrzu funkcji.
+```{r}
+
+get_encoling_enviroment <- function(){
+  
+  ft <- function(){
+    env_parent <- parent.frame()
+    call_ <- sys.call()
+    call_
+    list(eval(substitute(environment(x), list(x=as.name(call_[[1]])))), env_parent, environment(mean))
+  }
+  ft()
+}
+
+get_encoling_enviroment()
+
+
+```
+
+
+#### srodowisko paren
+
+
+```{r}
+
+env_1 <- new.env()
+env_2 <- new.env(parent = env_1)
+parent.env(env_1)
+parent.env(env_2)
+
+#zmiana srodowiska parent
+parent.env(env_2) <- .GlobalEnv
+parent.env(env_2)
+```
+
+
+#### srodowisko pracy
+
+
+```{r}
+
+#bierzace srodowisko pracy
+environment()
+
+```
+
+
+
+
+#### lexical scoping rules
+
+Jezeli kod wewnatrz funkcji nie znajdzie zmiennej w jej wnetrzu to szuka w srodowisku otaczjacym. Środowisko otaczajace definiuje sie wzgledem miejsca gdzie FUNKCJA ZOSTALA STWORZONA, a nie gdzie znajduje sie aktualnie (tzw. laxical scoping).
+
+Example of how does scoping rule works:
+
+```{r, o.l='c'}
+
+x<-100
+
+
+f1 <- function(){
+	x<-200
+	return(f2())
+}
+
+
+f2 <- function(){
+	return(10+x)
+}
+
+
+f1() # we will get 110 !!! (not 210)
+
+
+```
+
+
+
+#### Odwolanie przez referencje - sposob najprostszy
+
+
+
+
+Mozna tez zastosowac p:R.oo
+
+```{r}
+
+set <- function(x, value){
+   eval.parent(substitute(x <- value))
+}
+valX <- 51
+set(valX ,10)
+valX #uzyskamy wartosc 10 a nie 51 !!!
+
+
+
+addOne_1 <- function(x,value){
+   eval.parent(substitute(x <- x + 1))
+}
+valX <- 51
+addOne_1(valX)
+valX
+
+```
+<br>Note that you could not change the value of x inside the function. If you change the value of x, a new object will be created. The substitute function will replace x with the new value and hence this method wont work. For example:
+```{r}
+addOne_2 <- function(x,value){
+   x <- x + 1
+   eval.parent(substitute(x <- x))
+}
+valX <- 51
+addOne_2(valX)
+#Otrzymamy blad: Error in 52 <- 52 : invalid (do_set) left-hand side to assignment
+```
+If you want to change the value of x inside the function, you have to copy x to a new object and use new object as x.  At the end of the function, you can replace the value of x with the new object at the parent environment.
+
+```{r}
+addOne_3 <- function(x, value){
+   xx <- x
+   xx <- xx + 1
+   eval.parent(substitute(x <- xx))
+}
+valX <- 51
+addOne_3(valX)
+valX
+```
+
+
+
+```{r}
+#p
+
+substitute
+quote
+eval
+parse
+deparse
+call
+
+all.names(q)
+#k
+
+z <- unlist(quote({z <- 100; w <- 200}))
+
+
+z_p <- parse(text='z<-100')
+mode(z_p)
+mode(z_p[[1]])
+
+q <- quote(z <- 100 + 200)
+unlist(q)
+mode(q[[3]])
+mode(q[[3]][[1]])
+mode(quote({z <- 100; w <- 200}))
+
+
+mode(substitute(z <- 100))
+mode(substitute({z <- 100; w <- 200}))
+
+
+unlist(call('z<-100'))
+
+
+```
+
+
+#### environments - basic operations
+
+
+Informacje (dosc zaskakujace) o strukturze srodowisk w programie R sa w ksiazcek Gagolewskiego. Warto tez zajec do artykulu Wickhama pt. *Environments* ([link](http://adv-r.had.co.nz/Environments.html))
+```{r}
+#new environment
+zz <- new.env() 
+
+#ASSIGNING variable to environment
+assign('a', 100, envir=zz) 
+assign('b', 200, envir=zz)
+assign('c', 300, envir=zz)
+zz$d <- 400
+zz$e <- 500
+
+#zrzucenie do listy elementow ze srodowiska
+w <- as.list(zz)
+
+#REMOVING zmiennej 'a' ze srodowiska 'zz'
+rm('a', envir=zz) 
+
+#USUNICIE WSZYSTKICH elementow z danego srodowiska
+rm(list=ls(srod1, all.names=TRUE), envir=srod1) #not run
+
+#WYSWIETLENIE zmiennej 'b' ze srodowiska 'zz'
+get('b', envir=zz ) 
+
+#w jakim otoczniu (w jakim innym srodowisku) jest SRODOWISKO 'zz'
+parent.env(zz) 
+
+#LISTA zmiennych w danym srodowisku
+ls(envir=zz) 
+
+#czy zmienna 'b' ISTNIEJE w srodowisku 'zz'
+exists('b', envir=zz, inherits=T) 
+
+#funkcja wywolujaca globalenvironment (jest to funkcja , dlatego sa nawiasy okragle)
+globalenv() 
+
+#nazwa srodiwska globalnego (you gives it as a parameter in some functions)
+.GlobalEnv
+
+```
+<br>
+
+
+#### Nesting environments
+
+
+```{r}
+
+#tworzenie srodowiska w srodowisku
+g1 <- new.env()
+g2 <- new.env(parent = g1)
+g3 <- new.env(parent = g2)
+
+assign('a', 100, envir=g1) #przypisanie zmiennej do srodowiska g1
+
+#pobieram ze srodowiska g2. Nie ma jej tam, ale jest w srodowisku otaczajacym g1. Jesli nie bylo by w g1 poszukiwania byly by kontynuowane w kolejnym nadrzednym srodowisku poniewaz parametr inherits jesst ustawiony domylsnie na TRUE. .
+get('a', envir = g2)
+
+ls(patter='^g') #funkcja zwroci srodowiska zagniezdzone w innych, zatem dostaniem g1 i zagniezdzone w niej g2 zagniedzone w g2 srodowisko g3.
+
+#zwraca rodzica srodowiska g3 niestety nie jest to jego nazwa
+parent.env(g2)
+
+#usuniecie srodowiska nie powoduje usuniecia srodowisk w nim zagniezdzonych
+rm(g1)
+ls(patter='^g')
+
+#co wiecej jako rodzic dalej pokazywane jest srodowisko usuniete.
+parent.env(g2)
+
+#ustawienie otoczenia
+parent.env(g3) <- g2
+
+```
+<br>
+<small class='Sblack'>Uwaga</small>
+Srodowisko moze byc argumentem funkcji. W takiej sytuacji operacje wykonywane na srodowisku zostawiaja w nim zmiany po skonczeniu dzialania funkcji. 
+
+
+
+
+### Different functions to work with environments
+
+#### operator przypisania
+
+
+
+
+<small class='Sblack'>Uwaga</small>
+Operator `<<-` przypisuje do srodowiska otaczajacego a niekoniecznie do globalenvironment.
+
+It helps to think of <<- as equivalent to assign (if you set the inherits parameter in that function to TRUE). The benefit of assign is that it allows you to specify more parameters (e.g. the environment), so I prefer to use assign over <<- in most cases.
+
+Using <<- and assign(x, value, inherits=TRUE) means that "enclosing environments of the supplied environment are searched until the variable 'x' is encountered." In other words, it will keep going through the environments in order until it finds a variable with that name, and it will assign it to that. This can be within the scope of a function, or in the global environment.
+
+In order to understand what these functions do, you need to also understand R environments (e.g. using search).
+
+I regularly use these functions when I'm running a large simulation and I want to save intermediate results. This allows you to create the object outside the scope of the given function or apply loop. That's very helpful, especially if you have any concern about a large loop ending unexpectedly (e.g. a database disconnection), in which case you could lose everything in the process. This would be equivalent to writing your results out to a database or file during a long running process, except that it's storing the results within the R environment instead.
+
+My primary warning with this: be careful because you're now working with global variables, especially when using <<-. That means that you can end up with situations where a function is using an object value from the environment, when you expected it to be using one that was supplied as a parameter. This is one of the main things that functional programming tries to avoid (see side effects). I avoid this problem by assigning my values to a unique variable names (using paste with a set or unique parameters) that are never used within the function, but just used for caching and in case I need to recover later on (or do some meta-analysis on the intermediate results).
+
+
+
+#### detach attach
+
+
+Attach umozliwia dostep do ramki/listy bezposrednio. Detach uniemozliwia taka operacje. Trzeba sie odwolywac posrednio.
+
+```{r}
+
+a <- 100
+
+d <- data.frame(a=1, b=2)
+
+attach(d)
+
+a  #bedziemy mieli informacje o zakryciu zmienne z ramki. Zatem 'a' bedzie oznaczalo tutaj dostep do zmiennej o wartosci 100.
+
+
+```
+
+
+#### with, within
+
+
+Roznica miedzy f:with i f:within:  
+f:within is similar, except that it examines the environment after the evaluation of expr and makes the corresponding modifications to data (this may fail in the data frame case if objects are created which cannot be stored in a data frame), and returns it. within can be used as an alternative to transform.
+
+
+```{r}
+require(MASS) #do danych 'anorexia'
+anorexia$wtDiff <- with(anorexia, Postwt - Prewt)
+anorexia <- within(anorexia, wtDiff2 <- Postwt - Prewt)
+anorexia <- transform(anorexia, wtDiff3 = Postwt - Prewt)
+```
+
+
+#### local
+
+
+Umozliwia m.in robienie obliczeń 'na boku'. Wynik local przypisujemy do zmiennej. Zostanie przypisany ostatni element w klamrach (zgodnie z regula dzialania klamr).
+
+```{r}
+z <- local({
+  w <- 100
+  u <- 200
+})
+z #zwroci 200
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+### wyszukiwanie i usuwanie zmiennych
+
+
+Sluza do tego przede wszystkim takie funkcje jak `rm`, `ls`, `ls.str`, `lsf.str`,`exists`, `get`.
+
+
+#### ls
+
+
+Podstaje lista zmiennych w danym srodowisku. Zwraca poza zmiennymi funkcje i srodowiska. F:ls dziala rowniez dla data.frame i list. Funkcja domyslnie pomija zmienne zaczynajace sie od znaku kropki `.`
+```{r}
+#Dosylnie zwracane sa elementy z srodowiska globalnego
+ls()
+
+
+#lista elementow w danym srodowisku (nazwy podajemy bez cudzyslowia)
+ls(envir = zz)
+
+
+#lista elementow w data.frame i liscie
+m <- data.frame(a=c(1:10), b=letters[1:10])
+ls(m)  
+
+l <- list(a=1, b=2)
+ls(m)
+
+
+#wyszukiwanie elementow zgodnie ze wzorcem regular expression
+ls(pattern='z') #dostaniemy elementy zawierajace z nazwie litere z
+
+
+#uwzglednianie zmiennych ukrytych
+ls(all.names=TRUE)
+
+
+#niestety nie ma parametru 'mode' do ograniczenia zakresu typow szukanych obiektow.
+ls(mode='list') #BLAD: Error in ls(mode = "list") : unused argument (mode = "list")
+
+
+#funkcje-elementy w srodku
+#ls() nie dziala niestety dla funkcji
+f <- function()
+{
+  x <- 100
+  y <- 200
+  return(x + y)
+}
+ls(f) #wywali blad
+get('x', f)#wywali blad
+#Wniosek jest taki ze te funkcje nie dzialaja dla funkcji
+```
+
+
+#### lsf.str
+
+
+
+
+Lista funkcji w danym srodowisku.
+
+```{r}
+#lista funkcji w oparciu o pattern
+lsf.str(pattern='^l\\.m')
+
+
+#lista funkcji w oparciu o pattern
+lsf.str(envir=my.env)
+```
+
+
+
+#### ls.str
+
+
+Zwraca liste obiektow wraz z ich struktura, a konkretnie stosuje f:str na kazdym obiekcie ktory zwraca. 
+
+```{r}
+ls.str(mode = "list")
+```
+ 
+
+#### rm
+
+
+f:rm usuwa zmienne, funkcje, srodowiska. 
+```{r}
+
+#usuniecie elementu
+rm(z)
+
+#usuniecie kilku elementow
+rm(a,b)
+
+
+#usuniecie gdzie nazwy elementow podaje jako stringi
+rm(list=c('a','b','c'))
+
+
+#usuniecie wszystkich elementow w danym srodowisku (domyslnie w globalnym)
+rm(list=ls())
+rm(list=ls(envir = 'my.env'))
+
+
+#usuniecie wszystkich zmiennych z pominienciem funkcji
+rm(list = setdiff(ls(), lsf.str()))
+
+#usuniecie elementow wg. 'pattern'
+rm(list=ls(pattern='zzz'))
+
+
+#inherits
+rm(a, envir='my.env', inherits = FALSE) # czy usuwac zmienne ze srodowiska nadrzednego
+```
+
+### exists, existsFunction i get
+
+```{r}
+#czy istnieje dany obiekt (funkcja, zmienna, srodowisko)
+exists(x = 'z',   #nazwe zmiennej podajemy jako strin <small class='s1'>UWaga</small>
+  envir = 'my.env' , 
+  mode = 'any', 
+  inherits =    ) #czy szukac w srodowisku otaczjacym
+
+exists('apply')
+exists('foreach') #false jezeli pakiet 'zawierajacy funkcje nie jest zaladowany
+
+#czy istnieje funkcja 'mean
+existsFunction(f = 'mean')
+
+
+#pobieranie obiektow ze srodowisk
+get(x='z', 
+  envir='my.env',
+  mode='list'
+  inherits=TRUE)
+
+
+```
+
+
+
+
+## Macros
+
+
+Wszystko co dzieje sie w makrze jest widoczne poza nim. Makra tak jak funkcje moja argumenty
+
+```{r}
+
+require(gtools)
+
+#makro musi miec jakis argument. Jesli chcemy sie nim nieprzejmowac stosujemy ponizsza konstrukcje
+z <- defmacro(x, expr={
+  u <- 100
+})
+z(0) #uwaga: zero nie bedzie przypisane globalnie do x (nazwa argumentu makra!!!)
+
+
+# w makrach mozna tworzyc nowe funkcje
+plot.sf <- defmacro(type='b', col='black',
+                    title=deparse(substitute(x)), DOTS, expr=
+  function(x, y) plot( x,y, type=type, col=col, main=title, ...)
+)
+
+```
+
+

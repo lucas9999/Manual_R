@@ -1,0 +1,41 @@
+
+## Symphy
+
+
+Algorytm korzystania z pakietu 'symphy':
+
+
+Przykladowy kod w R z uzyciem pakietu symphy
+```{r}
+## Not run: 
+# These examples are mostly from: http://wiki.sympy.org/wiki/Tutorial
+
+# create a SymPy variable called x
+sympy("var('x')")
+sympy("y = x*x")
+sympy("y")
+
+sympy("limit(1/x, x, oo)")
+
+# the next line fails under jython even without R
+# and seems to corrupt the rest of the session
+# sympy("(1/cos(x)).series(x, 0, 10)")
+
+sympy("diff(sin(2*x), x, 1)")
+sympy("diff(sin(2*x), x, 2)")
+
+sympy("integrate(exp(-x), (x, 0, oo))")
+
+sympy("xr = Symbol('xr', real=True)")
+sympy("exp(I*xr).expand(complex=True)")
+
+# Matrices are stored row by row (unlike R matrices)
+cat(sympy("A = Matrix([[1,x], [y,1]])"), "\n")
+cat(sympy("A**2"), "\n")
+
+
+## End(Not run)
+```
+
+
+

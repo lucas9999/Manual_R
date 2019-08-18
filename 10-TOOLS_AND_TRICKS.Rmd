@@ -1,0 +1,313 @@
+
+
+
+# TOOLS AND TRICKS
+
+
+path for RStudio in Users directory
+
+C:\Users\memy\AppData\Local\RStudio-Desktop
+
+
+
+## Global settings
+
+
+### f:options
+
+najwazniejsze parametry to:
+
+1. scipen - od jakiej wielkosci liczby maja byc wyswietlane w postaci wykladniczej
+2. digits - ile miejsc po przecinku wyswietlac
+3. error - co ma sie dziac w sytuacji wystapienia bledu. Mozna np. ustawic *error=browser* domsylnie jest *error=stop*.
+4. expressions - ilosc zagniezdzen w obiektach o wlasnosci *recursive*
+5. width - ile znakow szerokosci ma miec output w konsoli. Dosylnie jest 80.
+6. encoding - sposob kodowania
+
+
+### working directory
+
+```{r}
+setwd() # set current working directory
+getwd() # get current working directory
+```
+
+### changing language
+
+```{r}
+
+Sys.setenv(LANGUAGE="en") #change language only for current session
+
+```
+
+
+## Packages and functions
+
+
+
+### f:library a f:require
+
+Roznica miedzy  f:library i f:require:
+
+1. jezeli ładowanego pakietu nie ma to f:library zwraca error natomiast f:require zwraca warning
+2. nazwy pakietow z f:library podaje sie w cudzyslowiu
+
+Uwaga: obie funcje moga ladowac tylko jeden pakiet. Funkcja naladowanie jednoczesnie klilku pakietow pokazana jest dalej.
+
+
+### Pakiety
+
+
+Lista zainstalowanych pakietow razem z podanymi szczegółowymi informacjami
+```{r}
+z<-installed.packages()
+print(xtable(head(z,3)), type='html')
+```
+<br>
+```{r, o.l='c'}
+z<-installed.packages()
+print(xtable(head(z)), type='html', html.table.attributes='style="font-size:11px;"')
+```
+<br>
+  
+```{r}
+
+#usuwanie pakietu
+remove.packages(c('ggplot2','xtable')
+
+#instalowanie pakietu
+install.packages(c('ggplot2','xtable') )
+
+  
+#sciezka gdzie sa pliki pakietow
+.libPaths()  
+  
+#lokalizacja plikow pakietu na dysku
+find.package('abind') 
+
+#opis pakietu
+packageDescription('abind')
+  
+#how many packages are installed
+nrow(installed.packages())
+  
+#list of data sets in package
+data(package='ggplot2')
+  
+# lista zawierajaca m.in zaladowane pakiety
+search()  
+
+#lista aktualnie zaladowanych pakietow
+(.packages())
+print(.packages())    
+
+#wylaczenie pakietu ('odladowanie')
+detach(name = 'package:ggplot2', unload=TRUE)
+  
+#jesli pakiet jest niezaladowany to go zaladuj
+if (!require(rgl)){ 
+        require(rgl) 
+} 
+  
+#jesli pakiet jest niezainstalowany to go zainstaluj
+if (!require(rgl)){ 
+        install.packages(rgl) 
+} 
+  
+  
+#zaladuj lub zainstaluj pakiet
+
+require(rgl) || install.packages(rgl)
+ 
+
+
+  
+```
+
+
+### funkcja do ladowania na raz kilku pakietow
+
+```{r}
+
+l.p.pak<-function(...){
+  
+  pkg<-unlist(list(...))
+  
+  #pakiety ktore nie sa zainstalowane
+  brak<-pkg[!(pkg%in%installed.packages()[,"Package"] )]
+  
+  if(length(brak)) warning(paste('pakiety ',paste(brak, collapse=', '),' nie sa zainstalowane', sep=''))
+  
+  #pakiety ktore sa
+  z<-setdiff(pkg,brak)
+  
+  #ladowanie pakietow ktore sa
+  if(length(z)) sapply(pkg, require, character.only = TRUE)
+}
+  
+  
+l.p.pak('ggplot2','abind')
+  
+```
+
+
+
+Pakiety z Bicunductor:
+
+```{r}
+# firm we have to install 'Biconductor'
+source("https://bioconductor.org/biocLite.R")
+biocLite()
+
+
+# then we can install packages from 'Biconductor'
+BiocInstaller::biocLite('IRanges') # installing p:IRanges
+
+```
+
+
+
+## Funkcje
+
+```{r}
+
+#lista wbudowanych funkcji w R
+builtins() 
+       
+  
+#lista funkcji w pakiecie
+ggplot2::<TAB>
+    
+    
+#lista funkcji w pakiecie zwracana do wektora
+ls('package:ggplot2')
+    
+    
+#znalezienie w helpie funkcje z konkretnego pakietu
+??abind::abind
+  
+  
+base::<TAB>
+  
+```
+
+
+
+### f:formatC
+
+
+```{r}
+
+formatC(300, format='e')
+  
+formatC(c(2.3,4.5,33,9999999), 
+  digits = 3, #ilosc cyfr po przecinku
+  flag="0", #ilosc zer (dla typy 'f' po przecinku, dla typy 'd' przed liczba)
+  width=4, #minimalna szerokosc
+  format = 'f',  #format d-integer, f-float, e-exponencial
+  big.mark = " ", #separator co 3 cyfry
+  decimal.mark = ",", ) #decinal separator
+
+formatC(c(2.3,4.5,33,9999999), digits = 3, flag="0", width=4, format = 'f', big.mark = " ", decimal.mark = "," )
+```
+
+
+
+## Important information
+
+
+```{r}
+
+Sys.time()
+Sys.Date()
+Sys.timezone()
+
+object.size(z) #ilosc pamieci jaka zajmuje obiekt
+
+sessionInfo() #informacje o biezacej sesji R-a (wersja R, system operacyjny, zaladowane pakiety, base packages, ustawienia)
+  
+Sys.info() #informacje o systemie operacyjnym
+
+#java version installed on computer
+system('java-version')  
+
+R.Version() #bardz szczegolowe inforamcje na temat wersji R-a
+
+# statystyki na temat pakietow
+packageStatus()  
+  
+```
+
+
+## Parallel computing
+
+
+## Files and directories manipulation
+
+
+For more information see: Biecek p.59.
+
+```{r}
+
+#utworz katalog
+dir.create('C:/Users/ppp/Desktop/bleble')
+
+#skopiuj plik
+file.copy('C:/Users/ppp/Desktop/book.xlsx', 'C:/Users/ppp/Desktop/bleble/book.xlsx')
+
+#wywolaj okno i zwroc sciezke dostepu
+w <- file.choose()
+w
+
+#usun plik (chyba nie dziala na katalogach)
+file.remove('C:/Users/ppp/Desktop/bleble/book.xlsx')
+
+#zmien nazwe pliku
+file.rename('C:/Users/ppp/Desktop/bleble/book.xlsx','C:/Users/ppp/Desktop/bleble/book111.xlsx')
+
+#lista plikow (z rozszerzeniami) i katalogow w danej lokalizacji
+list.files('C:/Users/ppp/Desktop/bleble', #katalog
+           include.dirs = TRUE, #czy zwrocic katalogi w katalogach
+           all.files = TRUE, #czy pliki ukryte
+           full.names = TRUE) #czy podawac cala sciezke pliku
+
+#dir robi to samo i ma takie same parametry jak list.files
+dir('C:/Users/ppp/Desktop/bleble')
+```
+
+
+Wyciagniecie samych plikow bez katalogow (mam nadzieje ze rozwiazanie tymczasowe) (2014-10-25)
+Po zaistalowaniu *open R* w f:list.files znowu poprawnie dziala parametr *include.dir* (2014-11-12)
+
+```{r}
+
+path='...'
+setdiff(
+  list.files(path),
+  list.dirs(path,full.names = FALSE, recursive = FALSE)
+)
+
+```
+
+
+
+## Other issues
+
+
+```{r}
+
+gc() #czyszczenie pamieci operacyjnej
+
+#lista zbiorow danych we wszystkich zaladowanych pakietach
+data()
+  
+?Syntax #dostepne w R operatory
+      
+?Mod  #operatory do liczb zespolonych
+      
+?Extract #wyciaganie elementow z obiektow
+
+```
+
+
+

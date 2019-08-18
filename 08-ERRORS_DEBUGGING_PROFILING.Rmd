@@ -1,0 +1,293 @@
+# ERROS DEBUGGING PROFILING
+
+## debuggowanie
+
+```{r}
+func <- function(a, b)
+{
+  x <- length(a)
+  y <- mean(c(a, b))
+  return(x + y)
+}
+
+debug(func) #tryb debuddowania odpalany przed wywolywaniem funkcji
+func(40, 'bleble') #teraz operujem przyciakami 'n' (wykonaj kolejna linijke kodu), 'Q' (wyjdz z debuggera), 'c' (wykonaj cala funkcje), oraz mozemy przywolywac nazwy kolejnych zmiennych zwiazanych z funkcja aby sprawdzic ich bierzaca wartosc.
+undebug(func) #wylaczenie trybu debuggowania
+
+#traceback
+func(40)
+traceback() #traceback wywoluje sie po funkcji w przeciwienstwie do 'debug'. Poza tym traceback jest wywolywane tylko dla funkcji w ktorych wystapil error!!!
+```
+
+
+
+## try
+
+
+
+
+```{r}
+c <- c('2', 33)
+p <- expression(pt <- 5) #wyrazenie ktore bedzie wykonane jezeli wystapi blad
+cc <- try(sum(c),  silent=T) #try wywali blad bo nie da sie zsumowac liczby i stringu
+
+#jezeli cc to blad wykonaj wyrazenie 'p'
+if(is(cc,"try-error"))  #to  nie  to  samo  co  cc=="try-error"!!!!!
+{
+    eval(p)
+}
+pt #otrzymamy 5 bo wyrazenie 'p' zostalo wykonane
+```
+
+
+
+## tryCatch
+
+
+```{r}
+c <- c('2', 33)
+p <- expression(pt <- 5) #wyrazenie ktore bedzie wykonane jezeli wystapi blad
+
+#bez argumentu 'finally
+tryCatch({
+  sum(c)}, 
+  warning=function(w){cat('ostrzezenie')},  #funkcje dla warning i error musza miec jakis argument (function() nie bedzie dzialalo)
+  error=function(e){cat('blad')}) 
+
+
+tryCatch({
+  sum(c)}, 
+  warning=function(w){cat('ostrzezenie')},  #funkcje dla warning i error musza miec jakis argument (function() nie bedzie dzialalo)
+  error=function(e){cat('blad')}, 
+  finally=zk <- 100) #operacje wykonana niezaleznie od wystapienia bledu lub ostrzezenia 
+  
+```
+
+How to use f:tryCatch to break loop:
+
+```
+w <- c(1:5,'a',7:10); sum <- 0
+for(i in 1:10){
+	if( inherits(tryCatch({sum <- sum + as.numeric(w[i])}, warning=function(w) w, error=function(e) e), c('warning', 'error')) ) break
+}
+
+```
+
+## Funkcja warning
+
+
+
+```{r}
+F <- function(z)
+{
+  ifelse(z > 100, print('ok'), warning('we have a problem'))
+}
+F(50)
+```
+
+
+## stop/stopifnot
+
+
+```{r}
+iter <- 12
+z <- 100
+if(iter > 10) stop("too many iterations") #wyswietli error i komunikat bo nie jest spelniony warunek
+top <- 100  #oprecja zostanie wykonanana
+top
+
+
+# stopifnot, list of condidionts (every must be TRUE)
+stopifnot(1 == 1, all.equal(pi, 3.14159265), 3 < 2) 
+
+
+```
+
+
+## assertError assertWarning asserCondition
+
+Zwraca blad jezeli nie ma bledu/ostrzezenia
+```{r}
+require(tools)
+
+z <- assertError(sqrt('abc'))
+z
+
+u <- assertError(sqrt(4)) # nie ma bledu wiec zwroci blad
+u
+
+w <- assertWarning(matrix(1:8, 4,3))
+w
+
+r <- assertCondition( ""-1 )
+r
+
+e <- try( assertCondition(sqrt(2), "warning") )
+e
+
+
+#podsumowanie
+assertWarning() #musi byc ostrzezenie i tylko ostrzezenie
+assertError() #musi byc blad i tylko blad
+assertCondition(matrix(1:8, 4,3), "error","warning")# musi byc blad lub ostrzezenie
+assertCondition(matrix(1:8, 4,3), "error") # musi byc blad niezaleznie od tego czy jest warning
+assertCondition(matrix(1:8, 4,3), "warning") # musi byc ostrzerzenie niezaleznie od bledu
+
+```
+
+
+
+## przerywanie petli jesli wystapi blad
+
+
+```{r}
+
+u <- list(1,2,3,'n',5)
+s <- 0
+
+for(i in 1:5){
+  z <- tryCatch(s <- s + u[[i]], error=function(e) e )
+  if(inherits(z, 'error')) break
+}
+
+```
+
+
+
+
+
+
+
+
+## Profiling
+
+
+### Czas wykonania kodu
+
+```{r}
+Rprof(''profiler.out'', interval=0.01, memory.profiling=TRUE) #Inicjowanie dzialania profilera. ``Profiler.out(nazwa funkcji z wielkiej litery)
+Z<-mean(z)
+Rprof(NULL)  #zakonczenie dzialania profilera
+summaryRprof(''profiler.out'' memory=''both'') #odczywanie danych zarejestrowanych przez profilera
+unlink(profiler.out) #usuniecie pliku
+
+#Prostszy sposob:
+x<-seq(from=1, to =100000000)
+system.time(sd(x))
+```
+
+
+### Czas wykonania kodu od linijki do linijki
+
+```{r}
+#pomiar czasu wykonania okreslonych linijek kody przy pomocy funkcji proc.time      
+ptm <- proc.time()
+for (i in 1:50) mad(stats::runif(500))
+z<-10000
+proc.time() - ptm
+```
+**Komentarz**: Czas ,,zwlekania'' przez Usera to 0.04, czas wykonania oblicze? przez system to 0.00. \textit{Elapse} oznacza ,,the 'real' elapsed time since the process was started' (z helpa do funkcji)''.
+
+
+
+### microbenchmark
+
+Funkcja do porownania czasu wykonania roznych kodow.
+
+```{r}
+microbenchmark2 <- function(...) {
+
+   library('microbenchmark')
+   x <- do.call(microbenchmark,
+                as.list(match.call()[-1]),
+                envir=parent.frame())
+   x$time <- microbenchmark:::convert_to_unit(x$time, 't')
+
+   res <- aggregate(time~expr, x, median)
+   res <- cbind(res, res[[2]]/min(res[[2]]))
+   colnames(res) <- c("expr", "median.time", "relative")
+   cat("Unit: ", attr(x$time, "unit"), "\n", sep = "")
+   print(res)
+}
+
+
+# # Przyklad:
+x <- 1:1000
+microbenchmark2(
+   sum(x),
+   prod(x)
+)
+
+
+
+
+
+
+## Measure the time it takes to dispatch a simple function call
+## compared to simply evaluating the constant \code{NULL}
+f <- function() NULL
+x<-10000
+res <- microbenchmark({mean(x); quantile(x)}, sd(x), times=10L)
+
+
+
+microbenchmark(NULL, f(), times=1000L)
+
+
+## Print results:
+print(res)
+
+## Plot results:
+boxplot(res)
+
+## Pretty plot:
+if (require("ggplot2")) {
+  plt <- ggplot2::qplot(y=time, data=res, colour=expr)
+  plt <- plt + ggplot2::scale_y_log10()
+  print(plt)
+}
+
+```
+
+
+
+
+
+### p:profile <small>2014-07-15</small>
+
+Pakietu na razie nie ma na Cran-r
+<small class='s1'>Uwaga</small> Funkcja testowana nie moze byc zbyt szybka (komunikat: Error: No parsing data available. Maybe your function was too fast?)
+```{r}
+#instalacja pakietu
+devtools::install_github("hadley/lineprof")
+
+#funkcja ktora bedzie testowac pod wzgledem wydajnosci
+z<-function(){
+  w<-rnorm(100000000)  #duzo losowac aby funkcja nie byla za szybka
+  mean(w)
+  sd(w)
+  quantile(rnorm(100000))
+}
+
+require(lineprof)
+l<-lineprof(z())
+l  #wyniki w formie tekstowej
+shine(l) #wyniki w formie graficznej w przegladarce internetowej
+
+
+```
+
+### f:Rprof
+
+
+
+
+```{r}
+
+Rprof(''profiler.out'', interval=0.01, memory.profiling=TRUE) #Inicjowanie dzialania profilera. ``Profiler.out(nazwa funkcji z wielkiej litery)
+Z<-mean(z)
+Rprof(NULL)  #zakonczenie dzialania profilera
+summaryRprof(''profiler.out'' memory=''both'') #odczywanie danych zarejestrowanych przez profilera
+unlink(profiler.out) #usuniecie pliku
+```
+

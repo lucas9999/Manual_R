@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Podstawy R-a</title>
+  <meta name="description" content="Podstawy programowania w języku R.">
+  <meta name="generator" content="bookdown 0.6 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Podstawy R-a" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Podstawy programowania w języku R." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Podstawy R-a" />
+  
+  <meta name="twitter:description" content="Podstawy programowania w języku R." />
+  
+
+<meta name="author" content="Ewelina Macioł-Huć">
+
+
+<meta name="date" content="2018-02-17">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="index.html">
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Podstawy R-a</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Prerequisites</a></li>
+<li class="part"><span><b>I Part I</b></span><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#uwagi-o-konwencjach-oznaczen-w-tym-dokumencie"><i class="fa fa-check"></i><b>1.1</b> Uwagi o konwencjach oznaczen w tym dokumencie</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#materialy-do-nauki"><i class="fa fa-check"></i><b>1.2</b> Materialy do nauki</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#skroty-klawiaturowe-te-z-ktorych-caly-czas-korzystam"><i class="fa fa-check"></i><b>1.3</b> Skroty klawiaturowe (te z ktorych caly czas korzystam)</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#inne-uwagi"><i class="fa fa-check"></i><b>1.4</b> Inne uwagi</a><ul>
+<li class="chapter" data-level="1.4.1" data-path="index.html"><a href="index.html#home-i-end"><i class="fa fa-check"></i><b>1.4.1</b> <strong>Home i End</strong></a></li>
+<li class="chapter" data-level="1.4.2" data-path="index.html"><a href="index.html#rozdzialy"><i class="fa fa-check"></i><b>1.4.2</b> <strong>Rozdzialy</strong></a></li>
+<li class="chapter" data-level="1.4.3" data-path="index.html"><a href="index.html#snippets"><i class="fa fa-check"></i><b>1.4.3</b> <strong>snippets</strong></a></li>
+<li class="chapter" data-level="1.4.4" data-path="index.html"><a href="index.html#instalacja-pakietow"><i class="fa fa-check"></i><b>1.4.4</b> <strong>Instalacja pakietow</strong></a></li>
+<li class="chapter" data-level="1.4.5" data-path="index.html"><a href="index.html#projects"><i class="fa fa-check"></i><b>1.4.5</b> <strong>Projects</strong></a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#o-jezyku-r"><i class="fa fa-check"></i><b>1.5</b> O jezyku R</a></li>
+<li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#nazwy-zmiennych"><i class="fa fa-check"></i><b>1.6</b> Nazwy zmiennych</a></li>
+<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#uzywaniu-cudzyslowia"><i class="fa fa-check"></i><b>1.7</b> Uzywaniu cudzyslowia</a></li>
+<li class="chapter" data-level="1.8" data-path="index.html"><a href="index.html#braki-danych"><i class="fa fa-check"></i><b>1.8</b> Braki danych</a></li>
+<li class="chapter" data-level="1.9" data-path="index.html"><a href="index.html#petla-for"><i class="fa fa-check"></i><b>1.9</b> petla for</a></li>
+<li class="chapter" data-level="1.10" data-path="index.html"><a href="index.html#if"><i class="fa fa-check"></i><b>1.10</b> if</a></li>
+<li class="chapter" data-level="1.11" data-path="index.html"><a href="index.html#ifelse-czyli-wektorowa-wersja-if"><i class="fa fa-check"></i><b>1.11</b> ifelse (czyli wektorowa wersja if)</a></li>
+<li class="chapter" data-level="1.12" data-path="index.html"><a href="index.html#while"><i class="fa fa-check"></i><b>1.12</b> while</a></li>
+<li class="chapter" data-level="1.13" data-path="index.html"><a href="index.html#repeat"><i class="fa fa-check"></i><b>1.13</b> repeat</a></li>
+<li class="chapter" data-level="1.14" data-path="index.html"><a href="index.html#switch"><i class="fa fa-check"></i><b>1.14</b> switch</a></li>
+<li class="chapter" data-level="1.15" data-path="index.html"><a href="index.html#informacje-wstepne"><i class="fa fa-check"></i><b>1.15</b> Informacje wstepne</a></li>
+<li class="chapter" data-level="1.16" data-path="index.html"><a href="index.html#przyklady-stosowania-formul"><i class="fa fa-check"></i><b>1.16</b> Przyklady stosowania formul</a></li>
+<li class="chapter" data-level="1.17" data-path="index.html"><a href="index.html#formula-a-tekst"><i class="fa fa-check"></i><b>1.17</b> Formula a tekst</a></li>
+<li class="chapter" data-level="1.18" data-path="index.html"><a href="index.html#wyciaganie-elementow-formuly"><i class="fa fa-check"></i><b>1.18</b> Wyciaganie elementow formuly</a></li>
+<li class="chapter" data-level="1.19" data-path="index.html"><a href="index.html#modyfikacja-formul"><i class="fa fa-check"></i><b>1.19</b> Modyfikacja formul</a></li>
+<li class="chapter" data-level="1.20" data-path="index.html"><a href="index.html#dynamiczne-tworzenie-formuly-liniowej-z-zadanych-elementow"><i class="fa fa-check"></i><b>1.20</b> Dynamiczne tworzenie formuly LINIOWEJ z zadanych elementow</a></li>
+<li class="chapter" data-level="1.21" data-path="index.html"><a href="index.html#types-of-functions"><i class="fa fa-check"></i><b>1.21</b> Types of functions</a></li>
+</ul></li>
+<li class="part"><span><b>II Part II</b></span><ul>
+<li class="chapter" data-level="1.22" data-path="index.html"><a href="index.html#podzial-struktur"><i class="fa fa-check"></i><b>1.22</b> Podzial struktur</a></li>
+<li class="chapter" data-level="1.23" data-path="index.html"><a href="index.html#listy-atomowe"><i class="fa fa-check"></i><b>1.23</b> Listy atomowe</a><ul>
+<li class="chapter" data-level="1.23.1" data-path="index.html"><a href="index.html#wektory"><i class="fa fa-check"></i><b>1.23.1</b> wektory</a></li>
+</ul></li>
+<li class="chapter" data-level="1.24" data-path="index.html"><a href="index.html#matrix"><i class="fa fa-check"></i><b>1.24</b> matrix</a><ul>
+<li class="chapter" data-level="1.24.1" data-path="index.html"><a href="index.html#array-macierz-wielowymiarowa"><i class="fa fa-check"></i><b>1.24.1</b> Array (macierz wielowymiarowa)</a></li>
+</ul></li>
+<li class="chapter" data-level="1.25" data-path="index.html"><a href="index.html#listy-generyczne"><i class="fa fa-check"></i><b>1.25</b> Listy generyczne</a><ul>
+<li class="chapter" data-level="1.25.1" data-path="index.html"><a href="index.html#list"><i class="fa fa-check"></i><b>1.25.1</b> List</a></li>
+</ul></li>
+<li class="chapter" data-level="1.26" data-path="index.html"><a href="index.html#data.frames"><i class="fa fa-check"></i><b>1.26</b> data.frames</a></li>
+<li class="chapter" data-level="1.27" data-path="index.html"><a href="index.html#typ-logical"><i class="fa fa-check"></i><b>1.27</b> Typ <em>logical</em></a></li>
+<li class="chapter" data-level="1.28" data-path="index.html"><a href="index.html#typ-numeric"><i class="fa fa-check"></i><b>1.28</b> Typ <em>numeric</em></a></li>
+<li class="chapter" data-level="1.29" data-path="index.html"><a href="index.html#typ-complex"><i class="fa fa-check"></i><b>1.29</b> Typ <em>complex</em></a></li>
+<li class="chapter" data-level="1.30" data-path="index.html"><a href="index.html#typ-character"><i class="fa fa-check"></i><b>1.30</b> Typ <em>character</em></a></li>
+<li class="chapter" data-level="1.31" data-path="index.html"><a href="index.html#typ-date"><i class="fa fa-check"></i><b>1.31</b> Typ <em>date</em></a></li>
+<li class="chapter" data-level="1.32" data-path="index.html"><a href="index.html#typ-posix"><i class="fa fa-check"></i><b>1.32</b> Typ <em>POSIX</em></a></li>
+<li class="chapter" data-level="1.33" data-path="index.html"><a href="index.html#typ-factor"><i class="fa fa-check"></i><b>1.33</b> Typ <em>factor</em></a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="dodatek.html"><a href="dodatek.html"><i class="fa fa-check"></i>Dodatek</a><ul>
+<li class="chapter" data-level="1.34" data-path="dodatek.html"><a href="dodatek.html#cos-tam0"><i class="fa fa-check"></i><b>1.34</b> cos tam0</a></li>
+<li class="chapter" data-level="1.35" data-path="dodatek.html"><a href="dodatek.html#cos-tam1"><i class="fa fa-check"></i><b>1.35</b> cos tam1</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Podstawy R-a</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="dodatek" class="section level1 unnumbered">
+<h1>Dodatek</h1>
+<div id="cos-tam0" class="section level2">
+<h2><span class="header-section-number">1.34</span> cos tam0</h2>
+</div>
+<div id="cos-tam1" class="section level2">
+<h2><span class="header-section-number">1.35</span> cos tam1</h2>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="index.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/A-Dodatek.Rmd",
+"text": "Edit"
+},
+"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

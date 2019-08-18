@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Introduction to R</title>
+  <meta name="description" content="Introduction to R">
+  <meta name="generator" content="bookdown 0.6 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Introduction to R" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Introduction to R" />
+  
+  
+  
+
+<meta name="author" content="Ewelina Macioł-Huć">
+
+
+<meta name="date" content="2018-02-17">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="funkcje.html">
+<link rel="next" href="typy-danych.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Podstawy R-a</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> INTRO</a></li>
+<li class="part"><span><b>I PROGRAMMING</b></span></li>
+<li class="chapter" data-level="2" data-path="syntax.html"><a href="syntax.html"><i class="fa fa-check"></i><b>2</b> SYNTAX</a><ul>
+<li class="chapter" data-level="2.1" data-path="syntax.html"><a href="syntax.html#variables-names"><i class="fa fa-check"></i><b>2.1</b> Variables names</a></li>
+<li class="chapter" data-level="2.2" data-path="syntax.html"><a href="syntax.html#using-quotation-marks-cudzysow"><i class="fa fa-check"></i><b>2.2</b> Using quotation marks [cudzysłów]</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html"><i class="fa fa-check"></i><b>3</b> Sterowanie przeplywam [control flow]</a><ul>
+<li class="chapter" data-level="3.1" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#petla-for"><i class="fa fa-check"></i><b>3.1</b> petla for</a></li>
+<li class="chapter" data-level="3.2" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#if"><i class="fa fa-check"></i><b>3.2</b> if</a></li>
+<li class="chapter" data-level="3.3" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#ifelse-czyli-wektorowa-wersja-if"><i class="fa fa-check"></i><b>3.3</b> ifelse (czyli wektorowa wersja if)</a></li>
+<li class="chapter" data-level="3.4" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#while"><i class="fa fa-check"></i><b>3.4</b> while</a></li>
+<li class="chapter" data-level="3.5" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#repeat"><i class="fa fa-check"></i><b>3.5</b> repeat</a></li>
+<li class="chapter" data-level="3.6" data-path="sterowanie-przeplywam-control-flow.html"><a href="sterowanie-przeplywam-control-flow.html#switch"><i class="fa fa-check"></i><b>3.6</b> switch</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="formulas.html"><a href="formulas.html"><i class="fa fa-check"></i><b>4</b> formulas</a><ul>
+<li class="chapter" data-level="4.1" data-path="formulas.html"><a href="formulas.html#informacje-wstepne"><i class="fa fa-check"></i><b>4.1</b> Informacje wstepne</a></li>
+<li class="chapter" data-level="4.2" data-path="formulas.html"><a href="formulas.html#przyklady-stosowania-formul"><i class="fa fa-check"></i><b>4.2</b> Przyklady stosowania formul</a></li>
+<li class="chapter" data-level="4.3" data-path="formulas.html"><a href="formulas.html#formula-a-tekst"><i class="fa fa-check"></i><b>4.3</b> Formula a tekst</a></li>
+<li class="chapter" data-level="4.4" data-path="formulas.html"><a href="formulas.html#wyciaganie-elementow-formuly"><i class="fa fa-check"></i><b>4.4</b> Wyciaganie elementow formuly</a></li>
+<li class="chapter" data-level="4.5" data-path="formulas.html"><a href="formulas.html#modyfikacja-formul"><i class="fa fa-check"></i><b>4.5</b> Modyfikacja formul</a></li>
+<li class="chapter" data-level="4.6" data-path="formulas.html"><a href="formulas.html#dynamiczne-tworzenie-formuly-liniowej-z-zadanych-elementow"><i class="fa fa-check"></i><b>4.6</b> Dynamiczne tworzenie formuly LINIOWEJ z zadanych elementow</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="funkcje.html"><a href="funkcje.html"><i class="fa fa-check"></i><b>5</b> Funkcje</a><ul>
+<li class="chapter" data-level="5.1" data-path="funkcje.html"><a href="funkcje.html#anchor"><i class="fa fa-check"></i><b>5.1</b> Types of functions</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html"><i class="fa fa-check"></i><b>6</b> Struktury danych w R</a><ul>
+<li class="chapter" data-level="6.1" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html#podzial-struktur"><i class="fa fa-check"></i><b>6.1</b> Podzial struktur</a></li>
+<li class="chapter" data-level="6.2" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html#listy-atomowe"><i class="fa fa-check"></i><b>6.2</b> Listy atomowe</a><ul>
+<li class="chapter" data-level="6.2.1" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html#wektory"><i class="fa fa-check"></i><b>6.2.1</b> wektory</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html#matrix"><i class="fa fa-check"></i><b>6.3</b> matrix</a><ul>
+<li class="chapter" data-level="6.3.1" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html#array-macierz-wielowymiarowa"><i class="fa fa-check"></i><b>6.3.1</b> Array (macierz wielowymiarowa)</a></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html#listy-generyczne"><i class="fa fa-check"></i><b>6.4</b> Listy generyczne</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html#list"><i class="fa fa-check"></i><b>6.4.1</b> List</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="struktury-danych-w-r.html"><a href="struktury-danych-w-r.html#data.frames"><i class="fa fa-check"></i><b>6.5</b> data.frames</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="typy-danych.html"><a href="typy-danych.html"><i class="fa fa-check"></i><b>7</b> Typy danych</a><ul>
+<li class="chapter" data-level="7.1" data-path="typy-danych.html"><a href="typy-danych.html#typ-logical"><i class="fa fa-check"></i><b>7.1</b> Typ <em>logical</em></a></li>
+<li class="chapter" data-level="7.2" data-path="typy-danych.html"><a href="typy-danych.html#typ-numeric"><i class="fa fa-check"></i><b>7.2</b> Typ <em>numeric</em></a></li>
+<li class="chapter" data-level="7.3" data-path="typy-danych.html"><a href="typy-danych.html#typ-complex"><i class="fa fa-check"></i><b>7.3</b> Typ <em>complex</em></a></li>
+<li class="chapter" data-level="7.4" data-path="typy-danych.html"><a href="typy-danych.html#typ-character"><i class="fa fa-check"></i><b>7.4</b> Typ <em>character</em></a></li>
+<li class="chapter" data-level="7.5" data-path="typy-danych.html"><a href="typy-danych.html#typ-date"><i class="fa fa-check"></i><b>7.5</b> Typ <em>date</em></a></li>
+<li class="chapter" data-level="7.6" data-path="typy-danych.html"><a href="typy-danych.html#typ-posix"><i class="fa fa-check"></i><b>7.6</b> Typ <em>POSIX</em></a></li>
+<li class="chapter" data-level="7.7" data-path="typy-danych.html"><a href="typy-danych.html#typ-factor"><i class="fa fa-check"></i><b>7.7</b> Typ <em>factor</em></a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="data-types.html"><a href="data-types.html"><i class="fa fa-check"></i><b>8</b> DATA TYPES</a><ul>
+<li class="chapter" data-level="8.1" data-path="data-types.html"><a href="data-types.html#braki-danych"><i class="fa fa-check"></i><b>8.1</b> Braki danych</a></li>
+</ul></li>
+<li class="appendix"><span><b>Dodatki</b></span></li>
+<li class="chapter" data-level="A" data-path="oznaczenia.html"><a href="oznaczenia.html"><i class="fa fa-check"></i><b>A</b> Oznaczenia</a><ul>
+<li class="chapter" data-level="A.1" data-path="oznaczenia.html"><a href="oznaczenia.html#oznaczenia-odpisowe"><i class="fa fa-check"></i><b>A.1</b> Oznaczenia odpisowe</a></li>
+<li class="chapter" data-level="A.2" data-path="oznaczenia.html"><a href="oznaczenia.html#oznaczenia-w-kodzie"><i class="fa fa-check"></i><b>A.2</b> Oznaczenia w kodzie</a></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="materialy-do-nauki.html"><a href="materialy-do-nauki.html"><i class="fa fa-check"></i><b>B</b> Materialy do nauki</a></li>
+<li class="chapter" data-level="C" data-path="skroty-klawiaturowe.html"><a href="skroty-klawiaturowe.html"><i class="fa fa-check"></i><b>C</b> Skroty klawiaturowe</a></li>
+<li class="chapter" data-level="D" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html"><i class="fa fa-check"></i><b>D</b> Dobre nawyki</a><ul>
+<li class="chapter" data-level="D.1" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#skladnia-w-kodzie"><i class="fa fa-check"></i><b>D.1</b> skladnia w kodzie</a></li>
+<li class="chapter" data-level="D.2" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#home-i-end"><i class="fa fa-check"></i><b>D.2</b> Home i End</a></li>
+<li class="chapter" data-level="D.3" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#rozdzialy"><i class="fa fa-check"></i><b>D.3</b> Rozdzialy</a></li>
+<li class="chapter" data-level="D.4" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#snippets"><i class="fa fa-check"></i><b>D.4</b> snippets</a></li>
+<li class="chapter" data-level="D.5" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#projects"><i class="fa fa-check"></i><b>D.5</b> Projects</a></li>
+</ul></li>
+<li class="chapter" data-level="E" data-path="uwagi-rozne.html"><a href="uwagi-rozne.html"><i class="fa fa-check"></i><b>E</b> Uwagi rozne</a><ul>
+<li class="chapter" data-level="E.1" data-path="uwagi-rozne.html"><a href="uwagi-rozne.html#instalacja-pakietow"><i class="fa fa-check"></i><b>E.1</b> <strong>Instalacja pakietow</strong></a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Introduction to R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="struktury-danych-w-r" class="section level1">
+<h1><span class="header-section-number">Chapter 6</span> Struktury danych w R</h1>
+<div id="podzial-struktur" class="section level2">
+<h2><span class="header-section-number">6.1</span> Podzial struktur</h2>
+<p>Na razie pominiemy tzw. typy danych tzn. daty, liczny, ciagi tekstowe, bo to rozbudowane tematy i zajmiemy się tym w jakie struktury mozna takie typu zebrac.</p>
+<p>Dane w jezyku R sa przechodywane w listach ktore dzieli sie na 2 podstawowe typy</p>
+<ol style="list-style-type: decimal">
+<li><strong>atomowe</strong> - kazdy element listy jest tego samego typu (czyli wszystko jest np. liczba) i elementow nie mozna w sobie zagniezdzac (przykladem jest np. vektor, matrix, array). Lista atomowa nie moze przechowywac obiektu NULL.</li>
+<li><strong>generyczne</strong> - kazdy element moze byc innego typu i elementy mozna zagniezdzac (przykladem sa listy, data.frames [ramki danych]). Lista generyczna moze przechowywac obiekt <code>NULL</code>.</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">nasz_wektor &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)
+
+<span class="kw">is.atomic</span>(nasz_wektor)   <span class="co"># czy obiekt jest atmowy</span>
+<span class="kw">isGeneric</span>(<span class="st">&#39;nasz_wektor&#39;</span>) <span class="co"># czy obiekt jest generyczny</span></code></pre></div>
+</div>
+<div id="listy-atomowe" class="section level2">
+<h2><span class="header-section-number">6.2</span> Listy atomowe</h2>
+<p>W przypadku list atomowych beda nas interesowaly:</p>
+<ol style="list-style-type: decimal">
+<li><strong>vector</strong> - wektor</li>
+<li><strong>matrix</strong> - macierz dwuwymiarowa</li>
+<li><strong>array</strong> - macierz o dowolnej liczbie wymiarow</li>
+</ol>
+<p><strong>Uwaga</strong>: W R nie ma czegos takiego jak <strong>skalar</strong>, czyli obiektu zawierajacego na sztywno tylko jeden element !!!. Mozna sobie co najwyzej zrobic wektor z jednym elementem albo macierz o wymiarze 1x1.</p>
+<div id="wektory" class="section level3">
+<h3><span class="header-section-number">6.2.1</span> wektory</h3>
+<p>Dla wektorow w wiekszosci sytuacji chyba nie ma sensu wyrozniac czy jest wierszowy czy kolumnowy. Po uzyciu na nim funkcji transponujacej dostaniemy matrix z jednym wierszem:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wektor &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)
+
+transponowany_wektor &lt;-<span class="st"> </span><span class="kw">t</span>(wektor)
+<span class="kw">class</span>(transponowany_wektor) <span class="co"># sprawdzam klase obiektu i dostaje &quot;matrix&quot;</span></code></pre></div>
+<p>Taka transpozycja moze kilka razy mi sie kiedys przydala.</p>
+<p><strong>Tworzenie wektora</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#obie ponizsze linijki kodu sa rownowazne</span>
+wektor &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>)
+wektor &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">9</span>
+
+<span class="co">#mozna tez to mieszac te konstrukcje</span>
+wektor1 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>, <span class="dv">10</span><span class="op">:</span><span class="dv">20</span>, <span class="dv">5</span>, <span class="dv">12</span>, <span class="dv">100</span><span class="op">:</span><span class="dv">200</span>)
+
+<span class="co"># sklejanie wektorow</span>
+wektor_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">3</span>
+wektor_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="dv">4</span><span class="op">:</span><span class="dv">6</span>
+
+<span class="co"># skleilem ponizej 4 wektory </span>
+wektor_razem &lt;-<span class="st"> </span><span class="kw">c</span>(  wektor_<span class="dv">1</span>
+                                , wektor_<span class="dv">2</span>
+                                , <span class="dv">1</span><span class="op">:</span><span class="dv">30</span>
+                                  , <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)) 
+
+
+wektor_pusty_liczbowy &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="dv">0</span>) <span class="co"># ten wektor ma zero elementow ale wiemy ze jest typu liczbowego (typy wektorow bede w jednej z kolejnych czesci)</span></code></pre></div>
+<p><strong>Wybieranie podzbioru elementow wektora po indeksach</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># wybieranie po indeksach (pozycjach) elementow</span>
+
+wektor[<span class="dv">1</span>]        <span class="co">#wyciagnij pierwszy element</span>
+wektor[<span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">3</span>)]   <span class="co">#wyciagnij drugi i trzeci element</span>
+wektor[<span class="dv">2</span><span class="op">:</span><span class="dv">3</span>]      <span class="co">#wyciagnij drugi i trzeci element</span>
+wektor[<span class="op">-</span><span class="dv">1</span>]       <span class="co"># wszyskie elementy z wyjatkiem pierwszego</span>
+wektor[<span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>,<span class="op">-</span><span class="dv">3</span>)] <span class="co"># wszyskie elementy z wyjatkiem pierwszego i trzeciego</span>
+wektor[<span class="op">-</span><span class="dv">1</span><span class="op">:-</span><span class="dv">3</span>]    <span class="co"># wszyskie elementy z wyjatkiem pierwszego drugiego i trzeciego</span>
+
+<span class="co"># mozeby tez wyciagajac elementy zmieniac sobie kolejnosc</span>
+wektor[<span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>)]
+<span class="kw">order</span>(wektor) <span class="co"># to naz zwroci ktory pod wzgledem wartosci jest dany element</span>
+wektor[<span class="kw">order</span>(wektor)] <span class="co"># dzieki takiemu podstawieniu dostaniemy posortowany wektor. Ale do srotowania generalnie lepsza jest f:sort ktora bedzie potem pokazana.</span></code></pre></div>
+<p><strong>Wybieranie podzbioru elementow wektora po warunkach logicznych</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wektor[<span class="kw">c</span>(<span class="ot">TRUE</span>, <span class="ot">TRUE</span>, <span class="ot">FALSE</span>, <span class="ot">FALSE</span>, <span class="ot">FALSE</span>, <span class="ot">FALSE</span>, <span class="ot">FALSE</span>, <span class="ot">FALSE</span>, <span class="ot">FALSE</span>)] <span class="co"># wycianij pierwszy i drugi element - zwrocmy uwage ze ilosc wartosci logicznych jest rowna ilosci elementow wektora, czyli warunek definiujemy oddzielnie dla kazdego elementu</span>
+
+<span class="co">#ponizsze dzialanie zwraca nam wektor wartosci logicznych o dlugosci naszego wektora pokazujace ktore elementy sa wieksze niz 3</span>
+wektor <span class="op">&gt;</span><span class="st"> </span><span class="dv">3</span>
+<span class="co">#nic nie stoi na przeszkodzie zeby powyzsze dzialanie podstawic w nawiasach kwadratowych naszego wektora:</span>
+wektor[wektor <span class="op">&gt;</span><span class="st"> </span><span class="dv">3</span>] <span class="co"># wyciagnij elementy wieksze niz 3</span>
+
+<span class="co"># bardziej skpmplikowany warunek</span>
+wektor[wektor <span class="op">&gt;</span><span class="st"> </span><span class="dv">3</span> <span class="op">&amp;</span><span class="st"> </span>wektor <span class="op">&lt;</span><span class="st"> </span><span class="dv">8</span>]</code></pre></div>
+<p><strong>Wybieranie podzbioru elementow wektora po nazwach.</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wektor &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">a=</span><span class="dv">10</span>, <span class="dt">b=</span><span class="dv">20</span>, <span class="dt">c=</span><span class="dv">30</span>) <span class="co"># kazdy element naszego wektora bedzie teraz mial nazwy literowe</span>
+
+<span class="kw">names</span>(wektor) <span class="co"># zwroci wektor z nazwami elementow wystapujacymi w naszym wektorze</span>
+
+wektor[<span class="st">&#39;a&#39;</span>] <span class="co"># element o nazwie &#39;a&#39;</span>
+wektor[<span class="kw">c</span>(<span class="st">&#39;a&#39;</span>,<span class="st">&#39;b&#39;</span>)] <span class="co"># elementy o nazwach &#39;a&#39; i &#39;b&#39;</span>
+
+<span class="co"># niestety nie dziala tutaj trik ze znakiem minus jak przy odwolywaniu sie przez indeksy</span>
+wektor[<span class="op">-</span><span class="st">&#39;a&#39;</span>] <span class="co"># dostaniemy blad</span>
+
+<span class="co">#zeby rozwiazac powyzszy problem z brakie mozliwosci uzycia minusa zastosujemy:</span>
+indeksy_do_usuniecia &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">names</span>(wektor) <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;b&#39;</span>)) <span class="co"># f:which zwroci nam numery nazw ktore zawieraja sie w zbiore dwuelementowym &#39;a&#39; i &#39;b&#39;.</span>
+wektor[<span class="op">-</span>indeksy_do_usuniecia] <span class="co"># dostaniemy tylko element &#39;c&#39;</span>
+
+
+
+<span class="co"># wektor bez komplenu nazw dla elementow:</span>
+wektor_bez_kompletu_nazw &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">a=</span><span class="dv">10</span>, <span class="dt">b=</span><span class="dv">20</span>, <span class="dv">30</span>) <span class="co"># trzeci element nie nazwany</span>
+<span class="kw">names</span>(wektor_bez_kompletu_nazw)   <span class="co"># na trzeciej pozycji mamy po prostu znak pusty &quot;&quot;</span>
+
+wektor_bez_kompletu_nazw[<span class="st">&quot;&quot;</span>] <span class="co"># to nie zadziala. Do elementow nie nazwanych nie odwolamy sie po nazwie !!!</span></code></pre></div>
+<p><strong>Atrybuty wektora</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wektor &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">a=</span><span class="dv">10</span>, <span class="dt">b=</span><span class="dv">20</span>, <span class="dt">c=</span><span class="dv">30</span>)
+
+<span class="co">#wczesniej wspomniane nazwy elementow</span>
+<span class="kw">names</span>(wektor)
+
+<span class="co">#dlugosc wektora</span>
+<span class="kw">length</span>(wektor)
+
+<span class="co"># podstawowy typ wektora (w rozdziale o typach danych wyjasnie co to jest)</span>
+<span class="kw">mode</span>(wektor)
+
+<span class="co"># tzw. klasa wektora (to nie to samo co podstawowy typ, chociaz tutaj mamy akurat prosty wektor numeryczny i f:mode oraz f:class zwraca nam &#39;numeric&#39; ). O tym czym jest klasa tez bedzie pozniej</span>
+<span class="kw">class</span>(wektor)</code></pre></div>
+<p><strong>Modyfikacja wektora</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wektor &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">a=</span><span class="dv">10</span>, <span class="dt">b=</span><span class="dv">20</span>, <span class="dt">c=</span><span class="dv">30</span>, <span class="dt">d=</span><span class="dv">40</span>)
+
+wektor[<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="dv">200</span> <span class="co"># drugi element zastap wartosciowa 200</span>
+wektor
+wektor[<span class="st">&#39;c&#39;</span>] &lt;-<span class="st"> </span><span class="dv">300</span>
+wektor
+wektor[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>] &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>)
+wektor
+wektor[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>] &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1000</span>, <span class="dv">2000</span>) <span class="co"># trzy elementy zastepujemy dwoma, ale nie jest do dobra praktyka. </span>
+wektor
+wektor[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>] &lt;-<span class="st"> </span><span class="dv">100</span>  <span class="co"># to zadziala  i jest czesto stosowane bo kilka elementow zastepujemy JEDNYM I TYM SAMYM elementem</span>
+wektor
+
+<span class="co"># mimo ze wektor ma tylko 4 elementy mozemy sie odwolac w indeksie do liczby 5 i tym samym dokleic kolejny element</span>
+wektor[<span class="dv">5</span>] &lt;-<span class="st"> </span><span class="dv">10000</span>
+wektor
+
+<span class="co"># to co jest nizej tez zadziala. Wektor ma juz 5 elementow a teraz bedzie mial 10. Dziury od elementu 6 do 9 zostana wypelnione brakami danych czyli wartoscia NA</span>
+wektor[<span class="dv">10</span>] &lt;-<span class="st"> </span><span class="dv">10000</span>
+wektor
+
+wektor &lt;-<span class="st"> </span>wektor[<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>] <span class="co"># skrocenie wektora do pierwszych 3 elementow</span>
+
+
+<span class="co"># ponizsze 2 linijki sa roznowazne</span>
+wektor &lt;-<span class="st"> </span><span class="kw">replace</span>(wektor, <span class="dt">list =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>), <span class="dt">values =</span> <span class="kw">c</span>(<span class="dv">10</span>,<span class="dv">20</span>))
+wektor[<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)] &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">10</span>,<span class="dv">20</span>)</code></pre></div>
+<p><strong>Rozne przydatne funkcje do pracy z wektorami</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">wektor &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">10</span>
+
+<span class="co"># odwrocenie kolejnosci elementow</span>
+<span class="kw">rev</span>(wektor) 
+
+<span class="co"># sortowanie rosnaco</span>
+<span class="kw">sort</span>(wektor)
+
+<span class="co"># sortowanie malejaco</span>
+<span class="kw">sort</span>(wektor, <span class="dt">decreasing =</span> <span class="ot">TRUE</span>)
+
+<span class="co"># sortowanie malejaco tak zeby braki danych NA byly po sortowaniu na koncu wektora </span>
+<span class="kw">sort</span>(wektor, <span class="dt">decreasing =</span> <span class="ot">TRUE</span>, <span class="dt">na.last =</span> <span class="ot">TRUE</span>)
+
+<span class="kw">which</span>(wektor <span class="op">==</span><span class="st"> </span><span class="dv">2</span>) <span class="co"># pozycja elementow rownych 2</span>
+<span class="kw">which</span>(wektor <span class="op">&gt;</span><span class="st"> </span><span class="dv">2</span> <span class="op">&amp;</span><span class="st"> </span>wektor <span class="op">&lt;</span><span class="st"> </span><span class="dv">7</span>)
+
+<span class="kw">which.max</span>(wektor) <span class="co"># pozycja najwiekszego elementu</span>
+<span class="kw">which.min</span>(wektor) <span class="co"># pozycja najmniejszego elementu</span>
+<span class="kw">is.na</span>(wektor) <span class="co"># czy elementy sa brakami danych typu NA</span>
+<span class="kw">is.nan</span>(wektor) <span class="co"># czy elementy sa brakami danych typu NaN</span>
+
+wektor <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">10</span>) <span class="co"># czy kazdy z kolejnych elementow zawiera sie w zbiorze liczb 1 i 2</span>
+<span class="op">!</span><span class="st"> </span>wektor <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">10</span>) <span class="co"># zaprzeczenie tego co jest wyzej</span>
+
+
+
+wektor_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">10</span>
+wektor_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="dv">1</span><span class="op">:</span><span class="dv">10</span>
+wektor_<span class="dv">1</span> <span class="op">==</span><span class="st"> </span>wektor_<span class="dv">2</span> <span class="co"># czy kazdy element z osobna jest taki sam </span>
+wektor_<span class="dv">1</span> <span class="op">!=</span><span class="st"> </span>wektor_<span class="dv">2</span> <span class="co"># czy kazdy element z osobna jest taki rozny</span>
+wektor_<span class="dv">1</span> <span class="op">&gt;</span><span class="st"> </span>wektor_<span class="dv">2</span> <span class="co"># czy kazdy element z osobna jest wiekszy w wektorze_1 w stosunku do wektora_2</span>
+<span class="kw">all.equal</span>(wektor_<span class="dv">1</span>, wektor_<span class="dv">2</span>) <span class="co"># czy wszyskie elementy sa takie same (dostaniemy jedna wartosc logiczna)</span>
+
+<span class="kw">unique</span>(wektor) <span class="co"># usuniecie duplikatow</span>
+
+<span class="kw">duplicated</span>(wektor) <span class="co"># czy poszczegolne wartosci sa duplikatami</span>
+
+<span class="kw">order</span>(wektor) <span class="co"># ktory z kolei pod wzgledem wartosci jest dany element</span></code></pre></div>
+</div>
+</div>
+<div id="matrix" class="section level2">
+<h2><span class="header-section-number">6.3</span> matrix</h2>
+<p><strong>Tworzenie macierzy</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">macierz &lt;-<span class="st"> </span><span class="kw">matrix</span>(  <span class="dt">data  =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span> <span class="co">#beda 4 elementy </span>
+                                    , <span class="dt">nrow  =</span> <span class="dv">2</span> <span class="co"># beda w wiersz</span>
+                                    , <span class="dt">byrow =</span> <span class="ot">TRUE</span>) <span class="co"># elementy beda wprowadzone w kolejnosci po wierszach</span>
+
+
+macierz
+
+<span class="co"># tak jak przy wektorach mozna wprowadzic nazwy elementow</span>
+<span class="co"># (1) mozna nazwac oddzielnie kazda komorke macierz co chyba nigdy nie jest praktykowane i nie bedziemy sie tym zajmowac</span>
+<span class="co"># (2) mozna nazwac kolumny i wiersze - to sie najbardziej przydaje</span>
+<span class="co"># (3) mozna nazwa wymiary</span>
+
+macierz_z_nazwami &lt;-<span class="st"> </span><span class="kw">matrix</span>(  <span class="dt">data =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>
+                                                        , <span class="dt">nrow =</span> <span class="dv">2</span>
+                                                        , <span class="dt">dimnames =</span> <span class="kw">list</span>(  <span class="dt">a=</span><span class="kw">c</span>(<span class="st">&#39;A&#39;</span>,<span class="st">&#39;B&#39;</span>) <span class="co">#wymiar wierszy o nazwie &#39;a&#39; bedzie zawieral wiesze &#39;A&#39; i &#39;B&#39;</span>
+                                                                                            , <span class="dt">b=</span><span class="kw">c</span>(<span class="st">&#39;D&#39;</span>,<span class="st">&#39;E&#39;</span>))) <span class="co">#wymiar kolumn o nazwie &#39;b&#39; bedzie zawieral kolumny &#39;D&#39; i &#39;E&#39;</span>
+
+<span class="co">#</span>
+macierz_z_nazwami</code></pre></div>
+<p>**Atrybuty macierzy*</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(macierz_z_nazwami) <span class="co"># dostaniemy NULL bo nie nazwalismy osobno kazdej komorki (Przy okazji zauwaz ze to pierwszy raz kiedy dostalismy obiekt NULL - wlasnie czesto jezli jakas funkcja nie ma czego zwrocic bo to nie isnieje, to zwraca NULL ktorego nie nalezy mylic z NULL-em w SQL-u)</span>
+<span class="kw">colnames</span>(macierz_z_nazwami) <span class="co"># nazwy kolumn </span>
+<span class="kw">rownames</span>(macierz_z_nazwami) <span class="co"># nazwy wierszy</span>
+<span class="kw">dimnames</span>(macierz_z_nazwami) <span class="co"># nazwy wymiarow</span>
+
+<span class="kw">length</span>(macierz) <span class="co"># ilosc komorek macierzy</span>
+<span class="kw">dim</span>(macierz) <span class="co"># wymiary - dostaniemy dwu elementowy wektor z iloscia i kolumn i wierszy</span>
+<span class="kw">ncol</span>(macierz) <span class="co"># ilosc kolumn</span>
+<span class="kw">nrow</span>(macierz) <span class="co"># ilosc wierszy</span></code></pre></div>
+<p><strong>Odwolywanie sie do elemenow</strong> Tutaj wszystko dziala analogicznie do wektorow wiec nie ma sie nad czym rozwodzic. Komplikacja jest to ze mamy 2 wymiary. Podam kilka prosty przykladow juz bez rozwleklego komentowania</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">macierz1 &lt;-<span class="st"> </span><span class="kw">matrix</span>( <span class="dt">data  =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">9</span>
+                                    , <span class="dt">nrow  =</span> <span class="dv">3</span>)
+
+<span class="co">#nazwy kolumn i wierszy mozna tez przypisac tak</span>
+<span class="kw">colnames</span>(macierz1) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;A&#39;</span>,<span class="st">&#39;B&#39;</span>,<span class="st">&#39;C&#39;</span>) 
+<span class="kw">rownames</span>(macierz1) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;D&#39;</span>,<span class="st">&#39;E&#39;</span>,<span class="st">&#39;F&#39;</span>) 
+
+macierz1[ ,<span class="dv">2</span>] <span class="co"># druga kolumna</span>
+macierz1[<span class="dv">2</span>, ] <span class="co"># druga wiersz</span>
+macierz1[<span class="dv">1</span>,<span class="dv">2</span>] <span class="co"># element z pierwszego wiesza i drugiej kolumny</span>
+macierz1[<span class="dv">1</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]
+macierz1[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]
+macierz1[<span class="op">-</span><span class="dv">1</span>,]
+macierz1[<span class="op">-</span><span class="dv">1</span><span class="op">:-</span><span class="dv">2</span>,]
+macierz1[,<span class="st">&#39;A&#39;</span>]
+macierz1[,<span class="kw">c</span>(<span class="st">&#39;A&#39;</span>,<span class="st">&#39;B&#39;</span>)]
+
+<span class="co"># Wazna uwaga do powyzszego jest to ze jezeli zwracany obiekt jest jednowymiarowy dostajemy wektor a nie jednowymiarowa macierz</span>
+<span class="kw">is.matrix</span>(macierz1[ ,<span class="dv">2</span>]) <span class="co"># zwroci FALSE</span></code></pre></div>
+<p><strong>Funckje do pracy z macierzami</strong></p>
+<p>Generalnie wiekszosc funkcji do pracy z wektorami moze tez pobrac macierze:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">macierz &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dv">2</span>)
+<span class="kw">sum</span>(macierz) <span class="co">#suma wszysktich elementow</span>
+<span class="kw">max</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>) <span class="co"># maksimum z wszystkich elemenotow</span></code></pre></div>
+<p>W powyzszych sytuacjach macierz jest potraktowana po prostu jak wektor i funkcja nie widzi wymiarowosci macierzy.</p>
+<p>Problem jest jezeli nie chcemy traktowac macierzy jak wektora ale zrobic obliczenia wzgledem kolumn albo wierszy (czyli pracowac na jej wymiarach)</p>
+<p>Zalozmy ze chcemy zrobic wartosc maksymalna z kazdej kolumny. Mozna to zrobic petla for:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">macierz &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, <span class="dv">2</span>)
+
+wynik &lt;-<span class="st"> </span><span class="kw">numeric</span>(<span class="dv">0</span>) <span class="co">#definiuje pusty wektor liczbowy gdzie bededokladal wyniki moich obliczen</span>
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(macierz)){ <span class="co"># wartosc licznika &#39;i&#39; bedzie od 1 do ncol(macierz) czyli ilosci kolumn macierzy</span>
+    max_i_tej_kolumny &lt;-<span class="st"> </span><span class="kw">max</span>(macierz[,i])  <span class="co">#max z i-tej kolumny</span>
+    wynik &lt;-<span class="st"> </span><span class="kw">c</span>(wynik, max_i_tej_kolumny) <span class="co"># do mojej zmiennej doklejam sobie wartosc max z kolejnej kolumny</span>
+}
+wynik</code></pre></div>
+<p>Jest to jednak malo wygodne i w praktyce jesli chcemy ta sama operacje wykonac na wielu roznych elementach (czyli np. na kolejnych kolumnach marcierzy) to stosujemy funkcje mapujace. Funkcje te niesamowite zastosowania w pracy ze zlowonymi strukturami danych. Przy macierzach nie bedzie dzialo sie nic spektakulanego. Dla macierzy istnieje taka dedykowana mapujaca funkcja i nazywa sie apply:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># wartosc maksymalna z kolumn (dostaniemy dokladnie to samo co wczesniej z petli for)</span>
+<span class="kw">apply</span>(macierz
+            , <span class="dt">MARGIN =</span> <span class="dv">1</span>
+            , <span class="dt">FUN =</span> max) 
+
+<span class="co"># wartosc maksymalna z wierszy</span>
+<span class="kw">apply</span>(  macierz
+            , <span class="dt">MARGIN =</span> <span class="dv">2</span>
+            , <span class="dt">FUN =</span> max) </code></pre></div>
+<p><strong>Skejanie (bindowanie [binding])</strong></p>
+<p>Bindowanie po wierszach [rows]</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#czy mozna bindowac macierz ktore maja inne nazwy kolumn?</span>
+z1 &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>),<span class="kw">c</span>(<span class="dv">2</span><span class="op">:</span><span class="dv">2</span>))
+<span class="kw">colnames</span>(z1) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;a&#39;</span>,<span class="st">&#39;b&#39;</span>)
+z2 &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">5</span><span class="op">:</span><span class="dv">8</span>),<span class="kw">c</span>(<span class="dv">2</span><span class="op">:</span><span class="dv">2</span>))
+<span class="kw">colnames</span>(z2) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;c&#39;</span>,<span class="st">&#39;d&#39;</span>)
+
+z &lt;-<span class="st"> </span><span class="kw">rbind</span>(z1,z2)
+<span class="co">#wniosek jest taki ze mozna. Nazwy sa przejmowane od pierwszej macierzy</span>
+
+
+
+<span class="co">#tworzenie macierzy przez bindowanie kiedy macierz startowa jest pusta i nieokreslona (bidnowanie od zera)</span>
+m1 &lt;-<span class="st"> </span><span class="kw">numeric</span>()
+m1 &lt;-<span class="st"> </span><span class="kw">rbind</span>(m1, <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>), <span class="dv">2</span>) )
+m1 &lt;-<span class="st"> </span><span class="kw">rbind</span>(m1, <span class="kw">matrix</span>(<span class="kw">c</span>(<span class="dv">10</span><span class="op">:</span><span class="dv">1</span>), <span class="dv">2</span>) )
+m1 <span class="co">#dostaniemy macierz o wymiarach 2X10</span>
+
+
+
+
+<span class="co"># bindowanie po kolumnach</span>
+<span class="kw">cbind</span>(m1, m1)</code></pre></div>
+<p><strong>Inne operacje macierzowe</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#posortowanie po pierwszej kolumnie</span>
+macierz[<span class="kw">order</span>(macierz[, <span class="dv">1</span>]), ]  <span class="co">#przypomnij sobie co robi f:order i wyjasnij jak tutaj dziala</span>
+
+
+<span class="co"># transponowanie</span>
+<span class="kw">t</span>(macierz)</code></pre></div>
+<div id="array-macierz-wielowymiarowa" class="section level3">
+<h3><span class="header-section-number">6.3.1</span> Array (macierz wielowymiarowa)</h3>
+<p>Ja tego typu struktury danych bardzo rzadko uzywam w praktyce, wiec potraktuj to jako ciekawostke ktorej nie bede szczegolowo opisywal. W podstawowych kwestiach tutaj nie ma sie nad czym rozwodzic bo wszystko jest tak jak w matrix tylko mamy wiecej wymiarow. W przypadku takich obiektow bardziej skomplikowane jest np. sklejanie (bindowanie) takich kilku wielowymiarowych kostek w jedna. Gdyby Cie to interesowalo to jest p:abind ktory sluzy do pracy z macierzmi wialowymiarowymi, ktory tutaj bedzi uzyty wlasnie do bindowania.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># tworze macierz twojwymiarowa</span>
+macierz_w &lt;-<span class="st"> </span><span class="kw">array</span>(  <span class="dt">data =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">27</span>
+                                     , <span class="dt">dim =</span> <span class="kw">c</span>(<span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">3</span>) <span class="co"># zrobimy 3 wymiarowa kostke z 3 wierszami w kazdym wymiarze</span>
+                                     , <span class="dt">dimnames =</span> <span class="ot">NULL</span>) <span class="co"># nazwy sobie podarujemy</span>
+
+
+<span class="kw">dim</span>(macierz_w) <span class="co">#wymiary macierzy</span>
+
+<span class="co"># uwaga: do wielowymiarowej transpozycji sluzy f:aperm a NIE f:t jak przy macierzach dwuwymiarowych</span>
+<span class="kw">aperm</span>(macierz_w, <span class="dt">perm =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">3</span>)) <span class="co"># tutaj zrobilismy transpozycje wymiaru drugiego z pierwszym</span></code></pre></div>
+<p><strong>Sklejanie (bindowanie) macierzy wielowymiarowych</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">require</span>(abind)
+w1 &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="ot">NA</span>, <span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">2</span>))   <span class="co">#macierz dwuwymiarowa o wymiarach 5x2</span>
+
+m1 &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">2</span>)) <span class="co"># nastepna macierz dwuwymiarowa 5x2</span>
+
+w2 &lt;-<span class="st"> </span>abind<span class="op">::</span><span class="kw">abind</span>(  w1
+                               , m1
+                               , <span class="dt">along =</span> <span class="dv">3</span>) <span class="co">#bindujemy po trzecim wymiarze - wiec dostane trojwymiarowa kostke sklejona z dwoch dwuwymiarowych macierzy</span>
+<span class="kw">dim</span>(w2) <span class="co"># moj nowy obiekt ma wymiar 5x2x2</span></code></pre></div>
+</div>
+</div>
+<div id="listy-generyczne" class="section level2">
+<h2><span class="header-section-number">6.4</span> Listy generyczne</h2>
+<p>Tutaj zajmiemy się dwoma najbardziej podstawowymi:</p>
+<ol style="list-style-type: decimal">
+<li>list [lista] - najbardizej ogolny typ listy. Wszyskie inne sa jej szczegolnymi przypadkami i modyfikacjami</li>
+<li>data.frame [ramka danych] - cos co jest mniej wiecej odpowiednikiem tabeli w SQL, czyli prostokatna tabela z danymi gdzie kazda ma tyle samo elementow ale moze byc innego typu</li>
+</ol>
+<div id="list" class="section level3">
+<h3><span class="header-section-number">6.4.1</span> List</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># utworzenie listy</span>
+
+moja_lista &lt;-<span class="st"> </span><span class="kw">list</span>( <span class="dt">a =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span> <span class="co"># wektor liczbowy</span>
+                                     ,<span class="dt">b =</span> <span class="st">&#39;ala&#39;</span> <span class="co"># wektor teksotwy</span>
+                                     ,<span class="dt">c =</span> <span class="kw">list</span>(<span class="dt">a=</span><span class="dv">10</span>, <span class="dt">z=</span><span class="dv">200</span>) <span class="co"># w liscie moge zagniezdzic nastepna liste bo to typ generyczny</span>
+                                     ,<span class="dt">d =</span> <span class="ot">NULL</span> <span class="co"># w liscie moge umiescic NULL bo to typ generyczny</span>
+)
+
+
+
+<span class="co"># 5 sposobow wyciagniecia pierwszego elementu listy</span>
+
+moja_lista[<span class="dv">1</span>] <span class="co"># wyciagam pierwsza element listy</span>
+<span class="kw">class</span>(moja_lista[<span class="dv">1</span>]) <span class="co"># ale jest to dalej lista tylko ze jedno elementowa - nie dobralem sie bezposrednio do wektora liczbowego !!!</span>
+
+<span class="co"># teraz dobiore sie do pierwszego elementu bezposrednio</span>
+moja_lista[[<span class="dv">1</span>]]
+<span class="kw">class</span>(moja_lista[[<span class="dv">1</span>]]) <span class="co"># mam wektor liczbowy - dobralem sie bezposrednio do niego!!!</span>
+
+<span class="co"># analogicznie dziala to dla pobieraniu elementow po nazwach</span>
+moja_lista[<span class="st">&#39;a&#39;</span>]
+moja_lista[[<span class="st">&#39;a&#39;</span>]]
+
+moja_lista<span class="op">$</span>a  <span class="co"># tu znowu dobieram sie bezposrednio po nazwie !!!</span>
+<span class="kw">class</span>(moja_lista<span class="op">$</span>a)</code></pre></div>
+<p>Teraz wazne pytanie: skoro elementy w liscie mozna zagniezdzac to czy jak odwolac sie do zagniezdzonych elementow. Nie stanowi to problemu bo odwolania mozna ukladac z lancuchy:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># drugi element w wektorze liczbowym</span>
+moja_lista[[<span class="st">&#39;a&#39;</span>]][<span class="dv">2</span>] 
+<span class="co">#lub</span>
+moja_lista[[<span class="dv">1</span>]][<span class="dv">2</span>] 
+<span class="co">#lub</span>
+moja_lista<span class="op">$</span>a[<span class="dv">1</span>]
+
+
+<span class="co"># drugi element w zagniezdzonej liscie</span>
+moja_lista[[<span class="st">&#39;c&#39;</span>]][[<span class="st">&#39;z&#39;</span>]]
+<span class="co">#lub</span>
+moja_lista[[<span class="dv">1</span>]][[<span class="st">&#39;z&#39;</span>]]
+<span class="co">#lub</span>
+moja_lista<span class="op">$</span>c<span class="op">$</span>z</code></pre></div>
+<p>Jezeli w wystapiloby wielokrotne zagniezdzenie to teki lancuszek mozna dalej ciagnac.</p>
+<p><strong>Modyfikacja listy</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">moja_lista &lt;-<span class="st"> </span><span class="kw">list</span>( <span class="dt">a =</span> <span class="dv">1</span><span class="op">:</span><span class="dv">10</span> <span class="co"># wektor liczbowy</span>
+                                     ,<span class="dt">b =</span> <span class="st">&#39;ala&#39;</span> <span class="co"># wektor teksotwy</span>
+                                     ,<span class="dt">c =</span> <span class="kw">list</span>(<span class="dt">a=</span><span class="dv">10</span>, <span class="dt">z=</span><span class="dv">200</span>) <span class="co"># w liscie moge zagniezdzic nastepna liste bo to typ generyczny</span>
+                                     ,<span class="dt">d =</span> <span class="ot">NULL</span> <span class="co"># w liscie moge umiescic NULL bo to typ generyczny</span>
+)
+
+<span class="co"># podmieniam pierwsze 2 elementy listy nowymi wartosciami. Warto zwrocic uwage na to ze nazwy pierwszych dwoch elementow sie nie zmiania mimo ze lista nowych elementow ma inne nazwy (&#39;ab&#39; i &#39;wz&#39;)</span>
+moja_lista[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>] &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">ab =</span> <span class="dv">1000</span>, <span class="dt">wz =</span> <span class="dv">200</span>)
+moja_lista
+
+
+<span class="co"># dodaj nowa zagniezdzona liste na koncu naszej listy</span>
+moja_lista &lt;-<span class="st"> </span><span class="kw">append</span>(  moja_lista
+                                         , <span class="dt">values =</span> <span class="kw">list</span>(<span class="dt">nowa_lista =</span> <span class="kw">list</span>(<span class="dt">a=</span><span class="dv">200</span>)))
+
+<span class="co"># dodaj wektor liczbowy po 3 elemencie listy</span>
+moja_lista &lt;-<span class="st"> </span><span class="kw">append</span>(  moja_lista
+                                         , <span class="dt">values =</span> <span class="kw">list</span>(<span class="dt">nowy_wektor=</span><span class="dv">1</span><span class="op">:</span><span class="dv">5</span>)
+                                         , <span class="dt">after =</span>  <span class="dv">3</span>)
+
+<span class="co">#usuniecie drugiego elementu z listy</span>
+moja_lista[<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="ot">NULL</span>
+
+
+<span class="co"># usun NULL-e z listy</span>
+moja_lista &lt;-<span class="st"> </span>purrr<span class="op">::</span><span class="kw">compact</span>(moja_lista)
+
+
+<span class="co"># ZOSTAW w liscie tylko te elementy ktore spelniaja okresony warunek</span>
+purrr<span class="op">::</span><span class="kw">keep</span>(   moja_lista
+                        , <span class="dt">.p =</span> <span class="cf">function</span>(x) <span class="kw">length</span>(x) <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) <span class="co"># element listy musi miec dlugosc co najmniej 2. &#39;x&#39; symbolizuje tu element listy</span>
+
+
+<span class="co">#teraz odwrotnie: USUN w listy tylko te elementy ktore spelniaja okresony warunek</span>
+purrr<span class="op">::</span><span class="kw">discard</span>(   moja_lista
+                           , <span class="dt">.p =</span> <span class="cf">function</span>(x) <span class="kw">length</span>(x) <span class="op">&gt;</span><span class="st"> </span><span class="dv">1</span> ) <span class="co"># usuwam elementy ktore maja dlugosc co najmniej 2</span></code></pre></div>
+<p><strong>Atrybuty listy</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># ilosc elementow glownych (nie zlicza zagniezdzonych itp)</span>
+<span class="kw">length</span>(moja_lista)
+
+<span class="co"># nazwy elementow glownych</span>
+<span class="kw">names</span>(moje_lista)
+
+<span class="co"># glebokosc listy (jak glebokie jest zagniezdzenie)</span>
+purrr<span class="op">::</span><span class="kw">vec_depth</span>(moja_lista)</code></pre></div>
+<p><strong>Laczenie list (merge)</strong></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lista_<span class="dv">1</span> &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">a=</span><span class="dv">10</span> , <span class="dt">b=</span><span class="dv">20</span> ,  <span class="dt">c=</span><span class="dv">30</span>             )
+lista_<span class="dv">2</span> &lt;-<span class="st"> </span><span class="kw">list</span>(       <span class="dt">b=</span><span class="dv">200</span>,       <span class="dt">d=</span><span class="dv">300</span>       )
+lista_<span class="dv">3</span> &lt;-<span class="st"> </span><span class="kw">list</span>(       <span class="dt">b=</span><span class="dv">2000</span>,            <span class="dt">w=</span><span class="dv">3000</span>)
+
+rlist<span class="op">::</span><span class="kw">list.merge</span>(  lista_<span class="dv">1</span>
+                                    , lista_<span class="dv">2</span> <span class="co"># tu nadpiszemy &#39;b&#39; i dodamy &#39;d&#39;</span>
+                                    , lista_<span class="dv">3</span>) <span class="co"># tutaj znowu nadpiszemy &#39;b&#39; i dodamy &#39;w&#39;</span></code></pre></div>
+<p><strong>funkcje mapujaca dla list</strong></p>
+<p>lapply</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lista &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">a=</span><span class="dv">2</span>, <span class="dt">b=</span><span class="dv">4</span>)
+
+<span class="kw">lapply</span>(lista, <span class="cf">function</span>(x) x<span class="op">^</span><span class="dv">2</span>) <span class="co"># podnies do kwadratu kazdy element listy</span>
+
+<span class="co"># to samo</span>
+purrr<span class="op">::</span><span class="kw">map</span>(lista, <span class="dt">.f =</span> <span class="cf">function</span>(x) x<span class="op">^</span><span class="dv">2</span>)
+
+
+<span class="co"># podnies do kwadratu tylko wybrane elementy</span>
+lista2 &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">a=</span><span class="dv">2</span>, <span class="dt">b=</span><span class="dv">3</span>, <span class="dt">c=</span><span class="dv">4</span>)
+purrr<span class="op">::</span><span class="kw">map_at</span>(  <span class="dt">.x =</span> lista2
+                            , <span class="dt">.at =</span> <span class="kw">c</span>(<span class="st">&#39;a&#39;</span>, <span class="st">&#39;b&#39;</span>) <span class="co"># podnosze elementy o nazwach &#39;a&#39; i &#39;b&#39;</span>
+                            , <span class="dt">.f =</span> <span class="cf">function</span>(x) x<span class="op">^</span><span class="dv">2</span> )
+
+<span class="co"># podnies do kwadratu tylko wybrane elementy</span>
+purrr<span class="op">::</span><span class="kw">map_at</span>(  <span class="dt">.x =</span> lista2
+                            , <span class="dt">.at =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>) <span class="co"># podnosze element pierszy i trzeci</span>
+                            , <span class="dt">.f =</span> <span class="cf">function</span>(x) x<span class="op">^</span><span class="dv">2</span> )
+
+
+<span class="co"># podnies do kwadratu tylko wybrane elementy</span>
+purrr<span class="op">::</span><span class="kw">map_if</span>(  <span class="dt">.x =</span> lista2
+                            , <span class="dt">.p =</span> <span class="cf">function</span>(x) x <span class="op">&gt;</span><span class="dv">2</span> <span class="co"># podnosze elementy wieksze niz 2</span>
+                            , <span class="dt">.f =</span> <span class="cf">function</span>(x) x<span class="op">^</span><span class="dv">2</span> )</code></pre></div>
+</div>
+</div>
+<div id="data.frames" class="section level2">
+<h2><span class="header-section-number">6.5</span> data.frames</h2>
+<p>Jest to typ z ktorego bedziesz korzystac najczesciej</p>
+<p><strong>Tworzenie</strong></p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="funkcje.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="typy-danych.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/03-DATA_STRUCTURES.Rmd",
+"text": "Edit"
+},
+"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,661 @@
+# OWN DATA TYPES AND STRUCTURES
+
+
+
+
+## what is dispatching
+
+
+
+First let's say what a message and a method are:
+
+    A message is a name that can be sent from one object to another, possibly with additional objects as arguments. For example in
+
+    account withdraw: 100
+
+    The message is withdraw: (Smalltalk syntax.) (Other languages might write account.withdraw(100).) The object receiving the message, in this example account, is called the receiver.
+
+    A method is an implementation that can be invoked in response to a message.
+
+These ideas are shared among a wide variety of object-oriented languages, sometimes under different names. For example, C++ calls a message a 'virtual member function'.
+
+Now:
+
+    Method dispatch is the algorithm used to decide which method should be invoked in response to a message. Algorithms vary dramatically across languages:
+
+        Languages like Smalltalk, which have classes and single inheritance, consult the class of the receiver. If the method is defined on that class, that method is invoked. Otherwise the algorithm checks the unique superclass, and so on.
+
+        In C++, the method is still determined by the class of the receiver, but because a class can have multiple superclasses, the problem of deciding which method to invoke is more complicated.
+
+        In languages like Self, which have methods but no classes, the method is either found in a named slot on the receiver itself, or possibly is found in the prototype from which the object was cloned.
+
+        In more advanced object-oriented languages, the method-dispatch algorithm examines not only the receiver but the arguments that are passed along with the message. This idea is sometimes referred to as 'multimethods'. (To a degree, this technique can be simulated using what Smalltalk calls double dispatch, but there's a programming cost and a performance cost.) I believe the languages Cecil, Diesel, and Dylan all use some form of multimethod dispatch, but I'm teetering on the edge of my expertise.
+
+
+
+
+
+Patrz \href{artykuly/Objected_Oriented_Programming.pdf}{artykul}
+
+
+
+
+## S3
+
+
+
+
+### useful functions
+
+
+```{r}
+
+#see methods
+methods('mean')
+
+methods('t.test')
+
+require(pryr)
+
+df <- data.frame(x = 1:10, y = letters[1:10])
+
+otype(df) 
+
+otype(df$x)  
+
+otype(df$y)
+
+ftype(t.data.frame) # data frame method for t()
+
+ftype(t.test) 
+```
+
+
+### creating new class and new object
+
+```{r}
+
+foo <-list()
+class(foo) <- 'ff' #assing object to class
+class(foo)
+inherits(foo, 'ff') #checking if object is foo-class
+
+
+```
+
+
+
+### creating new generics and new methods (overloading)
+
+
+
+see: Biecek1 s. 51
+```{r}
+#new generic
+f <- function(x) UseMethod("f")
+f.a <- function(x) "Class a"
+a <- structure(list(), class = "a")
+class(a)
+
+
+#overloading
+#przeciazymy funkcje plot dla obiektu typu logical:
+plot.logical()<-function(obj)
+{
+cat(ifelse(obj, 'prawda', 'nieprawda'))
+}
+#dla wartosci logicnej 'TRUE' funkcja 'plot' wyswietli 'prawda, a dla 'FALSE' wyswietli 'nieprawda'
+```
+
+pamietac o f:NexMethod przy definiowaniu funkcji w S3-wazne jezeli obiekt nalezy do kilku klas
+
+
+
+
+
+## S4
+
+### utworzenie nowej klasy
+
+```{r}
+
+setClass(
+  Class='l1', #nazwa klasy
+  slots=c(x='numeric', y='character'), #nazwy slotow i typy danych jakie przechowuja
+  contains=NULL,  #z jakich klas sa dziedziczone sloty i metody
+  prototype=NULL, #wartosci domyslne dla slotow
+  #representation=NULL, # zrgument 'slots' i 'cantains' w jednym. Nie moze byc uzyty jezeli wczesniej uzyto argumentu 'slots'!!!. Nie zaleca sie jego uzywania.
+  validity=NULL, #reguly integralnosci
+  sealed=F, #czy klasa jest zadokowana (nie mozna jej nadpisac nowa klasa o tej samej nazwie)
+  )
+
+getClass('l1') #informacja o nowej klasie 'l1'
+
+z<-new('l1', x=10, y='a')
+z@x
+
+removeClass('l1')
+
+
+
+#ustawianie wartosci domyslnych
+setClass(
+  Class='l1',
+  slots=c(x='numeric', y='character'),
+  contains=NULL,
+  prototype=NULL 
+  )
+
+removeClass('l1')  #usuwanie klasy. Uwaga: nie powoduje automatycznego usuniecia metod zwiazanych z klasa!!!
+
+
+
+
+
+#wartosci domyslne
+setClass(
+  Class='l2',
+  slots=c(x='numeric',y='character'),
+  prototype=c(x=matrix(c(4,5)), y='ble')
+  )
+
+
+
+
+
+
+#ustawianie ograniczen-validacja
+1 sposob-bezposrednio w setClass przy pomocy argumentu valitity
+2 sposob-utworzyc klase przy pomocy funkcji setClass, a nastenie uzyc funkcji setValidity
+
+
+ad1:
+setClass(
+Class='l1', #nazwa klasy
+slots=c(x='numeric', y='character'), 
+validity=function(object){
+  if(object@x>100)
+    {
+    cat('niedopuszczalna wartosc')
+    stop("niedopuszczalna wartosc") #przerwanie tworzenia obiektu
+    }else TRUE}, #reguly integralnosci
+)
+
+new('l1', x=110, y='fv')
+
+
+ad2:
+setClass(
+Class='l1', #nazwa klasy
+slots=c(x='numeric', y='character'), 
+)
+
+setValidity('l1',
+  function(object){
+  if(object@x>100)
+    {
+    cat('niedopuszczalna wartosc')
+    stop("niedopuszczalna wartosc") #przerwanie tworzenia obiektu
+    }else TRUE}, #reguly integralnosci
+  )
+
+
+}
+new('l1', x=110, y='fv')
+
+
+
+
+
+
+
+
+
+#dziedzicznie slotow (na na razie bez funkcji)
+
+#sloty nie moga miec tych samych nazw (nawet jesli sa przypisane inne typy)!!!. 
+setClass(Class='l1', slots=c(x='numeric',y='character',z='numeric'))
+setClass(Class='l2', slots=c(x='numeric',y='numeric',  w='numeric'))
+setClass(Class='l3', slots=c(t='character'), contains=c('l1','l2') ) #tutaj wywali blad
+
+#ponizej bedzie ok:
+setClass(Class='l1', slots=c(x='numeric',y='character',z='numeric'))
+setClass(Class='l2', slots=c(x1='numeric',y1='numeric',  w='numeric'))
+setClass(Class='l3', slots=c(t='character'), contains=c('l1','l2') )
+
+getClass('l1')
+getClass('l2')
+getClass('l3')
+
+
+
+
+
+
+#metody przypisane bezposrednio do obiektu
+setClass('l1', slots=c(x='numeric',y='numeric'))
+
+
+setGeneric(
+name='metoda',  #nazwa  definiowanej  metody
+def=function(x){  #przyjmowac  wartosci  (value)
+standardGeneric('metoda')  #
+}
+)
+
+
+setMethod('metoda','l1',
+  definition=function(x){  #'x' poniewaz w funkcji generycznej tez jest 'x'
+    z<-x@x+x@y
+    return(z)
+  }
+  )
+z1<-new('l1', x=100, y=100)
+metoda(z1)
+
+
+
+
+
+
+#dziedziczenie metod
+setGeneric(
+name='metoda',  #nazwa  definiowanej  metody
+def=function(x){  #przyjmowac  wartosci  (value)
+standardGeneric('metoda')  #
+}
+)
+
+setGeneric(
+name='metoda1',  #nazwa  definiowanej  metody
+def=function(x){  #przyjmowac  wartosci  (value)
+standardGeneric('metoda1')  #
+}
+)
+
+
+
+setClass(Class='l1', slots=c(x='numeric',y='character',z='numeric'))
+setMethod('metoda','l1',
+  definition=function(x){  #'x' poniewaz w funkcji generycznej tez jest 'x'
+    z<-x@x+x@z
+    return(z)
+  }
+  )
+z1<-new('l1', x=100, z=100)
+z1
+metoda(z1)
+
+
+
+
+
+setClass(Class='l2', slots=c(x1='numeric',y1='numeric',  w='numeric'))
+setMethod('metoda','l2',
+  definition=function(x){  #'x' poniewaz w funkcji generycznej tez jest 'x'
+    z<-x@x1*x@w
+    return(z)
+  }
+  )
+z2<-new('l2', x1=100, w=100)
+z2
+metoda(z2)
+
+setMethod('metoda1','l2',
+  definition=function(x){  #'x' poniewaz w funkcji generycznej tez jest 'x'
+    z<-x@x1/x@w
+    return(z)
+  }
+  )
+metoda1(z2)
+
+
+setClass(Class='l3', slots=c(t='character'), contains=c('l1','l2') )
+z3<-new('l3', x=100, z=100 ,x1=100, w=100)
+z3
+metoda(z3)  #zadzialala metoda przejeta z pierwszej funkcji
+metoda1(z3) 
+
+getMethod('l1')
+getMethods('l3')
+getMethods('l3')
+
+getMethod('metoda', signature='l1') #okreslona metoda dla okreslonej klasy
+getMethods('metoda') #informacje o metodzie 'metoda'
+
+#Wniosek
+#sa przejmowane metody z obu obiektow. Jezeli oba obiekty maja przeciazenia dla tej samej funkcji to przjmowane jest przeciazanie dla pierwszej funkcji
+
+```
+
+
+### Tworzenie nowych funkcji dla obiektow
+
+```{r}
+
+setGeneric(
+  name='metoda'  #nazwa definiowanej metody
+  def=function(x)   #przyjmowac wartosci (value)
+  {
+    standardGeneric('metoda') #
+  }
+  )
+  
+#powyzej wygenerowana nowa metoda mozemy teraz modyfikowac szczegolowo poleceniem setMethod
+#There is no control over the existence of a setGeneric: if a setGeneric existed,  the new definition destroyed the old one-in the same way as when you assign a value to a variable it destroys the preceding one-. A redefinition is often a mistake, the programmer was unaware that the function already existed. To protect oneself from this problem, it is possible to ''lock'' the definition of a method by using lockBinding:
+lockBinding('metoda',.GlobalEnv)
+
+showMethods('samochod')#pokazywanie metod dla danej klasy
+getMethod(f='plot', signature='samochod') #dostep do definicji metody
+```
+
+
+
+### Redefiniowanie istniejacych funkcji dla obiektow
+
+```{r}
+removeClass('samochod')
+setClass('samochod', representation(moc='numeric', kolor='character'), prototype(moc=255))
+setMethod(
+  f='plot',  #nazwa funkcji ktora redefiniujemy!!!
+  signature='samochod', #okrelam rodzaj klasy (nie konkretny obiekt)
+  definition=function(x)  #co robi metoda 
+              {          
+              g<-x@moc*10
+              w<-nchar(x@kolor)
+              return(list(g,w))
+              }
+  )
+plot(z)
+plot.samochod(z) #wywali blad
+#uwaga. Przed redefiniowaniem funkcji dobrze jest zobaczyc jakie przyjmuje argumenty:
+args(plot)
+```
+
+
+
+
+### obiekt w obiekcie
+
+```{r}
+setClass(Class='l1', slots=c(x='numeric'))
+setClass(Class='l2', slots=c(x1='numeric',y1='l1',  w1='numeric'))
+
+t<-new('l1',x=100) 
+t@x<-200
+w<-new('l2', x1=100  , y1=t  ,w1=60) #y1 trzeba niestety zadeklarowac wczesniej
+```
+
+## RC-references classes
+
+
+## R6
+
+
+```{r}
+
+# moja pierwsza klasa:
+require(R6)
+
+# klasa jest ogolen
+# obiekt definiuje polaczenie z konkretna baza - podajemy wszystkie paramatry polaczenia
+
+
+# praca z baza postgresql
+# info o polaczeniu
+# info o liscie tabel
+# info o strukturze danej tabeli
+
+
+
+con <- R6Class(
+    classname = 'con' 
+  , public = list(  user     = NA
+                  , password = NA
+                  , host     = NA
+                  , dbname   = NA
+                  , port     = NA
+                  , initialize = function(user, password, dbname, port){
+                       if(!missing(user))     self$user     <- user     else self$user     <- 'postgres'
+                       if(!missing(password)) self$password <- password else self$password <- 'Cognition_1'
+                       if(!missing(host))     self$host     <- host     else self$host     <- 'localhost'
+                       if(!missing(dbname))   self$dbname   <- dbname   else self$dbname   <- 'temporary'
+                       if(!missing(port))     self$port     <- port     else self$port     <- '5432'
+                    }
+                  )
+     active = list(
+       connection_info  <- function(){RPostgreSQL::}
+       tables_list      <- function(){RPostgreSQL::}
+       
+       RPostgreSQL::dbConnect(  drv      = "PostgreSQL"
+                              , user     = user
+                              , password = password
+                              , host     = host
+                              , dbname   = dbname
+                              , port     = port)
+       
+     )
+                 
+               )
+               
+)
+
+
+
+# kopiowanie
+
+require(R6)
+
+# class creation
+kl_1 <- R6Class(
+  public=list(
+    a=10
+  )
+)
+
+
+
+# creation of new object
+kl_1_1 <- kl_1$new()
+
+# assigning object to new variable
+ww1 <- kl_1_1
+
+ww1$a
+
+ww1$a <-20
+
+ww1$a
+
+kl_1_1$a # dostajemy ta samo wartosc
+
+
+# sklonowanie
+
+ww2 <- kl_1_1$clone()
+
+ww2$a <- 30
+
+ww2$a
+kl_1_1$a
+
+
+
+
+
+
+
+# przekazywanie do funkcji
+
+f1 <- function(a){
+  a$a <- 50
+  a
+}
+
+
+f1(kl_1_1)
+
+kl_1_1$a # dziala przez referencje!!!
+
+
+
+
+
+# dostepy wewnatrz
+
+a <- rnorm(10)
+
+kl_2 <- R6Class(
+  public = list(
+      a = 20
+    , fpb = function(){
+        private$b
+      }
+    , fpb_pr = function(){
+        private$fpr()
+      }
+    ),
+  private = list(
+      b = 20
+    , fpr = function(a=self$a){
+        list(a)
+      } 
+  )
+)
+
+
+kl_2_1 <- kl_2$new()
+
+kl_2_1$fpb()
+
+kl_2_1$fpb_pr()
+
+
+
+
+
+
+
+
+
+# rozne obiekty wewnatrz (s3, s4, r6)
+
+#R6
+
+y<-100
+
+kl_3_a <- R6Class(
+
+  public=list(
+     a=10
+    ,f2=function(){
+       return(y)
+    }
+))
+
+
+kl_3 <- R6Class(
+  
+  public=list(
+    s = NULL
+  , y = -50
+  , f3 = function(){
+     y
+   }
+  , initialize = function(){
+      self$s <- kl_3_a$new()
+    }
+  )
+)
+
+kl_3_1 <- kl_3$new()
+
+# pytanie czy zwroci -50 czy 100
+kl_3_1$s$f2()
+
+kl_3_1$f3()
+
+
+```
+
+
+
+## Prototypes
+
+
+
+
+
+
+## Pointers
+
+
+UWAGA: wskaznik i referencja to chyba nie to samo (patrz moja ksiakzka c++ w 21 dni str 295). Roznica na przykladzie jezyka c++ jest opisana na stronie: http://stackoverflow.com/questions/57483/what-are-the-differences-between-a-pointer-variable-and-a-reference-variable-in
+
+
+
+Pointers and passing by reference in R
+
+I've been using an approach that Andy Houseman showed me to create pointers and allow passing by reference in R. The basic idea is to create a class constructor and have each instantiation of the class be its own environment. One can then pass the object/environment into a function and it will be passed by reference rather than by value, because unlike other R objects, environments are not copied when passed to functions. Changes to the object in the function will change the object in the calling frame. In this way, one can operate on the object and change internal elements without having to create a copy of the object when the function is called nor pass the entire object back from the function. For large objects, this saves memory and time. The elements of the object, e.g., 'myFun', are local variables within the environment, accessed via list-like syntax, e.g., myFun$value. Note that care must be taken when assigning such objects/pointers because environments are not copied when used in assignments. You need to create an explicit copy function; assignment merely creates an additional name (i.e., pointer) referencing the existing object. These ideas are used extensively in the spectralGP library.
+
+You may also want to look into the R.oo package.
+
+Here's a basic example with a constructor, `newPointer()`, a copy S3 method, and an S3 method for updating the referenced value, `updatePointerValue()`:
+
+
+```{r, o.l='c'}
+
+newPointer=function(inputValue){  
+object=new.env(parent=globalenv())  
+object$value=inputValue  
+class(object)='pointer'
+
+return(object)  
+}  
+  
+copy=function (object, ...) { # create S3 generic  
+UseMethod("copy")   
+}   
+copy.pointer=function(object1,object2=NULL,...){  
+if (is.null(object2)) {   
+object2 = new.env(parent = globalenv())   
+class(object2) = class(object1)  
+nullFlag = TRUE   
+}   
+elements = names(object1)   
+for (index in 1:length(elements)) {   
+assign(elements[index], get(elements[index], env = object1,   
+inherits = FALSE), env = object2)   
+}   
+if (nullFlag)   
+{ return(object2)   
+} else {   
+return(NULL)   
+}   
+}  
+  
+updatePointerValue=function (object, ...) { # create S3 generic  
+UseMethod("updatePointerValue")   
+}   
+updatePointerValue.pointer=function(object,newValue){ # create S3 method  
+if (!is(object, "pointer")) { stop(" 'object' argument must be of class 'pointer' .") }   
+object$value=newValue  
+return(NULL)  
+}  
+##### Example  
+myP=newPointer(7)  
+print(myP$value) # returns '7'  
+newP=copy(myP)  
+copyP=myP  
+updatePointerValue(myP,9)  
+print(copyP$value) # returns '9'  
+print(newP$value) # returns '7'
+
+
+
+```
+
+Keywords: R, pointer, call by reference, pass by reference, object orientation, environments, classes
+
+
+## Other issues

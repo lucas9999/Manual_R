@@ -1,0 +1,636 @@
+# REPORTS HTML
+
+## Uniwersalia
+
+Znajduja sie tutaj elementy uniwersalne dzialajace niezależnie od werski outputu knitra. Sa elementy z **Pandos**, **Bootstrap** jak i utworzone wlasnorecznie funkcje R-owskie typu html (znajdujace sie w plikach o nazwach rozpoczynajacych sie od FUNCTION...html.v). Pliki R-owskie tworzone specjalnie pod szablony sa w rozdziale 'Szablony' i znajduja sie w plikach o nazwach 'FUNCTIONS...html.nazwa_szablonu'. 
+
+### tekst-formaltowanie
+
+
+#### wyglad_tekstu
+
+
+1. ~~tekst przekreslony~~ <br>
+2. *tekst pochylony* <br>
+3. **tekst pogrubiony** <br>
+4. <small>mniejsza czcionka</small> <br>
+5. subskrypt <sup> gorny </sup> <br>
+6. subskrypt <sub> gorny </sub> <br>
+7. `tekst komputerowy czerwony` <br>
+
+
+
+
+<br>KOD:
+```
+1. ~~tekst przekreslony~~
+2. *tekst pochylony*
+3. **tekst pogrubiony**
+4. <small>mniejsza czcionka</small>
+5. subskrypt <sup>gorny</sub>
+6. subskrypt <sub>gorny</sub>
+7. `tekst komputerowy czerwony`
+```
+
+#### drobiazgi i ozdobniki
+
+
+1. Nowa linia: dwie spacje i enter  
+2. Dodatkowa spacja: ` &nbsp; `
+3. Linia pionowa: ` --- `
+4. Naglowek rodzialu nienumerowany: `# My header {.unnumbered}`
+
+
+
+### praktyczne elementy rozne
+
+#### indeksy i chaptery w oparciu o wlasne funkcje
+
+#### notes
+
+<br>**footnote**
+`^[notatka na koncu strony]`
+
+<br>**sidenotes** 
+
+Zalezy od technologii output. Patrz szablony.
+
+
+
+<br>**tooltip**  
+`<a href="#" data-toggle="tooltip" title="Another tooltip">have a</a>`
+
+
+#### Linki
+
+
+**linki do strony**  
+`[sdca](http://wp.pl)`
+
+**link do rozdzialu**  
+`[nazwa linku](#nazwa_rozdzialu)`
+
+**link do zdjecia**
+<!-- ![alt text](zdjecie.jpg)  zadolarowane bo nie ma fizycznego zdjecia-->
+
+**link na email**
+
+**obrazek jako link**
+
+**link wewnetrzny**
+```
+<a id='ble'></a>
+<a href='#ble'>link</a>
+```
+
+
+#### numeracja rozdzialow
+
+
+
+```
+//naglowki rozdzialow-numeracja
+
+body {counter-reset: h1;}
+
+h1 {counter-increment: h1; counter-reset: h2; } 
+h2 {counter-increment: h2; counter-reset: h3; } 
+h3 {counter-increment: h3; counter-reset: h4; } 
+h4 {counter-increment: h4; counter-reset: h5; } 
+h5 {counter-increment: h5; counter-reset: h6; } 
+h6 {counter-increment: h6;  } 
+/* usage: enclose content with div class="heading_numbered" */ 
+h1:before {content:counter(h1)". "; }
+h2:before {content:counter(h1)"."counter(h2)". "; }
+h3:before {content:counter(h1)"."counter(h2)"."counter(h3)". "; }
+h4:before {content:counter(h1)"."counter(h2)"."counter(h3)"."counter(h4)". "; }
+h5:before {content:counter(h1)"."counter(h2)"."counter(h3)"."counter(h4)"."counter(h5)". "; }
+h6:before {content:counter(h1)"."counter(h2)"."counter(h3)"."counter(h4)"."counter(h5)"."counter(h6)". "; }
+
+h1 {font-size: 14px;}
+
+```
+
+
+
+### praca z css i js
+
+#### wprowadzenie kodu
+
+
+
+**css wewnetrzny**  
+`<style type="text/css">...</style>`
+
+**css zewnetrzny**  
+`<link rel="stylesheet" href="C:/Users/.../bootstrap-theme.min.css" type="text/css" media="screen"/>`
+
+
+**java  wenetrzny**  
+`<script></script>`
+
+**java zewnętrzny**  
+`<script type="text/javascript" src="simpletabs_1.3.js"></script>`
+
+
+
+
+
+#### CSS-skladnia
+
+
+1. **wiele kolumn w div**: -webkit-column-count: 3; -moz-column-count: 3;   column-count: 3;
+2. **marginesy zewnetrzne dla tabel**: margin-left: 10px; margin-right:20px; *samo margin nie zadziala*/
+3. **floating**: float:left:10px;
+4. **mozliwe wartosci dislplay**: block, inline, inline-block
+5. **mozliwe wartosci position**: fixed, absolute, relative
+6. **kolor tekstu: color:red**;  color:rbg(100,210,110); color:   #FF0000;
+7. **zaokraglone narozniki**: border-radius: 25px;
+8. **box-shadow**: 3px 3px 3px 3px;
+9. **text-shadow**: 2px 2px 2px;
+
+**Skladnia**<br> 
+table.t1 tr, td, #ble {} <br> 
+Powyzszy kod to odwolanie sie do *tr* z *tabel* klasy *t1* i do wszystkich elementow *td*, oraz elementu o id *ble*
+
+
+
+
+
+#### ustawienia dla elementow
+
+
+```
+/*cala strona*/
+body
+{
+
+background:"bgimage.jpg";
+background-color:rgb(255,0,0);
+font-family : Verdana, Geneva, Arial, Helvetica, sans-serif;
+margin: 0px;
+text-decoration: underline;
+
+}
+
+
+/*wlasnosci linkow*/
+a:link    
+{color:green;}
+
+a:visited 
+{color:green;}
+
+a:hover   
+{color:red;}
+
+a:active  
+{color:yellow;} 
+
+
+
+
+/*div*/
+
+div
+{
+
+box-shadow: 10px 10px 5px #888888;
+border:2px solid;
+border-radius:25px;
+line-height: 20px;  /*odstep miedzy wierszami*/
+line-height: normal
+}
+
+
+```
+
+#### ustawienia css tabel
+
+
+```
+
+table, th, td
+{
+border: 1px solid black;
+/
+border-color:#98bf21;
+border-width
+border-radius:25px;
+border-width:5px;
+border-width:medium;
+
+border-style:solid;
+border-top-style:dotted;
+border-right-style:solid;
+border-bottom-style:dotted;
+border-left-style:solid;
+
+
+
+backpground-color:green;
+background:url(img_flwr.gif);
+background-size:80px 60px;
+background-size:100% 100%;
+background-repeat:no-repeat; /*repeat|repeat-x|repeat-y|no-repeat|initial|inherit;*/
+
+
+
+text-align:right;
+vertical-align:bottom; /*top*/
+
+padding: 15px;
+
+
+width:100%;
+height:50px;
+
+}
+
+```
+
+
+```
+**ustawienia w tabeli dla n=tego wiersza**
+
+table tr:first-child td{
+color:yellow
+}
+
+table tr:last-child td{
+color:yellow
+}
+
+table tr:nth-child(2) td{
+color:yellow
+}
+
+/* od trzeciego wiersza*/
+table tr:nth-child(n+2) td{
+color:yellow
+}
+
+/*od drugiego wiersza co trzeci*/
+table tr:nth-child(3n+2) td{
+color:yellow
+}
+
+
+
+
+table tr:firt-child td{
+color:yellow
+}
+
+table tr:nth-child(odd) td{
+background-color: red;
+}
+table tr:nth-child(even) td{
+background-color: blue;
+}
+
+
+```
+
+#### js przyklady
+
+
+tabela z kolorem po najechaniu myszka (dodatkowo zakladam odowlanie do pliku sortable jako ze przykladowa tabela jest tej klasy)
+
+```
+<style>
+
+table tr:nth-child(odd){
+color:red;
+}
+
+
+tr:hover {
+    background-color: #FFCF8B
+}
+tr:selected {
+    background-color: #FFCF8B
+}
+td {padding: 5px;}
+
+</style>
+
+
+<script type='text/javascript'>
+var trs = document.querySelectorAll("tr");
+for(var i = 0; i < trs.length; i++){
+    trs[i].addEventListener("click", function(){this.className += " selected";});
+}
+
+var trs = document.querySelectorAll("tr");
+for(var i = 0; i < trs.length; i++){
+    trs[i].addEventListener("click", function(){
+        var cn = this.className, thc = " selected", start_idx = cn.indexOf(thc);
+        if(start_idx == -1) cn += thc;
+        else cn = cn.replace(thc,"");
+
+        console.log("#"+cn(0,start_idx)+"#");
+        this.className = cn;
+    });
+}
+</script>
+
+
+
+<table border="1" style="width:300px" class='sortable' >
+<tr>
+  <th>Firstname</th>
+  <th>Lastname</th>
+  <th>Points</th>
+</tr>
+<tr>
+  <td>Eve</td>
+  <td>Jackson</td>
+  <td>94</td>
+</tr>
+<tr>
+  <td>Eve</td>
+  <td>uackson</td>
+  <td>94</td>
+</tr>
+<tr>
+  <td>Eve</td>
+  <td>Jackson</td>
+  <td>94</td>
+</tr>
+<tr>
+  <td>Eve</td>
+  <td>qackson</td>
+  <td>94</td>
+</tr>
+</table>
+
+
+```
+
+
+
+### organizacja
+
+
+
+
+#### podzial na czesci <small>2014-09-11</small>
+
+##### Podzial na kolumny z plywnnym przeplywem zawartosci
+
+
+
+<style>
+
+div.dwa {
+    -webkit-column-count: 2; /* Chrome, Safari, Opera */
+    -moz-column-count: 2; /* Firefox */
+    column-count: 2;
+} 
+
+div.trzy {
+    -webkit-column-count: 3; /* Chrome, Safari, Opera */
+    -moz-column-count: 3; /* Firefox */
+    column-count: 3;
+} 
+</style>
+
+<div class='trzy'>
+aaaaaaa aaaaaaaaa aaaaaaaaaaa aaaaaaaaaa aaaaaaaaaaa aaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaa
+</div>
+
+<br>KOD:
+```
+<style>
+
+div.dwa {
+    -webkit-column-count: 2; /* Chrome, Safari, Opera */
+    -moz-column-count: 2; /* Firefox */
+    column-count: 2;
+} 
+
+div.trzy {
+    -webkit-column-count: 3; /* Chrome, Safari, Opera */
+    -moz-column-count: 3; /* Firefox */
+    column-count: 3;
+} 
+</style>
+
+<div class='trzy'>
+aaaaaaa aaaaaaaaa aaaaaaaaaaa aaaaaaaaaa aaaaaaaaaaa aaaaaaaaaa aaaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaa aaaaaaaaaaa
+</div>
+```
+
+##### Podzial sztywy na kolumny
+
+
+
+<div class="row">
+  <div class="col-md-6"> tresc pierwszej kolumny</div>
+  <div class="col-md-6"> tresc drugiej kolumny</div>
+</div>
+
+<br>KOD:
+```
+<div class="row">
+  <div class="col-md-6"> tresc pierwszej kolumny</div>
+  <div class="col-md-6"> tresc drugiej kolumny</div>
+</div>
+```
+
+
+
+
+
+
+### zdjecia
+
+
+
+**Rysunek**
+`<img src="image.jpg" alt="Smiley face" height="90" width="142" align="left" Hspace='50'>`
+
+**Rysunek i jego float**  
+Służy do tego parametr 'align' który przyjmuje wartości:
+
+1. left
+2. right
+3. center
+4. justify
+
+Dodatkowo parametr `hspace` steruje odstępem po obu stronach rysunku, a `vspace1` od góry i dołu.  
+
+**Dwa rysunki z opływającym tekstem**  
+```
+<figure>
+<img src="image.jpg" alt="Smiley face" height="90" width="142" align="left" Hspace='50'>
+<img src="image.jpg" alt="Smiley face" height="90" width="142" align="left" Hspace='50'>
+</figure>
+```
+
+
+
+
+
+## Baza elementow
+
+### Kolory
+
+
+<div class='trzy'> 
+
+<font color='#000080'>**1 #000080**</font> <br>
+<font color='#FFDEAD'>**2 #FFDEAD**</font> <br>
+<font color='#C71585'>**3 #C71585**</font> <br>
+<font color='#3CB371'>**4 #3CB371**</font> <br>
+<font color='#9370DB'>**5 #9370DB**</font> <br>
+<font color='#32CD32'>**6 #32CD32**</font> <br>
+<font color='#B0C4DE'>**7 #B0C4DE**</font> <br>
+<font color='#778899'>**8 #778899**</font> <br>
+<font color='#20B2AA'>**9 #20B2AA**</font> <br>
+<font color='#F08080'>**10 #F08080**</font> <br>
+<font color='#4B0082'>**11 #4B0082**</font> <br>
+<font color='#483D8B'>**12 #483D8B**</font> <br>
+<font color='#FFFF00'>**13 #FFFF00**</font>
+
+</div>
+
+### Bootstrap-rozne elementy
+
+
+**Kolorowe napisy**
+
+<span class="label label-default">Default</span>
+<span class="label label-primary">Primary</span>
+<span class="label label-success">Success</span>
+<span class="label label-info">Info</span>
+<span class="label label-warning">Warning</span>
+<span class="label label-danger">Danger</span>
+
+<br>KOD:
+```
+<span class="label label-default">Default</span>
+<span class="label label-primary">Primary</span>
+<span class="label label-success">Success</span>
+<span class="label label-info">Info</span>
+<span class="label label-warning">Warning</span>
+<span class="label label-danger">Danger</span>
+
+```
+
+**Oznaczanie skrótów klawiaturowych**
+`<kbd>ctr</kbd>`
+
+
+**Glypkon**
+
+<div class='trzy'>
+1. search: <span class="glyphicon glyphicon-search"></span>
+2. pushpin: <span class="glyphicon glyphicon-pushpin"></span>
+3. hand-right: <span class="glyphicon glyphicon-hand-right"></span>
+4. circle-arrow-right: <span class="glyphicon glyphicon-circle-arrow-right"></span>
+5. wrench: <span class="glyphicon glyphicon-wrench"></span>
+6. chevron-up: <span class="glyphicon glyphicon-chevron-up"></span>
+7. chevron-down: <span class="glyphicon glyphicon-chevron-down"></span>
+8. arrow-right: <span class="glyphicon glyphicon-arrow-right"></span>
+9. arrow-up: <span class="glyphicon glyphicon-arrow-up"></span>
+10. arrow-down: <span class="glyphicon glyphicon-arrow-down"></span>
+11. ok: <span class="glyphicon glyphicon-ok"></span>
+12. remove: <span class="glyphicon glyphicon-remove"></span>
+13. stats: <span class="glyphicon glyphicon-stats"></span>
+14. th-list: <span class="glyphicon glyphicon-th-list"></span>
+15. list-alt: <span class="glyphicon glyphicon-list-alt"></span>
+</div>
+
+<br>KOD:
+
+```
+
+1. search: <span class="glyphicon glyphicon-search"></span>
+2. pushpin: <span class="glyphicon glyphicon-pushpin"></span>
+3. hand-right: <span class="glyphicon glyphicon-hand-right"></span>
+4. circle-arrow-right: <span class="glyphicon glyphicon-circle-arrow-right"></span>
+5. wrench: <span class="glyphicon glyphicon-wrench"></span>
+6. chevron-up: <span class="glyphicon glyphicon-chevron-up"></span>
+7. chevron-down: <span class="glyphicon glyphicon-chevron-down"></span>
+8. arrow-right: <span class="glyphicon glyphicon-arrow-right"></span>
+9. arrow-up: <span class="glyphicon glyphicon-arrow-up"></span>
+10. arrow-down: <span class="glyphicon glyphicon-arrow-down"></span>
+11. ok: <span class="glyphicon glyphicon-ok"></span>
+12. remove: <span class="glyphicon glyphicon-remove"></span>
+13. stats: <span class="glyphicon glyphicon-stats"></span>
+14. th-list: <span class="glyphicon glyphicon-th-list"></span>
+15. list-alt: <span class="glyphicon glyphicon-list-alt"></span>
+
+
+```
+
+**textarea**
+<br>KOD:
+```
+<textarea name="comments" id="comments" style="width:160px;height:90px;background-color:Cornsilk;">
+</textarea>
+```
+
+## Own functions
+
+### Versatile
+
+
+<br>**tabela i zakladki **
+
+```
+
+l.html.stab(df, red=FALSE,rownames=TRUE, colnames=TRUE, hide=FALSE, title="table", title_before=NULL, title_after=NULL)
+
+l.html.tabs(k=0, names=NULL)
+
+l.html.collapse(code, title="collapse", title_before=NULL, title_after=NULL)
+
+```
+
+
+<br>**haslo do indeksu**  
+dopuszczalne 3 poziomy zagniedzenia  
+```
+'r l.html.i(c('f:mode','f:typeof', g:variables!acceptable names')); zn.)
+
+```
+
+<br>**chapter**
+```
+## 'r CHAP(nesting=1, title='pierwszy', subtitle='asdc', date='', type=c('normal'))'
+
+```
+
+<br>**generowanie indeksu i spisu treści i eksport danych do globalnego indeksu**
+```
+l.html.indeks_tabela()
+if(exists('indeks_plik')) l.html.ind_eksp(indeks_plik)
+
+
+
+l.html.toc()
+if(exists('table.chapter')) CHAP.save()
+```
+
+<br> **Panele **
+
+```
+l.html.panel.test(title = 'chi kwadrat', begin_text = 'fajny test', purpose = 'rozne', assumptions = 'musi byc odpowiedni rozklad')
+
+
+l.html.panel.method(title = 'ble', begin_text = 'ble', notions = c(ala='bleble',kot='sdcdsac'))
+
+
+l.html.panel.syntax(title='funkcja(pakiet)', parameters=c(aaa='[TRUE]-jakis paramert', bbb='[FALSE]csdcsc'))
+
+
+l.html.panel.intro(title='dsac', text='dsc asdc')
+
+
+l.html.glyp('search','yellow') 
+
+```
+

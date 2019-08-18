@@ -1,0 +1,1820 @@
+# DATA TYPES
+
+
+
+## Missing values [Braki danych]
+
+
+### about missing values
+
+
+W jezyku R odpowiednikiem NULL-a SQL-owego, czyli braku danych jest `NA` i `NaN`. `NaN` od `NA` rozni sie tym, ze stosuje sie go do oznaczenia sytuacji kiedy nie mamy danych bo dzialanie bylo niewykonalne np. dzielenie zera przez zero (0/0).
+W R istnieje też słowo `NULL`, ale nie jest to brak danych ale nazwa obiekt w strukturze jezyka R ktory spelnia rozne funkcje (patrz nastepny podrozdzial o nullach [link](#null)). 
+```{r}
+wektor <- c(1, 2, NA, NA, 3) # wektor z dwoma brakami danych
+
+# ponizej dostaniemy NaN
+0/0 
+
+```
+
+
+```{r, results='asis', eval=TRUE, echo=FALSE}
+l.html::l.html.panel.intro('',
+'1.  `NA` - (not available) zapisane w cudzyslowie jest **stringiem** a nie typem NA!!!!. F:is.na sprawdza czy element jest typu *NA* lub *NaN*.
+2. NA wystepuje w roznych odmianach w zaleznosci od typu danych e.g. NA_integer_.
+3.  `NaN` (not a number). Mozna otrzymac np. w wyniku nie wykonalnej operacji arytmetycznej (np. 0/0). f:is.nan sprawdza czy element jest typu NaN ale nie NA
+4.  `na.omit()` pomija brak. W data.frame usuwa wszystkie wiersze w których występuje chociaż jeden brak danych (nie dotyczy NaN).
+5.  `na.fail()`  zwraca obiekt tylko jezli jest w nim komplet danych (nie ma NA).
+6.  `na.pass()`  nie robi nic, zwraca pełny obiekt z brakami danych.
+7.  `na.exlude()`  to samo co f:omit, **ale** drobna różnica przy stosowaniu funkcji w modelach ekonometrycznych `exclude` przy robieniu prognoz robi puste miejsca nie skracając długości prognozowanego szeregu w przeciwieństwie do f:omit.')
+```
+
+
+
+
+### Some functions for missing values 
+
+`NA` vs `NaN`
+```{r}
+d <- c(NA,NaN)
+is.na(d)
+is.nan(d)
+is.na(d) & !is.nan(d)
+```
+
+
+
+f:na.omit
+```{r}
+d <- data.frame(a=1:4, b=c('a','b',NA,NaN))
+d
+na.omit(d)
+
+```
+
+
+f:complete.cases:
+Use to return only complete rows (without missing values).
+<small class='SwhiteB'></small> This function don't  concern *NaN*! (see results of example below).
+
+```{r}
+d <- data.frame(a=1:4, b=c('a','b',NA,NaN))
+d[complete.cases(d),]
+```
+
+
+##  NULL {#null}
+
+```{r, results='asis', eval=TRUE, echo=FALSE}
+
+l.html::l.html.panel.intro('','
+1. Jest to oddzielny obiekt i stanowi oddzielna klase
+2. There is only one NULL object
+3. NULL length is 0
+3. There are objects with length 0 whitch are not nulls (e.g. list())
+4. NULL can not be included in atomic vector. Podstawiony do zwyklego wektora powoduje jego skrocenie, tzn pomijane sa indeksy w ktorych jest NULL. W przypadku macierzy sa trudne do przewidzenia zachowania (jesli po obcienciu nie pasuja wymiary macierzy)
+')
+
+```
+
+
+Co to jest typ NULL?
+```{r}
+
+z <- NULL
+class(z)  #to oddzielna klasa i oddzielny obiekt
+
+
+#this gives NULL:
+z <- {}
+z
+
+
+# functions dont't return NULL even if they doesn't include 'return' <small class=''>Watch out</small>
+w <- function(){
+  10
+}
+w
+
+```
+
+
+
+
+## O typach danych
+
+W R sa nastepujace PODSTAWOWE typy danych:
+
+1. logical [logiczny] 
+2. numeric [liczby calkowite i niecalkowite]
+3. complex [liczby zespolone]
+4. character [tekst]
+
+Typ *numeric* dodatkowo dzieli sie na 2 podtypy: *integer* (calkowitoliczbowy) i *double* (ulamkowy). Jest tez cos takiego jak typ *Raw*, ale nigdy nie widzialem zastosowania i rzadko sie o nim wspomina. 
+
+Kolejnosc wymienionych typow nie jest przypadkowo - sa to typy od najmniej do najbardziej ogolnego. Ta kolejnosc definiuje tzw. **reguly koersji [coersion rules]**, ktore okreslaja jak rozwiazac sytuacje konfliktowe miedzy typami danych. Jest to konieczne, aby zachować informacje w danych:
+```{r}
+# Ponizej jest konflikt bo do dwoch liczb dodalismy tekst. Pytanie: czy wektor wynikowy bedzie typu liczbowego czy tekstowego?
+wektor <- c(1,2,'3') 
+
+# otoz zgodnie z hierarchia przchodzimy do typu bardziej ogolnego czyli dostaniemy tekst
+class(wektor)
+
+
+wektor <- c(1,TRUE,FALSE) # konflikt liczby z typem logicznym
+class(wektor) # dostaniemy typ liczbowy a wartosc TRUE bedzie przekonwertowana na 1, a FALSE na 0.
+
+
+```
+Warto sobie przypomniec ze MS SQL chcialby na sile nasza tekstowa liczbe 3 skonwertowac na liczbe i tam dostlibysmy typ liczbowy.
+
+**UWAGA**
+Przechodząc dalej zapewne zastanawiasz sie dlaczego na liscie typow nie bylo np. typu danych do przechowywania dat. W R jest kilka typow sluzacych do przechowywania dat a najbardziej popularny nazywa sie *Date*. **Ale *Date* nie jest typem PODSTAWOWYM !!!**. *Date* bazuje na typie numerycznym. Tutaj wyjdzie wspomniana przy wektorach roznice miedzy klasami i typami podstawowymi:
+```{r}
+
+moja_data <- as.Date('2017-01-01')
+
+# klasa wektora to rzeczywiscie 'Date'
+class(moja_data)
+
+# ale typ podstawowy to 'numeric' !!!
+mode(moja_data)
+
+# oprocz f:mode jest jeszcze f:typeof. Od mode rozni sie tym ze w typie 'numeric' robi jeszcze rozroznienie czy jest to 'integer' czy 'double'
+typeof(moja_data)
+
+```
+
+Na bazie typow podstawowych jest powstalo oczywiscie wiecej typow pochodnych. Wiekszosc na bazie typu *numeric* i *character*.
+
+Teraz przejdziemy do szczegolowego przeanalizowania poszczegolnych typow danych.
+
+
+
+
+
+## *logical*
+
+### General notes
+
+1. W przypadku typu *numeric* jezeli przekonwertujemy na typ *logical* to 0 jest traktowane jako FALSE a liczby **rozne** od 0 jako TRUE. Jest to np. ważne przy f:if, ktora akceptuje liczby jako wartosci logiczne zgodnie ze wspomniana logika
+2. Jest cos takiego jak nieokreslona wartosc logiczna `logical(0)`. Mozemy ja zidentyfikowac przez f:length (rowne 0), i f:is.logical (TRUE)
+
+
+```{r}
+# konwersja na typ logiczny
+as.logical(c(  0
+             , 1
+             , 2
+             , 300
+             , 10.86 # ulamek
+             , -50   # liczba ujemna
+             , 0.1   # ulamek bliski 0
+             , complex(1, 0, 0) # liczba zespolona z dwoma zerowymi argumentami 
+             , complex(1, 2, 4) # liczba zespolona
+             ))
+
+
+
+
+```
+
+
+###  Logical operators
+
+
+```{r}
+
+l1 <- c(T,T,T,T)
+l2 <- c(F,F,T,T)
+
+
+#wersja wektorowa
+l1 & l2
+l1 | l2
+
+
+#wersja niewektorowa-pod uwage sa brane tylko pierwsze elementy wyrazen skladowych
+l1 && l2
+l1 || l2
+
+
+#Watch out:
+prod(c(T,F,T)) #cos takiego zwraca liczbe a nie wartosc logiczna
+
+
+any(c(TRUE, FALSE, TRUE))
+
+
+all(c(TRUE, FALSE, TRUE))
+
+
+```
+
+<br>
+lazy vs eager evaluation [ewaluacja leniwa vs gorliwa]
+
+```{r}
+
+# eager
+y <- 5
+x <- 5
+(x == 6) & (y == (y <- y + 10))
+y
+
+
+# lazy
+y <- 5
+x <- 5
+(x == 6) && (y == (y <- y + 10))
+y
+
+```
+
+
+
+
+
+## *numeric* i *complex*
+
+
+### Types of variables
+
+
+Sa dwa glowne typy liczb
+1. `numeric` ktory sie dzieli na *integer* , *double*
+2. `complex` - jest to typ podstawowy (f:mode i f:typeod zwroca *complex*)
+
+Ustalanie typu liczby
+1. `class`-zwroci *numeric* jestli obiekt nie jest jakos rozbudowany w ramach programowania obiektowego
+2. `mode`-zwroci *numeric* lub *complex*
+3. *typeof*-bardziej jest szczegolowy od mode, tzn. w przypadku liczb niezespolonych *typeof* poda czy to jest *integer* czy *double*.
+
+
+Funkcje do konwertowania typow liczbowych:
+
+1.  as.double
+3.  as.integer
+4.  as.numeric (tutaj sa wszystki typy liczbowe wymienione wyzej-bez complex)
+5.  as.complex
+6.  10L-liczba 10 typu integer. **Domyslnie liczby sa typu *double* **.
+
+Watch out: w starszych wersjach R-a było cos takiego jak as.real, czy as.float.
+
+
+
+pmax(wektor1, wektor2) # porownuje dla dwoch wektorow kady element z kazdym i z takich par wymieram element wiekszy
+pmin(wektor1, wektor2) #
+
+
+### Infitinive values [wartosci nieskonczone]
+
+Wartosc *Inf* wystepuje rowniez z minusem<br>
+
+```{r}
+c(1, Inf, -Inf)
+```
+
+
+### Imposible operations [dzialania niewykonalne]
+
+```{r}
+
+#Działania wykonalne
+Inf/1
+1/Inf
+Inf+Inf
+
+
+#Działania niewykonalne
+Inf-Inf
+0/0
+Inf/Inf
+
+```
+
+###  Replacing *Inf* in data.frame
+
+This function (unlike f:is.na) doesn't work with data.frames.
+
+```{r}
+
+z <- data.frame(a=c(1:3,Inf,5), b=c(4,Inf,6:8))
+do.call('data.frame', lapply(z,function(x) replace(x,is.infinite(x),NaN)))
+```
+
+
+### *complex* [zespolone]
+
+```{r}
+
+#defining complex number
+z <- complex(real = 1, imaginary = 2)
+#or
+z <- 1 + 2i
+
+Re(z)  #real part
+Im(z)   #imaginary part
+Mod(z)  #modul
+Arg(z)  #wartosc argumentu z postaci trygonometrycznej
+Conj(z) #sprzezenie [conjugate]
+```
+
+
+
+## *character*
+
+
+###  Extracting
+
+#### By index
+
+```{r}
+require(stringr)
+
+#atomowo
+string <- 'ala ma kota'
+str_sub(string, 1, 6)
+
+#atomowo od konca
+string <- 'ala ma kota'
+str_sub(string, -4, -1)
+
+
+#atomowo zlozony
+string <- 'ala ma kota'
+str_sub(string, start = c(1,5), end = c(2,6) )
+
+
+#wektorowo
+string_2 <- c('ala ma kota', 'jest piekny poranek')
+str_sub(string_2, 2, 4) #tak samo dla wszystkich elementow
+str_sub(string_2, start = c(2,3), end = c(4,5)) #roznie dla poszczegolnych elementow
+
+
+```
+
+
+
+#### By pattern
+
+```{r}
+
+str_extract_all('12a45', '\\d') #wyciagniecie cyfr oddzielnie
+
+str_extract_all('12a45', '\\d+') #wyciagniecie calych ciagow cyfr
+
+stri_extract_last_regex('12a45', '\\d+')
+
+```
+
+
+
+#### By words
+
+```{r }
+
+sentences <- c('Jane saw a cat', 'Jane sat down')
+
+stringr::word(sentences, 1) #pierwszy wyraz
+stringr::word(sentences, 2)
+stringr::word(sentences, -1) #pierwszy wyraz od konca
+stringr::word(sentences, 2, -1)
+
+stringr::str_extract_all('aa bb cc', stringr::boundary(type = 'word') )
+stringr::str_extract_all('Aa bb cc. Dd ee ff.', stringr::boundary(type = 'sentence') )
+
+
+
+stringi::stri_extract_all_words('dsca sdc sadc sadc')
+
+
+
+```
+
+
+
+### Replacing
+
+#### By index
+
+Jest problem z podstawieniami zlozlonymi
+```{r}
+
+#atomowo
+string <- 'ala ma kota'
+str_sub(string, 1, 6) <- 'PpP'
+string
+
+#atomowo od konca
+string <- 'ala ma kota'
+str_sub(string, -1,-4) <- 'PpP'
+
+
+#atomowo zlozony-nie zadowala mnie to rozwiazanie
+string <- 'ala ma kota'
+str_sub(string, c(1,5), c(2,6) ) <- 'PpP'
+string # otrzymamy dwa oddzielne wektory
+
+
+#wektorowo
+string_2 <- c('ala ma kota','jest piekny poranek')
+str_sub(string_2, 2, 4) <- 'PpP' # tak samo dla wszystkich elementow
+string_2
+
+string_2 <- c('ala ma kota','jest piekny poranek')
+str_sub(string_2, start = c(2,3), end = c(4,5)) <- 'PpP' # roznie dla poszczegolnych elementow
+string_2
+
+```
+
+
+
+#### By pattern
+
+```{r}
+
+string <- c('ala ma kota ala')
+str_replace(string, 'ala', 'krysia') # pierwsze napotkane
+str_replace_all(string, 'ala','krysia') # wszystkie
+stri_replace_last_fixed(string, 'ala', 'PpP') # ostatni
+
+# n-ty
+string <- c('ala ma kota ala ala')
+p <- str_locate_all(string, 'ala')
+str_sub(string, p[[1]][2,1], p[[1]][2,2] ) <- 'PpP' # drugi
+string
+
+string <- c('ala ma kota ala ala')
+p <- str_locate_all(string, 'ala')
+str_sub(string, p[[1]][c(2,3), 1], p[[1]][c(2,3), 2] ) <- 'PpP' # drugi i trzeci
+string  # niestety dostaniemy dwa oddzielne wektory
+```
+
+
+
+### Detecting
+
+```{r}
+#funkcja str_detect nie ma odmiany 'all', gdyz w jej wypadku nie ma ona sensu.
+
+z <- c('alala cmcmc ', 'cmcmcmc', 'alalala')
+str_detect(z, 'al')
+
+
+
+```
+
+
+
+### Find position
+
+```{r}
+
+#lokalizacja pierwszego napotkanego wzorca
+
+z <- c('ala ma kota ', 'jest piekny poranek')
+str_locate(z, 'kot') #zostanie zwrocona macierz z pozycjami. W przypadku stringow gdzie nie wykryto wzorca jest im poswiecony wiesz wypelniony wartosciami 'NA'
+
+
+#lokalizacja wszystkich wzorcow
+
+z <- c('al bl al ', 'al al cl cl al', 'cl cl cl')
+str_locate_all(z, 'al') #otrzmuje liste gdzie kazdemu stringowi jest przypisana oddzielne macierz. Tutaj w przypadku braku wykrycia elementow macierz jest pusta (nie ma jak przy wykrywaniu pierwszego napotkanego wzroca wartosci 'NA')
+
+```
+
+
+
+### Counting
+
+```{r}
+
+z <- 'clcl cl cl'
+
+str_count(z, 'cl')
+
+```
+
+
+
+### Joining
+
+#### f:str_c
+
+```{r}
+
+str_c(letters[-26], sep=" comes before ", letters[-1])
+
+```
+
+
+
+#### f:paste
+
+```{r}
+#sklej 3 stringi polaczone w jeden. Separatorem jest spacja
+paste('ala', 'ma', 'kota', sep=' ')
+
+
+a1 <- c('a')
+a2 <- c('b')
+a3 <- c('c')
+
+paste(a1, a2, a3)
+paste(a1, a2, a3, sep=',')
+
+
+a1 <- c('a','b')
+a2 <- c('c')
+paste(a1, a2)
+paste(a1, a2, sep=',')
+paste(a1, a2, collapse=':')
+paste(a1, a2, collapse=':', sep=',')
+
+
+
+a1 <- c('a','b')
+a2 <- c('c','d')
+paste(a1, a2)
+paste(a1, a2, sep=',')
+paste(a1, a2, collapse=':')
+paste(a1, a2, collapse=':', sep=',')
+
+
+
+
+a1 <- c('a','b','e')
+a2 <- c('c','d')
+paste(a1, a2)
+paste(a1, a2, sep=',')
+paste(a1, a2, collapse=':')
+paste(a1, a2, collapse=':', sep=',')
+
+
+
+a1 <- c('a','b')
+a2 <- c('c','d','e')
+paste(a1, a2)
+paste(a1, a2, sep=',')
+paste(a1, a2, collapse=':')
+paste(a1, a2, collapse=':', sep=',')
+
+
+
+a1 <- c('a','b')
+a2 <- c('c','d','e','f')
+paste(a1, a2)
+paste(a1, a2, sep=',')
+paste(a1, a2, collapse=':')
+paste(a1, a2, collapse=':', sep=',')
+
+
+
+a1 <- c('a','b')
+a2 <- c('c','d','e','f','g','h','i','j')
+paste(a1, a2)
+paste(a1, a2, sep=',')
+paste(a1, a2, collapse=':')
+paste(a1, a2, collapse=':', sep=',')
+
+
+
+#macierze
+a1 <- matrix(c('c','d','e','f'), c(2,2))
+a2 <- matrix(c('g','h','i','j'), c(2,2))
+paste(a1,a2)
+paste(a1, a2, sep=',')
+paste(a1, a2, collapse=':')
+paste(a1, a2, collapse=':', sep=',')
+```
+
+
+
+#### Duplicated
+
+```{r}
+
+fruit <- c("apple", "pear", "banana")
+str_dup(fruit, 2)
+
+```
+
+
+
+###  Upper Lower Case
+
+
+#### Ignoring case
+
+```{r}
+
+stringr::str_detect('AB', fixed('a', ignore_case = TRUE  ))
+stringr::str_detect('AB', regex('a', ignore_case = TRUE  ))
+
+
+```
+
+
+#### Conversion
+
+```{r}
+
+tolower('SDAC') #na male
+toupper('asdcas') #na duze
+
+require(Hmisc)
+capitalize('dsac sadc') #zamiana pierwszej litery na wielka
+
+```
+
+
+
+### Length
+
+<lfr> Warning </lfr>
+
+```{r}
+
+#zliczenie dlugosci bez uwzglednienia wartosci NA, oraz z uwzglednieniem spacji.
+
+str_length( c('a a a',NA) )
+
+
+#zliczenie dlugosci z uwzglednieniem wartosci NA (zwracana dlugosc dla NA to 2), oraz z wuzglednieniem spacji.
+
+nchar( c('a a a',NA) )
+
+```
+
+
+
+### Splitting
+
+```{r}
+
+str_split('lala', 'l')
+
+#rozdzielenie stringu-kazdy element osobno
+z <- 'alala ala lal'
+str_split(z, '', nchar(z)+1)
+
+```
+
+
+
+#### Splitting into columns
+
+```{r}
+#funkcja colpslit
+require(reshape)
+x <- c("a_1", "a_2", "b_2", "c_3")
+vars <- colsplit(x, "_", c("trt", "time"))
+vars
+str(vars)
+
+df <- data.frame(a=c('a_b', 'c_d', 'e_r'), stringsAsFactors = FALSE)
+tidyr::separate(df, col = a, into = c('A', 'B'), sep = '_')
+
+```
+
+
+
+### Trimming padding
+
+```{r}
+#usuwa spacje z krancow ciagu (both, lefh, right)
+str_trim('   cdd ', side='both')
+
+ #doda 30 spacji z lewej strony
+str_pad('hadley', 30, 'left')
+```
+
+
+
+### Other
+
+#### 'f:gsubfn
+
+```{r}
+
+require(gsubfn)
+
+
+# PRACA Z LISTA - przyklad usuwania polskich znakow
+# uwaga ponizsza operacje mozna wykonac przy pomocy funkcji chartr(base)
+
+z1 <- c('ą','ć','ę','ł','ń','ó','ż','ź')
+z2 <- list('a','c','e','l','n','o','z','z')
+
+names(z2) <- z1
+
+s <- '[ąćęłńóżź]'
+
+gsubfn(s, z2 , 'sdę ć csd ódsc')
+
+
+
+# PRACA Z FUNKCJAMI
+
+gsubfn("[[:digit:]]+", function(x) as.numeric(x)+1, "(10 20)(100 30)")
+
+
+
+# PRACA Z FORMULAMI-dziala troche jak uproszczenie skladni dla funkcji
+
+gsubfn("[[:digit:]]+", ~ as.numeric(x)+1, "(10 20)(100 30)")
+
+gsubfn("[[:digit:]]+", ~ paste(rep("X", n), collapse = "-"), "5.2") #n - jest pobierane z elementow zdefiniowanych w pierwszy argumencie 'gsubfn'
+
+```
+
+
+
+#### f:strapply(gsubfn)
+
+Use to operate on atoms of string. Atom in a single sign/element or elements in round braces.
+```{r}
+
+require(gsubfn)
+strapply(X = 'asdcsac', pattern = '[[:alpha:]]')
+strapply(X = 'asdcsac', pattern = '([[:alpha:]]+)')
+strapply(X = '45365asdcsac', pattern = '[[:digit:]]+|[[:alpha:]]+')
+
+```
+
+
+####  f:charmatch(base)
+
+```{r, o.l='c'}
+charmatch("med", c("mean", "median", "mode"))
+
+```
+
+
+
+
+####  sklejanie ramek danych i dodatkowe argumenty do f:do.call
+
+```{r}
+sklejone_dane <- do.call(paste, c(OD_zm_robocza_1[,which(names(OD_zm_robocza_1)%in%names(kod_tab_1[,-ncol(kod_tab_1)]))], sep='') )
+```
+
+
+
+
+
+
+
+#### f:match
+
+```{r}
+
+#zwraca pierwszy napotkany podciag znakow zgodny z wzorem
+str_match('kotalalalala', 'al')
+
+```
+
+
+
+
+
+### Inne
+
+```{r}
+
+#ODWOCENIE KOLEJNOSCI ELEMENTOW STRINGU
+
+require(Kmisc)
+str_rev('abc')
+
+
+#PRZYCINANIE STRINGU
+require(BBmisc)
+clipString(c('sdcasc sadcsadc', 'sdc asdc'), len=10, tail='...')
+
+```
+
+
+###  p:stringr - dzialanie wetorowe
+
+```{r}
+
+require(stringr)
+
+#wektorowe dzialanie na funkcji str_sub
+
+m.s <- matrix(c(c(1,3,5,7,9),  c(1,4,7,10,NA)), byrow=TRUE, nrow=2)
+m.e <- matrix(c(c(2,4,6,8,10), c(3,6,9,12,NA)), byrow=TRUE, nrow=2)
+
+matrix(str_sub(c('alalalalalala','klsklsklsklsklskls'), m.s, m.e), byrow=TRUE, ncol=2 )
+matrix(str_sub(c('alalalalalala','klsklsklsklsklskls'), m.s, m.e), byrow=FALSE, nrow=2 )
+
+
+# wektorowe dzialanie na funkcji str_detect
+
+str_detect(c('lupa','kot'), c('lu','ko'))
+
+```
+
+
+
+
+
+### regular expressions [wyrazenia regularne]
+
+
+
+#### Zamiana stringu na regular expression
+
+```{r}
+
+require(utils)
+glob2rx("abc.*")
+
+```
+
+
+#### Rodzaje regular expressions
+
+W r są dwa rodzaje regular expression:
+
+1. extended regular expression
+2. perl
+
+Perl jest tak naprawdę rozszerzeniem extended. W helpie do hasła 'regex' jest jeden wyjątek opisujący sprzeczność miedzy tymi dwoma systemami.
+
+
+
+Turning off regular regular expression in p:stringr 
+```{r}
+string <- c('a.a', 'b.b')
+
+stringr::str_detect(string, pattern = '...')                 # turned ON
+stringr::str_detect(string, pattern = stringr::fixed('...')) # turned OFF
+
+```
+
+
+
+
+#### Rodzaje uzywanych  symboli
+
+Tzn. matcharacters:
+\$ * + . ? [ ] \^ { } | ( ) \ \\
+
+Definicje\textit{ matcharacters}:
+
+1.  "." matches everything except for the empty sting "".
+2.   "+" the preceding item will be matched one or more times.
+3.  "*" the preceding item will be matched zero or more times.
+4.  "\^" matches the empty string at the at the beginning of a line. UWaga w 'character class' ma to inne znaczenie
+ When used in a character class (see explanation about character classes
+                                 in the following section) means to match any character but the following ones.
+5.  "\$" matches empty string at the end of a line.
+6.  "|" infix operator: OR
+7.  "(", ")" brackets for grouping.
+8.  "[", "]" character class brackets (see next section).
+
+
+Rozszerzenie o Perl:
+
+9. (?=...)   - PRZED wyrazeniem na byc wyrazenie okreslone przez trzykropek
+10. (?!...)
+11. (?<=...) - PO wyrazeniem na byc wyrazenie okreslone przez trzykropek
+12. (?<!...)
+
+
+Dodatkowe symbole pomocznice
+
+1. [:alnum:] - litery i cyfry
+2. [:alpha:] - male i duze litery
+3. [:lower:] - male litery
+4. [:upper:] - duze litery
+5. [:digit:] - cyfry
+6. [:punct:] - znaki takie jak: ! " # $ % & ' ( ) * + , - . / : ; < = > ? @ [ \ ] ^ _ ` { | } ~
+
+
+#### Hierarchia operatorow
+
+
+1. ()
+2. {},? 
+3. ^
+4. |
+
+Kolejnosc operatorow wzieta ze strony. Moim zdaniem jedynka z dwójką powinny być odwrocony.
+
+Next remarks obout operators
+
+* ^ -  
+* $ - 
+* | - do rozdzielenia nawiasow okraglych oraz calych wyrazen
+* () - dobrze organizuje kod
+* [] - 
+* {} - dotyczy jednego symbolu poprzedzajcego lub wyrazenia w nawiasie okraglym
+* \\ - dotyczy pojedynczych symboli
+
+
+#### Przyklady uzycia symboli
+
+
+```{r}
+
+str_extract_all('abc', pattern = 'a.') # 'a' and any symbol that is next to
+
+str_detect(c('abc', 'bac'), pattern = '^a') # if string starts with 'a'
+
+str_detect(c('abc', 'acb'), pattern = 'c$') # if string ends with 'c'
+
+str_detect(c('aa','bb'), 'a|b') # if string contains 'a' or 'b'
+
+# see the differnce!!!
+str_replace('abcd',     pattern = 'ab|cd',     replacement = 'c') # only 'ab' was replaced with 'c'
+str_replace('abcd',     pattern = '(ab)|(cd)', replacement = 'c') # only 'ab' was replaced with 'c'
+str_replace_all('abcd', pattern = 'ab|cd',     replacement = 'c') # 'ab' and 'cd' was replaced with 'c'
+
+str_replace_all( 'aabcdef', '(^a)|b' , 'c' ) # replace 'a' if it is firt sign or 'b' 
+
+str_replace_all( 'aabcdef', '[abf]' , 'C' ) # replace 'a' or 'b' or 'f'
+str_replace_all( 'aabcdef', '[^abf]' , 'C' ) # replace NOT 'a', 'b' or 'f'
+
+string <- c('ala','aa','allllla')
+str_extract(string, 'a?')
+str_extract(string, 'a+')
+str_extract(string, 'a*')
+str_extract(string, 'a{2}')
+str_extract(string, 'a{1,2}')
+
+
+str_extract('abc.efg.hij', '([^\\.]{1,})$')
+           
+str_extract('abcZabc', '.{0,}(?=Z)')
+
+
+str_extract('abc.efg.hij',     '(?<=\\.)[^\\.]{0,}$')   # elementy ktore sa po ostatniej kropce
+str_extract('abc.efg.hij',            '([^\\.]{1,})$')  # elementy ktore sa po ostatniej kropce (second way)
+str_extract('abc.efg.hij', '.{0,}(?=(\\.[^\\.]{1,})$)') # elementy ktore sa przed ostatnia kropka
+
+str_extract(c('zabc', 'wabc'), '(z)(?=abc)')  # 'abc' poprzedzone przez 'z'
+str_extract(c('zwgr', 'zabc'), '(z)(?!abc)')  # cos innego niz 'abc' poprzedzone przez 'z'
+str_extract(c('alac', 'alaw'), '(?<=ala)(w)') # 'abc' za ktorym jest 'w'
+str_extract(c('rtgw', 'alaw'), '(?<!ala)(w)') # cos innego niz 'abc' za ktorym jest 'w'
+
+
+
+# znaki specjalne - kropka
+str_locate('a.a', '.')
+str_locate('a.a', '\\.')
+
+str_locate_all('a(a)b', '(|)')
+str_locate_all('a(a)b', '\\(|\\)')
+
+str_locate('a|a', '|')
+str_locate('a|a', '\\|')
+
+
+```
+
+
+
+
+
+
+
+
+
+## *date* and *POSIX*
+
+
+
+
+Patrz artykuly/Dates_and_Times_Made_Easy_with_lubridate.pdf}{artykul} na temat pakietu lubridate.
+
+Zrodla:<br>
+Artykul: 'Dates and Times in R ze strony Berkley'
+
+### Data types
+
+
+W R-cran sa 4 podstawowe sposoby przechowywania informacji o datach i czasie
+
+1.  **Date**-przechowuje date z dokladnoscia do dni. Date jest typem numeric. Przy konwertowaniu liczby na date trzeba podac parametr *origin*.
+2.  **chron** (wymaga pakietu chron)-przechowuje date i godzine jako oddziele elementy listy (`thetimes = chron(dates=?2002-06-09?,times=12:45:40,format=c('y-m-d','h:m:s'))`)
+3.  **POSIXlt**-przechowuje date i godzine jako liste oddzielnych elementow. Jako ze jest to lista elementy mozna wyciagac elementy przy uzyciu dolara. Poprzez funkcje 'structure' mozna latwo zobaczyc wszystkie elementy skladajace sie na obiekt.
+4.  **POSIXct**-tak jak typ Date przechowuje data w postaci liczby. Ale tutaj liczba oznacza ilosc sekund wiec mamy do czynienia z wieksza precyzja.
+
+
+Istnieje zmienna *origin* w p:lubridate przechowujaca domyslnie date '1970-01-01'.
+
+
+
+### Zapisywanie dat i konwertowanie na daty
+
+####  Typ Date
+
+Funkcje z p:lubridate
+```{r}
+ymd("1970-10-15")
+mdy("10/15/1970")
+dmy(15101970)
+
+```
+
+
+f:as.Date
+```{r}
+as.Date('1915-6-16')
+as.Date('1990/02/17')
+as.Date('1/15/2001',format='%m/%d/%Y')
+as.Date('April 26, 2001',format='%B %d, %Y')
+
+#if converting from number origin is necessery. (For convenience use variable 'origin' from p:lubridate)
+as.Date(2345, origin='1970-01-01')
+```
+
+
+
+Kod dla typu 'Data' | Wartosc
+--------------------|--------
+%d | dzien miesiaca
+--------------------|--------
+%m | miesisc-liczba
+--------------------|--------
+%b | miesisc-skrot
+--------------------|--------
+%B | miesisc-pelna nazwa
+--------------------|--------
+%y | rok-2 cyfry
+--------------------|--------
+%Y | rok-4 cyfry
+
+
+
+#### Typ chron
+
+
+```{r}
+require(chron)
+
+d <- dates('11/14/92') #kolejnosc-miesiac/dzien/rok (po amerykansku)
+t <- times <- '23:45:32'
+z <- chron(d,t)
+
+dates <- dates(c("02/27/92", "02/27/92", "01/14/92", "02/28/92", "02/01/92"))
+times <- times(c("23:03:20", "22:29:56", "01:03:30", "18:21:03", "16:56:26"))
+#now connect dates and times into one.
+z4 <- chron(dates = dates, times = times) #default origin is 1970-01-01
+
+```
+
+
+Dla dat i godzin mozna okreslac parametr format:
+
+ Kod | Wartosc
+ ----|--------
+ m   | miesiac-liczba
+ ----|--------
+ d   | dziel-liczba
+ ----|--------
+ y   | rok-4cyfry
+ ----|--------
+ mon | miesiac-skrot
+ ----|--------
+ month | miesiac-pelna nazwa
+
+
+
+Kod | Wartosc
+----|--------
+h   | godzina
+----|--------
+m   | minuta
+----|--------
+s   | sekunda
+
+
+####  Typ POSIX
+
+
+```{r}
+
+#If converting from number giving origin is essencial.
+z <- 1472562988
+z2 <- as.POSIXct(z, origin = "1960-01-01")
+
+```
+W przypadku *POSIXlt* i *POSIXct* mozna uwzgledniac zagadnienie stref czasowych (parameter *tz* - short for *time zone*).
+
+
+
+
+###  Date NA, NaN and Inf
+
+```{r}
+
+as.Date(c('1999-09-09', NaN, Inf)) #NA and Inf are converted into NA
+as.POSIXct(c(Sys.time(), NaN, Inf))
+as.POSIXlt(c(Sys.time(), NaN, Inf))
+```
+
+
+Converting value in Date vector into NaN is immpossible
+```{r}
+
+z <- as.Date(Sys.time())
+replace(z, is.infinite(z), NaN) # this does not work
+replace(z, is.infinite(z), NA)  # this works
+```
+
+
+### Extracting element from date
+
+####  p:base
+
+```{r}
+x <- as.Date('1985-06-16')
+base::weekdays(x)
+base::months(x)
+base::quarters(x)
+```
+
+
+
+#### p:lubridate
+
+```{r}
+require(lubridate)
+x <- as.POSIXct('2011-03-27 01:30:23')
+lubridate::second(x)
+lubridate::minute(x)
+lubridate::hour(x)
+lubridate::day(x)  # day of month
+lubridate::mday(x) # day od month
+lubridate::days_in_month(x) #number of days in month
+lubridate::week(x) # week of year
+lubridate::month(x)
+lubridate::quarter(x)
+lubridate::year(x)
+lubridate::yday(x) # day of year
+lubridate::wday(x) # day of week
+lubridate::decimal_date(x) #Rok plus ile procent roku uplynelo od pierwszego stycznia
+```
+
+
+
+
+### Dates differences
+
+
+```{r}
+time1 <- as.Date('2013-12-11')
+time2 <- as.Date('2013-02-09')
+d <- difftime(time1, time2, tz,units = c("secs"))  #UNITS WYSTEPUJE W WARIANTACH: "auto", "secs", "mins", "hours", "days", "weeks"
+class(d) #dostajemy diffdate-moe podowodowac problemy i lepiej przekonwertowac na zwykla liczbe
+mode(d)
+```
+
+
+
+Number of months between dates.
+Pretty easy: convert to POSIXlt, then use something like:<br>
+12*x$year + x$month<br>
+and subtract those. You could set up a class for 'months' and have as.months and a '-' method.
+
+
+
+### Arithmetic operations on dates
+
+
+####  Rounding dates [zaokroglanie dat]
+
+```{r}
+require(lubridate)
+date <- ymd('2010-10-12')
+round_date(date, "month")  #round date to first of month
+round_date(date, "year")  #zaokraglanie do pierwszego najblizszego dnia roku
+round_date(date, "week")  #zaokraglanie do pierwszego najlizszego dnia tygodnia
+ceiling_date(date, 'month')
+floor_date(date, 'month')
+```
+
+
+
+####  Date incrementation [inkrementacja daty]
+
+
+
+```{r}
+z <- as.Date('1980-09-07')
+
+z + 2 #dodanie dwoch dni do daty
+
+require(lubridate)
+
+# z przestrzelaniem miesiecy
+z + seconds(552)
+z + minutes(552)
+z + hours(87)
+z + days(2)
+z + weeks(5)
+z + months(1)
+z + years(3)
+
+# bez przestrzelanie miesiecy
+z %m+% seconds(552)
+z %m+% minutes(552)
+z %m+% hours(87)
+z %m+% days(2)
+z %m+% weeks(5)
+z %m+% months(1)
+z %m+% years(3)
+```
+
+
+####  Date sequences [Ciagi dat]
+
+
+f:seq
+```{r}
+seq(as.Date('1976-7-4'),by='days',length=10)
+seq(as.Date('2000-6-1'),to=as.Date('2000-8-1'),by='2 weeks')
+seq(as.Date('2000-6-1'),to=as.Date('1999-5-1'),by='-2 weeks') #malejacy ciag
+```
+
+
+<br><lfr>Warning!</lfr>
+<div class="btn-danger"> Jezeli uzywamy typu *chron* w parametrze *by* nie mozna wstawiac liczby (np. `by="2 weeks"`)
+W przypadku dat mozna stosowac f:cut:<br>
+`cut(thetimes,"year")` </div><br>
+
+
+
+p:lubridate
+```{r}
+
+data <- as.Date('2012-01-12')
+
+data %m+% months(1:4)
+data %m+% months(-1:-4)
+
+```
+
+
+
+
+### Intervals Duration Perdios
+
+
+
+lubridate provides three classes, or three different ways, to distinguish between different types of time spans.
+
+1. Duration
+2. Interval
+3. Period
+
+Understanding these classes will help you get the most out of lubridate.
+
+The most simple is Duration. This is simply a span of time measured in seconds. There is no start date.
+
+An Interval is also measured in seconds but has an associated start date. An Interval measures elapsed seconds between two specific points in time.
+
+A Period records a time span in units larger than seconds, such as years or months. Unlike seconds, years and months differ in time. June has 30 days while July has 31 days. February has 28 days except for leap years when it has 29 days. With the Period class, we can add 1 month to February 1 and get March 1. It allows us to perform calculations in calendar or clock time as opposed to absolute number of seconds.
+
+
+```{r}
+
+start <- mdy_hm("3-11-2017 5:21", tz = "US/Eastern")
+end   <- mdy_hm("3-12-2017 5:21", tz = "US/Eastern")
+
+time.interval <- start %--% end
+time.interval # I will get : 2017-03-11 05:21:00 EST--2017-03-12 05:21:00 EDT
+
+
+as.duration(time.interval) / dweeks(1)
+as.duration(time.interval) / dyears(1)
+
+
+```
+
+
+
+```{r}
+
+
+interval_1 <- as.Date('2017-01-02') %--% as.Date('2017-01-12')
+interval_2 <- as.Date('2017-01-02') %--% as.Date('2017-01-11')
+
+# overlaping
+int_overlaps(interval_1, interval_2)
+
+# including
+interval_1 %within% interval_2
+interval_2 %within% interval_1
+
+
+```
+
+
+
+## *factor* 
+
+
+### Atrybuty
+
+
+```{r}
+
+x <- factor(c(1:5))
+table(x)   #faktyczna ilosc roznych czynnikow
+unique(x)  #faktyczne czynniki
+levels(x)  #czynniki dopuszczalne
+nlevels(x) #ilosc czynnikow dopuszczalnych
+labels(x)  #etykiety bedace liczbami naturalnymi
+length(x)  #ilosc elementow
+sum(is.na(x)) #ilosc brakow danych
+```
+
+
+### Podstawowe operacja zwiazane z typem factor
+
+
+```{r}
+
+#Tworzenie czynnika
+z <- factor(c(2,4,6), levels=c(1,2,3,4,5,6))
+c <- factor(c('A','B','A'),levels=c('A','B','C'))
+
+
+#Tworzenie czynnika wedlug wzorca
+g <- gl(2,5,labels=c('a','b'))  #otrzymamy: a a a a a b b b b b
+g
+
+
+#Zmiana poziomu atrybutu (levels) dla czynnika
+attr(c,'levels') <- c('zly', 'dobry')
+levels(c) <- c(1,2,3,4,5,10)
+c
+
+
+#Funkcja attr-zmienia atrybut names - przypisanie nowych nazw elementow wektora x:
+x <- factor(c(1,2,3))
+attr(x, 'names') <- c('a','b','c')
+x
+```
+
+
+### Co to jest *levels*
+
+
+```{r}
+
+#dopuszczalne wartosci leveli
+#dopuszczalne wartosci leveli
+
+#braki danych
+#domyslnie NA nie jest poziomem (exclude=NA)
+factor(c(1,NA))
+
+#brak danych moze byc oddzielnym levelem, jezeli parametr 'exclude' ma wartosc NULL.
+z3 <- factor(c(1,2,NA), exclude=NULL)
+levels(z3)
+
+#parametrem exclude mozna wykluczyc inne elementy
+z <- factor(c(1,2,3,4), exclude=c(3,4))
+
+#levels musi sie pokrywac z wartosciami faktycznymi bo to nie sa etykiety!!!!
+z4 <- factor(x=c(1,2,3,4), levels=c('a','b','c','d'))
+
+z4 #wywali braki danych bo wartosci 1,2,3,4 i niepasuja do zadnych leveli
+levels(z4)
+labels(z4)
+```
+
+
+
+### labels
+
+
+
+```{r}
+#labels oznacza kolejnosc. Sluzy np. do sortowania.Labels sa zawsze liczbami naturalnymi.
+
+z5 <- factor(c(3,2), labels=c(2,1))
+sort(z5)
+```
+
+
+
+
+labels a duplikaty:
+
+
+```{r}
+
+z6 <- factor(c(1,1,2,2,4,4,3,3))
+labels(z6)
+
+#uwaga. nie mozna przypisac dwom roznym elementom tych samych labels. Nawet jezeli elementy maja ta sama wartosci. Dlatego tez labels jest dokladnie tyle ile elementow i kazdy ma swoj identyfikatow
+z7 <- factor(c(1,1,2), labels=c(1,1,2) )
+
+```
+
+###  Usuwanie i dodawanie poziomow czynnika
+
+
+```{r}
+#dodawanie i usuwanie leveli z factor
+
+#dodawanie
+z9 <- factor(c(1,2,3))
+levels(z9) <- c(1,3,4,5) #wypisujemy stare levele oraz dodajemy nowe
+# levels(z9) <- c(1,2) #Blad. leveli przypisywanych jest mniej niz w zmiennej
+#Error in `levels <- .factor`(`*tmp*`, value = c(1, 2, 3)) : number of levels differs
+#Uwaga. Blad ten bedzie nawet jezeli w zbiorze wartosci nie bedzie brakujacego czynnika
+a=factor(c(1:4))
+a <- a[1:3]
+a
+levels(a) <- c(1,2,3)
+
+
+#usuwanie
+#jezeli ze zbioru usunelismy czesc obserwacji i chcemy zeby levele odpowiadaly faktycznie wystepujacym wartoscia w nowym podzbiorze danych po prostu dokonujemy nadpisania
+z <- factor(z)
+
+#jezeli chcemy sterowac usuwaniem leveli recznie stosujemy drop.factor. Funkcja dziala dla nadmiarowych leveli. Nie usuwa leveli dla ktorych wystepuje wartosc.
+require(gdata)
+z9 <- factor(c(1,2,3))
+z9 <- z9[1:2]
+drop.levels(z9)
+
+#drop.level dziala tez na ramce danych z czynnikami. Zwroc uwage ze trzeci element nie jest typu factor i nie bedzie brany pod uwage
+dane <- data.frame(a=factor(c(1:4)), b=factor(letters[1:4]), c=c(1,2,3,4))
+dane <- dane[1:3
+levels(dane[,1])
+levels(dane[,2])
+levels(dane[,3])
+
+drop.levels(dane)
+levels(dane[,1])
+levels(dane[,2])
+levels(dane[,3])
+
+
+#jezeli ze zbioru zniknely np. 2 czynniki a chcemy z leveli usunac tylko jeden postpeujemy tak:
+z <- factor(c(1:5))
+z <- z[1:3]
+z <- factor(z)
+levels(z) <- c(1,2,3,4)
+
+#co jezeli w zdefuniowanym factor levels nie pokrywaja wartosci
+z <- factor(c(1,2,3,4,5), levels=c(1,2))
+#nie wywali bledu, ale w miejscu elemento gdzie ktorym nic nie odpowiada na liscie czynnikow sa wartosci NA
+z
+```
+
+
+### Transformowanie na inne typy danych
+
+
+```{r}
+#jak R automatycznie transformuje czynnik factor
+
+#numeric
+c1 <- c(1,2,3)
+c2 <- factor(c('a','b'))
+c3 <- c(c1,c2)
+c3
+class(c3)  #dostajemy 'numeric
+
+#character
+c1 <- c('x','y','z')
+c2 <- factor(c('a','b'))
+c3 <- c(c1,c2)
+c3
+> c3 #dostajemy labels
+[1] "x" "y" "z" "1" "2"
+class(c3) #dostajemy 'character'
+
+
+
+#inny factor
+c1 <- factor(c('x','y','z'))
+c2 <- factor(c('a','b'))
+c3 <- c(c1,c2)
+c3
+class(c3) #dostajemy 'integer' z lista labels pierwszego i drugiego wektora
+
+
+
+#data
+c1 <- as.Date(c('2013-09-09', '2012-11-06'))
+c2 <- factor(c('a','b'))
+c3 <- c(c1,c2)
+c3
+class(c3) #dostajemy 'data'
+> c3 #dostajemy labels
+[1] "2013-09-09" "2012-11-06" "1970-01-02" "1970-01-03"
+
+
+#logical
+c1 <- c(TRUE, FALSE)
+class(c1)
+c2 <- factor(c('a','b'))
+c3 <- c(c1,c2)
+c3
+class(c3) #dostajemy 'integer'
+```
+
+
+
+
+```{r}
+
+
+require(BBmisc)
+
+h1 <- factor(c('a','b'), levels=c('a','b','c'))
+
+h2 <- factor(c('r','s'), levels=c('r','s','t'))
+
+droplevels(cFactor(h1,h2))
+
+
+
+```
+
+
+### Duplikaty
+
+
+```{r}
+
+#WEKTORY
+w <- c(1,1,2,2,3,3)
+unique(w)
+
+duplicated(w) #wartosci logiczne ktore elementy sa duplikatami
+!duplicated(w) #wartosci logiczne ktore elementy NIE sa duplikatami
+```
+
+
+
+### Uwaga przy rekodowaniu czynnikow
+
+
+<br><lfr>Warning!</lfr>
+<div class="btn-danger"> Trzeba uwazac przy rekodowaniu czynnikow. Jesli przekodujemy na wielkosc ktorej nie ma ustalonej w levels wywali nam blad. Trzeba wtedy dodac dany poziom to levels: </div><br>
+
+```{r}
+
+h <- factor(c(1,2,3,2,3,2,3,2), levels=c(1,2,3,4,5))
+h
+h[h==2] <- 10 #wywli blad bo nie ma takiego levelu
+levels(h) <- c(1,2,3,4,5,10)
+h[h==2] <- 10 #teraz zadziala
+h
+```
+
+
+### Factor a automatyczne sortowanie
+
+Utworzenie zmiennej typu factor nie powoduje zadnego sortowania tych elementow:
+```{r}
+
+c <- c(2,1,5,4,7,2,4,1)
+b <- c('b','a','w','g')
+factor(c)
+factor(b)
+
+factor(c(3,1,4,3,2,5))
+
+d <- data.frame(a=c(1,3,2,5), b=c(2,3,1,2))
+d[,3] <- factor(d[,2])
+d
+```
+
+
+### Sortowanie factor (wg. wartosci czy wg etykiet)
+
+
+```{r}
+
+z1 <- factor(x=c(5,4,3,2,1), labels=c('a','b','c','d','e'))
+z2 <- factor(x=c('a','b','c','d','e'), labels=c(5,4,3,2,1))
+sort(z2)
+```
+Wniosek: sortowanie nastepuje wg. etykiet.
+
+### Factor a dzialania arytmetyczne
+
+
+Niestety nie mozna ich wykonac (w przypadku uporzadkowanego czynnika mozna badac znakami nierownosci!!!)
+```{r}
+
+z1 <- factor(c(5,4,3,2,1))
+z1 + 5
+```
+
+
+
+###  basic functions
+
+Especially functions from p:forcats
+
+```{r}
+
+fac_a <- factor(c(letters[1:4],NA), levels=letters[1:8])
+fac_b <- addNA(fac_a)
+levels(factor('c', levels=c('c','d', NA))) # this will not NA as a level!!!
+nlevels(fac_b)
+fac_1 <- fct_drop(fac_b, only='e') # NA will be dropped????? (it shouldn't)
+fac_2 <- droplevels(fac_b)
+fct_c(factor('a', levels=c('a','b')), factor('c', levels=c('c','d')))
+fct_recode(fac_a , NEW_a='a', NEW_b='b')
+fct_expand(f = fac_a, 'z', NA) # NA will be added
+fct_relevel(fac_a, 'c', 'd', after=1L)
+
+
+```
+
+
+## Other things
+
+
+
+### Atrybuty i podstawowe operacja
+
+
+
+```{r}
+
+z <- integer()  #pusty wektor/macierz typu integer
+z <- rep(NA_real_, 10) #pusty wektor 10-elementowy typu real (liczby rzeczywiste)
+z <- numeric()  #pusty wektor/macierz o niezdefiniowanych rozmiarach
+
+#czy kazdy kolejny elementow jest sobie rowny?
+a1 <- c(1:4)
+b1 <- c(1:4)
+a1 == b1
+
+#czy wektory ogolnie sa sobie rowne?
+all.equal(a1,b1) #dostaniemy jedna wartosc logiczna. W tej funkcji mozemy rowniez stosowac parametr 'tolerance' ktory nie do konca wiem jak jest zdefiniowany (trzeba przeanalizowac dokladnie skladnie funkcji).
+```
+
+
+### Sortowanie
+
+```{r}
+
+#wektory
+z <- c(2,3,5,4,3,5,6,7)
+sort(z, decreasing = T, na.last=T)  #sort sluzy tylko do sortowania wektoroW. 'decreasing' ma domyslnie wartosc FALSE
+rev(z) #to samo co sort(z, decresing=T)
+z <- c('b','a','z','f')
+sort(z) #sortowanie alfabetyczne stringoW
+z <- c(TRUE, FALSE, TRUE)
+sort(z) #sortowanie wartosci logicznych
+order(z, na.last=T, decreasing=F) #okresla na ktorej pozycji powinny byc kolejne elementy jezeli bysmy je posortowali
+```
+
+
+
+### f:rank(base), f:dense_rank(dplyr), f:min_rank(dplyr), f:order(base)
+
+See also rank function in p:dplyr.
+
+```{r}
+
+
+z1 <- c(1,2,2,5,4)
+
+rank(z1, na.last=TRUE, ties.method = 'first')
+rank(z1, na.last=TRUE, ties.method = 'max')
+rank(z1, na.last=TRUE, ties.method = 'min') # in p:dplyr equivalent is f:min.rank
+rank(z1, na.last=TRUE, ties.method = 'average')
+rank(z1, na.last=TRUE, ties.method = 'random')
+
+# there is not possible to get from f:rank results like from function below:
+dplyr::dense_rank(z1)
+
+order(z1)
+
+```
+
+
+<br>
+
+Difference between f:rank and f:order:
+
+Example:
+```{r}
+
+z1 <- c(1,2,2,5,4)
+
+rank(z1, ties.method = 'first')
+order(z1)
+
+z2 <- c(4,5,2,2,1)
+rank(z2, ties.method = 'first')
+order(z2)
+z2[order(z2)]
+
+```
+f:order only show as place where element should be placed (element is pointed by its index) to get sorted vector.
+
+
+### f:order, f:sort
+
+Unlike in f:rank there is only one algotyhm. We can just choice between ascending and descending ordering.
+```{r}
+
+number <- c(2,1,4,3,6,10)
+text <- c('al', 'bw', '-op', '*uio')
+date <- as.Date(c(4589, 4305), origin='1970-01-01')
+date_posix <- as.Date(c(45389, 43905), origin='1970-01-01')
+
+order(number, na.last = TRUE, decreasing = TRUE)
+order(text)
+order(date)
+order(date_posix)
+
+
+sort(number, decreasing = TRUE, na.last = TRUE)
+sort(text)
+sort(date)
+sort(date_posix)
+
+```
+
+
+### f:which , f:match i f:%in%
+
+
+```{r}
+#which zwraca indeksy pozycji wektora/macierzy, spelniajace okreslone warunki.
+z <- c(2,3,4,2,3,4,3,2,1,4,5,6,5,4,5)
+which(z > 2)
+
+w <- c(3,2,4,1)
+w %in% z #zwraca wartosci logiczne okreslajace ktore kolejne elementy wektora 'w' maja odpowiednik w wektorze 'z'
+
+
+#match-informuje ktorym indeksom drugiego wektora-macierzy odpowiadaja kolejne elementarz pierwszego wektora/macierzy.
+z1 <- c(1, 2, 3, 4)
+z2 <- c(3, 2, 1, 4, 5)
+match(z1, z2)
+
+
+#Uwaga. Funckcja informuje jedynie o pierwszym napotkaniu wystapienia danej wartosci:
+a1 <- c(1,2,3,4)
+b1 <- c(1,2,10,2) #funkcja nie wzkaze ze wartosc 2 jest nie tylko na drugiej ale i na czwartek pozycji wektora b1.
+match(a1,b1)
+#Aby rozwiazac powyzszy problem mozna zastosowac funkcje find.matches
+
+require(Hmisc)
+find.matches(a1, b1) #wiecej o f:find.matches patrz indeks funkcji)
+```
+<br>
+Above functions and NA
+```{r}
+
+which.min(c(1,2,3,NA,4,5)) # works for NA values
+which.max(c(1,2,3,NA,4,5)) # works for NA values
+which(c(1,2,3,4,NA)>2) # works for NA
+c(1,2,3,NA) %in% c(NA,3,5) # works for NA
+match(c(1,2,3,NA), c(2,3,4,6,7,8,NA)) # f:match works for NA
+
+```
+
+
+
+
+### f:find.matches
+
+
+
+```{r}
+#ZASTOSOWANIE FUNKCJI find.matches (pakiet Hmisc)
+require(Hmisc)
+y <- rbind(c(.1, .2),c(.11, .22), c(.3, .4), c(.31, .41), c(.32, 5))
+x <- rbind(c(.09,.21), c(.29,.39))
+y
+x
+w <- find.matches(x, y, maxmatch=5, tol=c(.05,.05)) #Nie wolno stosowac wartosci ujemnych dla tolerancji. Tolerancja jest +/- symetrycznie w obie strony
+w
+```
+
+
+Interpretacja wynikow:<br>
+
+1. Pierwszy wiersz ramki x pasuje do wiersza 1 i 2 ramki y.
+2. Drugi wiersz ramki x pasuje do wiesza 3 i 4 ramki y.
+
+This funciton does not work correctly with NA:
+```{r}
+find.matches(c(1,2,3,NA), c(2,3,4,6,7,8,NA)) # f:find.matches does not work for NA.
+```
+
+

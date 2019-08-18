@@ -1,0 +1,397 @@
+# PLOTS GRAPHS
+
+
+
+
+
+## p:Diagrammer', type='new'
+
+### graph from data.table
+
+
+```{r}
+edges <- DiagrammeR::create_edges(from = c('a', 'b'), to = c('b', 'c'), )
+nodes <- DiagrammeR::create_nodes(nodes=c('a','b','c'), shape=c('circle','rectangle','square'), tooltip=c('ala ma kota', 'ble', 'dupa'))
+graph <- create_graph(nodes_df = nodes, edges_df = edges)
+DiagrammeR::render_graph(graph)
+
+
+ create_nodes(nodes = c("a", "b", "c", "d"),
+               label = FALSE,
+               type = "lower",
+               style = "filled",
+               color = "aqua",
+               shape = c("circle", "circle",
+                         "rectangle", "rectangle"),
+               data = c(3.5, 2.6, 9.4, 2.7))
+```
+
+
+
+
+### graph manually created
+
+
+```{r}
+
+require(DiagrammeR)
+
+
+boxes_and_circles <- "
+digraph boxes_and_circles {
+
+  # several 'node' statements
+  node [shape = box, color = blue]
+    A; B; C
+
+  node [shape = box, color = black, fontsize = 18, fontcolor = yellow]
+    D; E; F
+
+  node [shape = circle,
+        fixedsize = true,
+        width = 0.9] // sets as circles
+    1; 2; 3; 4; 5; 6; 7; 8
+
+  # several 'edge' statements
+    A->1; B->2; B->3; B->4; C->A
+    1->D; E->A; 2->4; 1->5; 1->F 
+    E->6; 4->6; 5->7; 6->7; 
+    3->8 [color = green]
+
+
+  # a 'graph' statement
+  graph [overlap = true]
+
+}
+"
+
+grViz(boxes_and_circles)
+
+```
+
+
+
+
+## p:networkD3
+
+
+### sankeyPlot
+
+
+
+```{r}
+
+require(networkD3)
+
+# definiowanie polaczen. Numery zaczyaja sie od 0!. Numery koresponcuja z kolejnoscia wezlow zdefiniowanych w zmiennej z wezlami.
+links <- data.frame(from=c(0,0,1,2), to=c(1,2,2,3), value=c(10,15,20,25))
+
+nodes <- data.frame(name=c('a','b','c','d'), group=c(1,1,2,2))
+
+
+sankeyNetwork(Links = links, # data.frame z imformajami o polaczeniach
+							Nodes = nodes, # ramka danych z informacjami o wezlach
+							Source = 'from',  # nazwa zmiennej z ramki z linkami dla poczatku polaczenia
+							Target = 'to', # nazwa zmiennej z ramki z linkami dla konca polaczenia
+							Value = 'value', # nazwa zmiennej z ramki z wartoscia zwiazana z polaczeniam
+							NodeID = 'name', # nazwa zmiennej z ramki z wezlami w ktorej sa nazwy wezlow
+							fontSize = 20)
+
+
+
+```
+
+
+### network
+
+```{r}
+
+# definiowanie polaczen. Numery zaczyaja sie od 0!. Numery koresponcuja z kolejnoscia wezlow zdefiniowanych w zmiennej z wezlami.
+links <- data.frame(from=c(0,0,1,2), to=c(1,2,2,3), value=c(10,15,20,25))
+
+nodes <- data.frame(name=c('a','b','c','d'), group=c(1,1,2,2))
+
+
+forceNetwork(Links = links, # data.frame z imformajami o polaczeniach
+					  	Nodes = nodes, # ramka danych z informacjami o wezlach
+							Source = 'from',  # nazwa zmiennej z ramki z linkami dla poczatku polaczenia
+							Target = 'to', # nazwa zmiennej z ramki z linkami dla konca polaczenia
+							Value = 'value', # nazwa zmiennej z ramki z wartoscia zwiazana z polaczeniam
+							NodeID = 'name', # nazwa zmiennej z ramki z wezlami w ktorej sa nazwy wezlow
+							Group = 'group',
+							fontSize = 20)
+
+
+```
+
+
+
+### radialNetwork and diagonalNetwork
+
+
+```{r}
+
+samochody <-  list(name='samochody', 
+                   children=list(list(name='toyota', 
+                                      children=list(list(name='corolla'), 
+                                                    list(name='avensis'))
+                                      ), 
+                                 list(name='nissan', 
+                                      children=list(list(name='micra'), 
+                                                    list(name='almera'))
+                                      ), 
+                                 list(name='honda', 
+                                      children=list(list(name='civi'), 
+                                                    list(name='accord'))
+                                      )
+                                 )
+                   )
+
+radialNetwork(List = samochody, fontSize=10)
+diagonalNetwork(List = samochody, fontSize=10)
+
+```
+
+
+
+### dendrogram
+
+
+
+```{r}
+
+hc <- hclust(dist(USArrests), "ave")
+
+dendroNetwork(hc, height = 600)
+
+
+```
+
+
+
+## network
+
+
+```{r}
+
+#Rysowanie ladnych grafow
+
+set.seed( 1 ) # for reproducibility of this exact graph
+
+require(network) # network
+require(sna) # plot.network
+require(Hmisc) # largest.empty
+
+# Create some data.
+
+con <- textConnection("name,age,jobyrs,inc,saved,int,chld,addryrs
+                      Adam,21,1,46,110,3.9,2.62,16.46
+                      Ben,32,6,82,110,3.9,2.875,17.02
+                      Chris,22,2,38,93,3.85,2.32,18.61
+                      David,46,16,158,110,3.08,3.215,19.44
+                      Elvin,58,4,110,175,3.15,3.44,17.02
+                      Fred,18,1,25,105,2.76,3.46,20.22
+                      Greg,23,1,60,245,3.21,3.57,15.84
+                      Henry,44,12,46,62,3.69,3.19,20
+                      Ivan,32,2,40,95,3.92,3.15,22.9
+                      James,29,5,67,123,3.92,3.44,18.3
+                      Kevin,27,10,67,123,3.92,3.44,18.9
+                      Luke,46,18,75,180,3.07,4.07,17.4")
+nodelist <-read.csv(con)
+close( con )
+
+con <- textConnection("from,to
+                      Adam,Ben
+                      Adam,Chris
+                      Chris,David
+                      Chris,Elvin
+                      David,Fred
+                      Fred,Greg
+                      Greg,Henry
+                      Henry,James
+                      Henry,Ivan
+                      James,Kevin
+                      Ivan,Kevin
+                      Kevin,Luke")
+
+edgelist <- read.csv(con)
+close( con )
+
+nodes <- levels(as.factor(nodelist[[1]]))
+
+# Create a matrix to represent the network.
+
+m <- matrix(data = 0, nrow=length(nodes), ncol=length(nodes))
+rownames(m) <- colnames(m) <- nodes
+
+apply(edgelist, 1, function(x) m[x[[1]], x[[2]]] <<- 1)
+
+graph <- network(m, matrix.type="adjacency")
+
+# Now plot the network, without the nodes.
+
+par(xpd=TRUE)
+xy <- plot(graph, vertex.cex=5, vertex.col="white", vertex.border=0)
+
+# Get the some other data from the nodes and generate a plot for
+# each node and place them onto the network. Include a Key at some
+# empty space.
+
+kl <- largest.empty(xy[,1], xy[,2], 2, 2)
+
+stars(nodelist[-1], labels=nodelist[[1]], locations=xy, draw.segments=TRUE,
+      key.loc=c(kl$x, kl$y), add=TRUE)
+
+
+```
+
+
+## p:igraph
+
+Graf skierowany
+```{r}
+library(igraph)
+
+# Krawedzie dla grafow skierowanych
+gd <- graph(c(1,2, 2,3, 2,4, 1,4, 5,5, 3,6))
+plot(gd)
+```
+
+
+Graf nieskierowany
+```{r}
+
+library(igraph)
+# Krawedzie dla grafow nieskierowanych
+gu <- graph(c(1,2, 2,3, 2,4, 1,4, 5,5, 3,6), directed=FALSE)
+# No labels
+plot(gu, vertex.label=NA)
+```
+
+
+
+More complex graph
+
+```{r}
+
+
+require(igraph)
+
+# macierz nodes
+actors <- data.frame(name=c("Alice", "Bob", "Cecil", "David", "Esmeralda"),
+                     age=c(48,33,45,34,21),
+                     gender=c("F","M","F","M","F"))
+
+# macierz edges
+relations <- data.frame(from=c("Bob", "Cecil", "Cecil", "David", "David", "Esmeralda"),
+                        to=c("Alice", "Bob", "Alice", "Alice", "Bob", "Alice"),
+                        same.dept=c(FALSE, FALSE, TRUE, FALSE, FALSE, TRUE),
+                        cos_tam=c('a', 'b', 'b', 'a', 'b', 'a'),
+                        friendship=c(4,5,5,2,1,1), 
+                        advice=c(4,5,5,4,2,3))
+
+# utworzenie grafu
+graph <- graph_from_data_frame(relations, directed=TRUE, vertices=actors)
+
+print(graph, e=TRUE, v=TRUE) # struktura obiektu grafu
+
+# wykres igraph
+plot.igraph(graph, 
+            edge.width=relations$advice, 
+            vertex.color=actors$gender , 
+            edge.color=relations$cos_tam, 
+            vertex.label.color='white') # wykres z p:igraph
+
+
+
+```
+
+
+## p:edgebundleR
+
+
+```{r}
+
+
+require(igraph)
+require(edgebundleR)
+
+# generujemy graf tak jak dla p:igrap ale musi byc on symetryczny tzn jezeli jest polaczenia z 'a' do 'b' to tez musi byc z 'b' do 'a'
+
+actors <- data.frame(name=c("Alice", "Bob", "Cecil", "Martin"),
+                     age=c(48,33,45,46),
+                     gender=c("F","M","F","F"))
+
+relations <- data.frame(from=c("Alice", "Bob", "Alice", "Cecil"),
+                        to=c("Bob", "Alice", "Cecil", "Alice"),
+                        same.dept=c(FALSE, FALSE, TRUE, FALSE),
+                        friendship=c(1,1,5,5), 
+                        cos_tam=c('a', 'a', 'b', 'b'),
+                        advice=c(1,10,50,50))
+
+graph <- graph_from_data_frame(relations, directed=TRUE, vertices=actors)
+
+# wykres igraph
+plot.igraph(graph, 
+            edge.width=relations$advice, 
+            vertex.color=actors$gender , 
+            edge.color=relations$cos_tam, 
+            vertex.label.color='white') # wykres z p:igraph
+
+
+# wykres edgebundle
+edgebundle(graph, tension = c(.9) ) # wykres z p:edgebundle 
+
+
+```
+
+
+## wizualizacja korelacji p:ggraph
+
+example from: https://www.r-bloggers.com/how-to-create-correlation-network-plots-with-corrr-and-ggraph-and-which-countries-drink-like-australia/
+
+wiecej o rysowaniu grafow http://www.data-imaginist.com/2017/Announcing-ggraph/
+
+http://www.data-imaginist.com/2017/ggraph-introduction-layouts/
+
+```{r}
+library(tidyverse)
+library(corrr)
+library(igraph)
+library(ggraph)
+
+# stworzenie tabeli korelacji pomiedzy zmiennymi
+tidy_cors <- mtcars %>% 
+	correlate() %>% 
+	stretch()
+
+# filtrowanie
+graph_cors <- tidy_cors %>%
+	filter(abs(r) > .3) %>% # interesuja nas korelacje powyzej 0.3
+	graph_from_data_frame(directed = FALSE) # utworzenie danych o strukturze grafu
+
+# narysowanie grafu bez kolorystyki
+ggraph(graph_cors) +
+	geom_edge_link() + # krawedzie
+	geom_node_point() + # wezly
+	geom_node_text(aes(label = name)) # texty na wezlach
+
+# graf z kolorystyka
+ggraph(graph_cors) +
+	geom_edge_link(aes(  edge_alpha = abs(r)
+										 , edge_width = abs(r)
+										 , color      = r)) +
+	guides(  edge_alpha = "none"
+				 , edge_width = "none") +
+	scale_edge_colour_gradientn(  limits = c(-1, 1)
+															, colors = c("firebrick2", "dodgerblue2")) +
+	geom_node_point(  color = "white"
+									, size = 5) +
+	geom_node_text(  aes(label = name)
+								 , repel = TRUE) +
+	theme_graph() +
+	labs(title = "Correlations between car variables")
+
+```
+
+

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Introduction to R</title>
+  <meta name="description" content="Introduction to R">
+  <meta name="generator" content="bookdown 0.6 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Introduction to R" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Introduction to R" />
+  
+  
+  
+
+<meta name="author" content="Ewelina Macioł-Huć">
+
+
+<meta name="date" content="2018-02-18">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="syntax.html">
+<link rel="next" href="functions-and-environemnts.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Podstawy R-a</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> INTRO</a></li>
+<li class="part"><span><b>I PROGRAMMING</b></span></li>
+<li class="chapter" data-level="2" data-path="syntax.html"><a href="syntax.html"><i class="fa fa-check"></i><b>2</b> SYNTAX</a><ul>
+<li class="chapter" data-level="2.1" data-path="syntax.html"><a href="syntax.html#variables-names"><i class="fa fa-check"></i><b>2.1</b> Variables names</a></li>
+<li class="chapter" data-level="2.2" data-path="syntax.html"><a href="syntax.html#vs"><i class="fa fa-check"></i><b>2.2</b> &lt;- vs =</a></li>
+<li class="chapter" data-level="2.3" data-path="syntax.html"><a href="syntax.html#using-quotation-marks-cudzysow"><i class="fa fa-check"></i><b>2.3</b> Using quotation marks [cudzysłów]</a></li>
+<li class="chapter" data-level="2.4" data-path="syntax.html"><a href="syntax.html#sterowanie-przeplywam-control-flow"><i class="fa fa-check"></i><b>2.4</b> Sterowanie przeplywam [control flow]</a><ul>
+<li class="chapter" data-level="2.4.1" data-path="syntax.html"><a href="syntax.html#petla-for"><i class="fa fa-check"></i><b>2.4.1</b> petla for</a></li>
+<li class="chapter" data-level="2.4.2" data-path="syntax.html"><a href="syntax.html#if"><i class="fa fa-check"></i><b>2.4.2</b> if</a></li>
+<li class="chapter" data-level="2.4.3" data-path="syntax.html"><a href="syntax.html#ifelse-czyli-wektorowa-wersja-if"><i class="fa fa-check"></i><b>2.4.3</b> ifelse (czyli wektorowa wersja if)</a></li>
+<li class="chapter" data-level="2.4.4" data-path="syntax.html"><a href="syntax.html#while"><i class="fa fa-check"></i><b>2.4.4</b> while</a></li>
+<li class="chapter" data-level="2.4.5" data-path="syntax.html"><a href="syntax.html#repeat"><i class="fa fa-check"></i><b>2.4.5</b> repeat</a></li>
+<li class="chapter" data-level="2.4.6" data-path="syntax.html"><a href="syntax.html#switch"><i class="fa fa-check"></i><b>2.4.6</b> switch</a></li>
+</ul></li>
+<li class="chapter" data-level="2.5" data-path="syntax.html"><a href="syntax.html#formulas"><i class="fa fa-check"></i><b>2.5</b> formulas</a><ul>
+<li class="chapter" data-level="2.5.1" data-path="syntax.html"><a href="syntax.html#informacje-wstepne"><i class="fa fa-check"></i><b>2.5.1</b> Informacje wstepne</a></li>
+<li class="chapter" data-level="2.5.2" data-path="syntax.html"><a href="syntax.html#przyklady-stosowania-formul"><i class="fa fa-check"></i><b>2.5.2</b> Przyklady stosowania formul</a></li>
+<li class="chapter" data-level="2.5.3" data-path="syntax.html"><a href="syntax.html#formula-a-tekst"><i class="fa fa-check"></i><b>2.5.3</b> Formula a tekst</a></li>
+<li class="chapter" data-level="2.5.4" data-path="syntax.html"><a href="syntax.html#wyciaganie-elementow-formuly"><i class="fa fa-check"></i><b>2.5.4</b> Wyciaganie elementow formuly</a></li>
+<li class="chapter" data-level="2.5.5" data-path="syntax.html"><a href="syntax.html#modyfikacja-formul"><i class="fa fa-check"></i><b>2.5.5</b> Modyfikacja formul</a></li>
+<li class="chapter" data-level="2.5.6" data-path="syntax.html"><a href="syntax.html#dynamiczne-tworzenie-formuly-liniowej-z-zadanych-elementow"><i class="fa fa-check"></i><b>2.5.6</b> Dynamiczne tworzenie formuly LINIOWEJ z zadanych elementow</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="expression-and-call.html"><a href="expression-and-call.html"><i class="fa fa-check"></i><b>3</b> <em>Expression</em> and <em>call</em></a><ul>
+<li class="chapter" data-level="3.0.1" data-path="expression-and-call.html"><a href="expression-and-call.html#evaluating-call-and-expressions"><i class="fa fa-check"></i><b>3.0.1</b> evaluating call and expressions</a></li>
+<li class="chapter" data-level="3.0.2" data-path="expression-and-call.html"><a href="expression-and-call.html#names"><i class="fa fa-check"></i><b>3.0.2</b> names</a></li>
+<li class="chapter" data-level="3.0.3" data-path="expression-and-call.html"><a href="expression-and-call.html#converting-call-and-expression"><i class="fa fa-check"></i><b>3.0.3</b> converting call and expression</a></li>
+<li class="chapter" data-level="3.0.4" data-path="expression-and-call.html"><a href="expression-and-call.html#creating-call"><i class="fa fa-check"></i><b>3.0.4</b> creating call</a></li>
+<li class="chapter" data-level="3.0.5" data-path="expression-and-call.html"><a href="expression-and-call.html#get-elements-of-expression"><i class="fa fa-check"></i><b>3.0.5</b> get elements of expression</a></li>
+<li class="chapter" data-level="3.0.6" data-path="expression-and-call.html"><a href="expression-and-call.html#get-elements-of-call"><i class="fa fa-check"></i><b>3.0.6</b> get elements of call</a></li>
+<li class="chapter" data-level="3.0.7" data-path="expression-and-call.html"><a href="expression-and-call.html#change-functions-parameters-in-call-expressions"><i class="fa fa-check"></i><b>3.0.7</b> change functions parameters in call expressions</a></li>
+<li class="chapter" data-level="3.0.8" data-path="expression-and-call.html"><a href="expression-and-call.html#dynamic-formulas"><i class="fa fa-check"></i><b>3.0.8</b> dynamic formulas</a></li>
+<li class="chapter" data-level="3.0.9" data-path="expression-and-call.html"><a href="expression-and-call.html#functions"><i class="fa fa-check"></i><b>3.0.9</b> Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html"><i class="fa fa-check"></i><b>4</b> FUNCTIONS AND ENVIRONEMNTS</a><ul>
+<li class="chapter" data-level="4.1" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#functions-1"><i class="fa fa-check"></i><b>4.1</b> Functions</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#types-of-functions"><i class="fa fa-check"></i><b>4.1.1</b> Types of functions</a></li>
+<li class="chapter" data-level="4.1.2" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#extracting-function-code"><i class="fa fa-check"></i><b>4.1.2</b> Extracting function code</a></li>
+<li class="chapter" data-level="4.1.3" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#functions-defining"><i class="fa fa-check"></i><b>4.1.3</b> Functions defining</a></li>
+<li class="chapter" data-level="4.1.4" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#unspecified-formal-arguments-argumenty-nadmiarowe"><i class="fa fa-check"></i><b>4.1.4</b> Unspecified formal arguments [argumenty nadmiarowe]</a></li>
+<li class="chapter" data-level="4.1.5" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#functions-arguments-without-quotation-marks"><i class="fa fa-check"></i><b>4.1.5</b> functions arguments without quotation marks</a></li>
+<li class="chapter" data-level="4.1.6" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#recursive-function"><i class="fa fa-check"></i><b>4.1.6</b> recursive function</a></li>
+<li class="chapter" data-level="4.1.7" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#create-infix-function"><i class="fa fa-check"></i><b>4.1.7</b> create infix function</a></li>
+<li class="chapter" data-level="4.1.8" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#replacement-functions-funkcje-podstawieniowe"><i class="fa fa-check"></i><b>4.1.8</b> replacement functions [funkcje podstawieniowe]</a></li>
+<li class="chapter" data-level="4.1.9" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#missing"><i class="fa fa-check"></i><b>4.1.9</b> missing</a></li>
+<li class="chapter" data-level="4.1.10" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#pmatch"><i class="fa fa-check"></i><b>4.1.10</b> pmatch</a></li>
+<li class="chapter" data-level="4.1.11" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#overloading-functions-przeciazanie-funkcji-concern-generic-functions"><i class="fa fa-check"></i><b>4.1.11</b> Overloading functions [przeciazanie funkcji]-(concern generic functions)</a></li>
+<li class="chapter" data-level="4.1.12" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#arguments-values-from-give-vector"><i class="fa fa-check"></i><b>4.1.12</b> Arguments values from give vector</a></li>
+<li class="chapter" data-level="4.1.13" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#conditionals-values-of-arguments"><i class="fa fa-check"></i><b>4.1.13</b> conditionals values of arguments</a></li>
+<li class="chapter" data-level="4.1.14" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#fformals"><i class="fa fa-check"></i><b>4.1.14</b> f:formals</a></li>
+<li class="chapter" data-level="4.1.15" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#functions-factory"><i class="fa fa-check"></i><b>4.1.15</b> functions factory</a></li>
+<li class="chapter" data-level="4.1.16" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#function-operator"><i class="fa fa-check"></i><b>4.1.16</b> function operator</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#environments"><i class="fa fa-check"></i><b>4.2</b> Environments</a></li>
+<li class="chapter" data-level="4.3" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#environment-and-variables-scope"><i class="fa fa-check"></i><b>4.3</b> Environment and variables scope</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#types-of-environment-in-r"><i class="fa fa-check"></i><b>4.3.1</b> Types of environment in R</a></li>
+<li class="chapter" data-level="4.3.2" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#different-functions-to-work-with-environments"><i class="fa fa-check"></i><b>4.3.2</b> Different functions to work with environments</a></li>
+<li class="chapter" data-level="4.3.3" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#wyszukiwanie-i-usuwanie-zmiennych"><i class="fa fa-check"></i><b>4.3.3</b> wyszukiwanie i usuwanie zmiennych</a></li>
+<li class="chapter" data-level="4.3.4" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#exists-existsfunction-i-get"><i class="fa fa-check"></i><b>4.3.4</b> exists, existsFunction i get</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#macros"><i class="fa fa-check"></i><b>4.4</b> Macros</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="data-structures.html"><a href="data-structures.html"><i class="fa fa-check"></i><b>5</b> DATA STRUCTURES</a><ul>
+<li class="chapter" data-level="5.1" data-path="data-structures.html"><a href="data-structures.html#objects-attributes"><i class="fa fa-check"></i><b>5.1</b> Objects attributes</a></li>
+<li class="chapter" data-level="5.2" data-path="data-structures.html"><a href="data-structures.html#podzial-struktur"><i class="fa fa-check"></i><b>5.2</b> Podzial struktur</a></li>
+<li class="chapter" data-level="5.3" data-path="data-structures.html"><a href="data-structures.html#listy-atomowe"><i class="fa fa-check"></i><b>5.3</b> Listy atomowe</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="data-structures.html"><a href="data-structures.html#wektory"><i class="fa fa-check"></i><b>5.3.1</b> wektory</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="data-structures.html"><a href="data-structures.html#matrix"><i class="fa fa-check"></i><b>5.4</b> matrix</a><ul>
+<li class="chapter" data-level="5.4.1" data-path="data-structures.html"><a href="data-structures.html#array-macierz-wielowymiarowa"><i class="fa fa-check"></i><b>5.4.1</b> Array (macierz wielowymiarowa)</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="data-structures.html"><a href="data-structures.html#listy-generyczne"><i class="fa fa-check"></i><b>5.5</b> Listy generyczne</a><ul>
+<li class="chapter" data-level="5.5.1" data-path="data-structures.html"><a href="data-structures.html#list"><i class="fa fa-check"></i><b>5.5.1</b> List</a></li>
+</ul></li>
+<li class="chapter" data-level="5.6" data-path="data-structures.html"><a href="data-structures.html#data.frames"><i class="fa fa-check"></i><b>5.6</b> data.frames</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="typy-danych.html"><a href="typy-danych.html"><i class="fa fa-check"></i><b>6</b> Typy danych</a><ul>
+<li class="chapter" data-level="6.1" data-path="typy-danych.html"><a href="typy-danych.html#typ-logical"><i class="fa fa-check"></i><b>6.1</b> Typ <em>logical</em></a></li>
+<li class="chapter" data-level="6.2" data-path="typy-danych.html"><a href="typy-danych.html#typ-numeric"><i class="fa fa-check"></i><b>6.2</b> Typ <em>numeric</em></a></li>
+<li class="chapter" data-level="6.3" data-path="typy-danych.html"><a href="typy-danych.html#typ-complex"><i class="fa fa-check"></i><b>6.3</b> Typ <em>complex</em></a></li>
+<li class="chapter" data-level="6.4" data-path="typy-danych.html"><a href="typy-danych.html#typ-character"><i class="fa fa-check"></i><b>6.4</b> Typ <em>character</em></a></li>
+<li class="chapter" data-level="6.5" data-path="typy-danych.html"><a href="typy-danych.html#typ-date"><i class="fa fa-check"></i><b>6.5</b> Typ <em>date</em></a></li>
+<li class="chapter" data-level="6.6" data-path="typy-danych.html"><a href="typy-danych.html#typ-posix"><i class="fa fa-check"></i><b>6.6</b> Typ <em>POSIX</em></a></li>
+<li class="chapter" data-level="6.7" data-path="typy-danych.html"><a href="typy-danych.html#typ-factor"><i class="fa fa-check"></i><b>6.7</b> Typ <em>factor</em></a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="data-types.html"><a href="data-types.html"><i class="fa fa-check"></i><b>7</b> DATA TYPES</a><ul>
+<li class="chapter" data-level="7.1" data-path="data-types.html"><a href="data-types.html#braki-danych"><i class="fa fa-check"></i><b>7.1</b> Braki danych</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="own-data-types-and-structures.html"><a href="own-data-types-and-structures.html"><i class="fa fa-check"></i><b>8</b> OWN DATA TYPES AND STRUCTURES</a></li>
+<li class="chapter" data-level="9" data-path="data-processing-philosopies.html"><a href="data-processing-philosopies.html"><i class="fa fa-check"></i><b>9</b> DATA PROCESSING PHILOSOPIES</a></li>
+<li class="chapter" data-level="10" data-path="data-processing-tricks.html"><a href="data-processing-tricks.html"><i class="fa fa-check"></i><b>10</b> DATA PROCESSING TRICKS</a></li>
+<li class="chapter" data-level="11" data-path="erros-debugging-profiling.html"><a href="erros-debugging-profiling.html"><i class="fa fa-check"></i><b>11</b> ERROS DEBUGGING PROFILING</a><ul>
+<li class="chapter" data-level="11.1" data-path="erros-debugging-profiling.html"><a href="erros-debugging-profiling.html#debuggowanie"><i class="fa fa-check"></i><b>11.1</b> debuggowanie</a></li>
+<li class="chapter" data-level="11.2" data-path="erros-debugging-profiling.html"><a href="erros-debugging-profiling.html#try"><i class="fa fa-check"></i><b>11.2</b> try</a></li>
+<li class="chapter" data-level="11.3" data-path="erros-debugging-profiling.html"><a href="erros-debugging-profiling.html#trycatch"><i class="fa fa-check"></i><b>11.3</b> tryCatch</a></li>
+<li class="chapter" data-level="11.4" data-path="erros-debugging-profiling.html"><a href="erros-debugging-profiling.html#funkcja-warning"><i class="fa fa-check"></i><b>11.4</b> Funkcja warning</a></li>
+<li class="chapter" data-level="11.5" data-path="erros-debugging-profiling.html"><a href="erros-debugging-profiling.html#stopstopifnot"><i class="fa fa-check"></i><b>11.5</b> stop/stopifnot</a></li>
+<li class="chapter" data-level="11.6" data-path="erros-debugging-profiling.html"><a href="erros-debugging-profiling.html#asserterror-assertwarning-assercondition"><i class="fa fa-check"></i><b>11.6</b> assertError assertWarning asserCondition</a></li>
+<li class="chapter" data-level="11.7" data-path="erros-debugging-profiling.html"><a href="erros-debugging-profiling.html#przerywanie-petli-jesli-wystapi-blad"><i class="fa fa-check"></i><b>11.7</b> przerywanie petli jesli wystapi blad</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="data-import-and-export-fromto-files.html"><a href="data-import-and-export-fromto-files.html"><i class="fa fa-check"></i><b>12</b> DATA IMPORT AND EXPORT FROM/TO FILES</a></li>
+<li class="chapter" data-level="13" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html"><i class="fa fa-check"></i><b>13</b> TOOLS AND TRICKS</a></li>
+<li class="part"><span><b>II VISUALISATION</b></span></li>
+<li class="chapter" data-level="14" data-path="visualisation-philosopies.html"><a href="visualisation-philosopies.html"><i class="fa fa-check"></i><b>14</b> VISUALISATION PHILOSOPIES</a></li>
+<li class="chapter" data-level="15" data-path="plots-graphs.html"><a href="plots-graphs.html"><i class="fa fa-check"></i><b>15</b> PLOTS GRAPHS</a></li>
+<li class="chapter" data-level="16" data-path="plots-maps.html"><a href="plots-maps.html"><i class="fa fa-check"></i><b>16</b> PLOTS MAPS</a></li>
+<li class="chapter" data-level="17" data-path="plots-mont-common.html"><a href="plots-mont-common.html"><i class="fa fa-check"></i><b>17</b> PLOTS MONT COMMON</a></li>
+<li class="chapter" data-level="18" data-path="visualisation-other-issues.html"><a href="visualisation-other-issues.html"><i class="fa fa-check"></i><b>18</b> VISUALISATION OTHER ISSUES</a></li>
+<li class="part"><span><b>III ADDS-ON</b></span></li>
+<li class="chapter" data-level="19" data-path="forking.html"><a href="forking.html"><i class="fa fa-check"></i><b>19</b> FORKING</a></li>
+<li class="chapter" data-level="20" data-path="interactive-apps.html"><a href="interactive-apps.html"><i class="fa fa-check"></i><b>20</b> INTERACTIVE APPS</a></li>
+<li class="chapter" data-level="21" data-path="work-organisation.html"><a href="work-organisation.html"><i class="fa fa-check"></i><b>21</b> WORK ORGANISATION</a></li>
+<li class="chapter" data-level="22" data-path="reports-and-presentations.html"><a href="reports-and-presentations.html"><i class="fa fa-check"></i><b>22</b> REPORTS AND PRESENTATIONS</a></li>
+<li class="appendix"><span><b>APPENDICES</b></span></li>
+<li class="chapter" data-level="A" data-path="oznaczenia.html"><a href="oznaczenia.html"><i class="fa fa-check"></i><b>A</b> Oznaczenia</a><ul>
+<li class="chapter" data-level="A.1" data-path="oznaczenia.html"><a href="oznaczenia.html#oznaczenia-odpisowe"><i class="fa fa-check"></i><b>A.1</b> Oznaczenia odpisowe</a></li>
+<li class="chapter" data-level="A.2" data-path="oznaczenia.html"><a href="oznaczenia.html#oznaczenia-w-kodzie"><i class="fa fa-check"></i><b>A.2</b> Oznaczenia w kodzie</a></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="materialy-do-nauki.html"><a href="materialy-do-nauki.html"><i class="fa fa-check"></i><b>B</b> Materialy do nauki</a></li>
+<li class="chapter" data-level="C" data-path="skroty-klawiaturowe.html"><a href="skroty-klawiaturowe.html"><i class="fa fa-check"></i><b>C</b> Skroty klawiaturowe</a></li>
+<li class="chapter" data-level="D" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html"><i class="fa fa-check"></i><b>D</b> Dobre nawyki</a><ul>
+<li class="chapter" data-level="D.1" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#skladnia-w-kodzie"><i class="fa fa-check"></i><b>D.1</b> skladnia w kodzie</a></li>
+<li class="chapter" data-level="D.2" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#home-i-end"><i class="fa fa-check"></i><b>D.2</b> Home i End</a></li>
+<li class="chapter" data-level="D.3" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#rozdzialy"><i class="fa fa-check"></i><b>D.3</b> Rozdzialy</a></li>
+<li class="chapter" data-level="D.4" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#snippets"><i class="fa fa-check"></i><b>D.4</b> snippets</a></li>
+<li class="chapter" data-level="D.5" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#projects"><i class="fa fa-check"></i><b>D.5</b> Projects</a></li>
+</ul></li>
+<li class="chapter" data-level="E" data-path="uwagi-rozne.html"><a href="uwagi-rozne.html"><i class="fa fa-check"></i><b>E</b> Uwagi rozne</a><ul>
+<li class="chapter" data-level="E.1" data-path="uwagi-rozne.html"><a href="uwagi-rozne.html#instalacja-pakietow"><i class="fa fa-check"></i><b>E.1</b> <strong>Instalacja pakietow</strong></a></li>
+</ul></li>
+<li class="chapter" data-level="F" data-path="dictionary.html"><a href="dictionary.html"><i class="fa fa-check"></i><b>F</b> Dictionary</a><ul>
+<li class="chapter" data-level="F.1" data-path="dictionary.html"><a href="dictionary.html#en-pl"><i class="fa fa-check"></i><b>F.1</b> EN-PL</a></li>
+<li class="chapter" data-level="F.2" data-path="dictionary.html"><a href="dictionary.html#pl-en"><i class="fa fa-check"></i><b>F.2</b> PL-EN</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Introduction to R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="expression-and-call" class="section level1">
+<h1><span class="header-section-number">Chapter 3</span> <em>Expression</em> and <em>call</em></h1>
+<p>Basic terms</p>
+<ul>
+<li><em>constant</em>-e.g. 1, ‘a’, TRUE, FALSE</li>
+<li><em>name</em> (called also <em>symbols</em>)- names of functions, variables and the like</li>
+<li><em>call</em> - expression which can executed by R. call is recursive, so call can include another call.</li>
+<li><em>expression</em> - group of calls.</li>
+</ul>
+<div id="evaluating-call-and-expressions" class="section level3">
+<h3><span class="header-section-number">3.0.1</span> evaluating call and expressions</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">eval</span>()</code></pre></div>
+</div>
+<div id="names" class="section level3">
+<h3><span class="header-section-number">3.0.2</span> names</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#to get name:</span>
+<span class="kw">quote</span>(z)
+<span class="kw">as.name</span>(<span class="st">&#39;z&#39;</span>)
+<span class="kw">as.symbol</span>(<span class="st">&#39;z&#39;</span>)
+
+<span class="co">#to check if name</span>
+<span class="kw">is.name</span>(z)
+<span class="kw">is.symbol</span>(z)</code></pre></div>
+</div>
+<div id="converting-call-and-expression" class="section level3">
+<h3><span class="header-section-number">3.0.3</span> converting call and expression</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#expression (not call!!!) from string</span>
+<span class="kw">parse</span>(<span class="dt">text=</span><span class="st">&#39;z&lt;-100&#39;</span>) <span class="co">#text is not a first parametr so you have to specify it manually.</span>
+
+<span class="co">#call to string</span>
+<span class="kw">deparse</span>(<span class="kw">quote</span>(z &lt;-<span class="st"> </span><span class="dv">100</span>))</code></pre></div>
+</div>
+<div id="creating-call" class="section level3">
+<h3><span class="header-section-number">3.0.4</span> creating call</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#1.</span>
+<span class="kw">quote</span>(z &lt;-<span class="st"> </span><span class="dv">100</span>)
+
+<span class="co">#2.</span>
+w &lt;-<span class="st"> </span><span class="dv">100</span>
+<span class="kw">bquote</span>(<span class="dt">z =</span> b <span class="op">+</span><span class="st"> </span>.(w)) <span class="co">#dynamic substitution with .()</span>
+<span class="co">#warning: problem with &#39;=&#39;</span>
+z&lt;-<span class="st">&#39;ble&#39;</span>
+<span class="kw">bquote</span>({.(<span class="kw">as.name</span>(z)) =<span class="st"> </span>w})[[<span class="dv">2</span>]] <span class="co">#use paranthesis to solve problem</span>
+
+<span class="co">#3.</span>
+<span class="kw">substitute</span>(z &lt;-<span class="st"> </span><span class="dv">100</span>)
+
+<span class="co">#4.</span>
+w&lt;-<span class="st">&#39;price&#39;</span>
+<span class="kw">substitute</span>(target &lt;-<span class="st"> </span><span class="dv">100</span>, <span class="kw">list</span>(<span class="dt">target=</span><span class="kw">as.name</span>(w)))
+<span class="co">#warning: problem with &#39;=&#39; . I have no ide what to do with that.</span>
+
+
+<span class="co">#5.</span>
+<span class="kw">substitute</span>(z &lt;-<span class="st"> </span>w, <span class="kw">list</span>(<span class="dt">w=</span><span class="dv">100</span>))</code></pre></div>
+</div>
+<div id="get-elements-of-expression" class="section level3">
+<h3><span class="header-section-number">3.0.5</span> get elements of expression</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p &lt;-<span class="kw">parse</span>(<span class="dt">text=</span><span class="st">&#39;z&lt;-100&#39;</span>)
+p[[<span class="dv">1</span>]]</code></pre></div>
+</div>
+<div id="get-elements-of-call" class="section level3">
+<h3><span class="header-section-number">3.0.6</span> get elements of call</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">z &lt;-<span class="st"> </span><span class="kw">quote</span>(z<span class="op">+</span>w<span class="op">+</span><span class="dv">200</span><span class="op">+</span><span class="dv">500</span>)
+<span class="kw">all.vars</span>(z) <span class="co">#names of variables</span>
+<span class="kw">all.names</span>(z) <span class="co">#all names</span>
+z[[<span class="dv">1</span>]] <span class="co">#first element</span></code></pre></div>
+</div>
+<div id="change-functions-parameters-in-call-expressions" class="section level3">
+<h3><span class="header-section-number">3.0.7</span> change functions parameters in call expressions</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">z &lt;-<span class="st"> </span><span class="kw">quote</span>(<span class="kw">mean</span>(<span class="dt">x=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>), <span class="dt">trim=</span>.<span class="dv">3</span>))
+z<span class="op">$</span>trim &lt;-<span class="st"> </span>.<span class="dv">6</span>
+z</code></pre></div>
+</div>
+<div id="dynamic-formulas" class="section level3">
+<h3><span class="header-section-number">3.0.8</span> dynamic formulas</h3>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">y &lt;-<span class="st"> &#39;price&#39;</span>
+<span class="kw">as.formula</span>(<span class="kw">paste</span>(<span class="st">&#39;x~&#39;</span>,y,<span class="dt">sep=</span><span class="st">&#39;&#39;</span>))
+
+y &lt;-<span class="st"> &#39;price&#39;</span>
+<span class="kw">as.formula</span>(<span class="kw">bquote</span>(x<span class="op">~</span>.(<span class="kw">as.name</span>(y))))
+
+y &lt;-<span class="st"> &#39;price&#39;</span>
+<span class="kw">as.formula</span>(<span class="kw">substitute</span>(x<span class="op">~</span>target, <span class="kw">list</span>(<span class="dt">target=</span><span class="kw">as.name</span>(y))))</code></pre></div>
+</div>
+<div id="functions" class="section level3">
+<h3><span class="header-section-number">3.0.9</span> Functions</h3>
+<div id="call-do.call-match.call" class="section level4">
+<h4><span class="header-section-number">3.0.9.1</span> call, do.call, match.call</h4>
+<ol style="list-style-type: decimal">
+<li>W f:call podajemy elementy ktore nie a przekazywane w postaci listy (w przeciwienstwie do f:do.call). Jezeli nie podajemy nazw parametrow musimy zachowac dobra kolejnosc. Otrzymujemy w wyniku niewyliczone wyrazenie typu call. Kolejnosc argumentow bedzie taka jak podalismy w f:call wiec nie musi sie zgadzac z kolejnoscia argumentow jaka jest domyslnie w funkcjach. Uwaga f:match.call mozna tez uzywac wewnatrz funkcji zeby pobrac wartosc wprowadzonych w funkcji argumentow (wiecej infro patrz w rozdziale o funkcjach).</li>
+<li>W f:match.call podajemy parametry i nazwe funkcji call wraz z ich PELNYMI nazwami parametrow. otrzymane wyrazenie bedzie mialo argumenty zgodne z porzadkiem argumentow w funkcji. Otrzymujemy niewyliczone wyrazenie typu call. Kolejnosc argumentow bedzie sie zgadzac z kolejnoscia argumentow jaka jest domyslnie w funkcjach (to podstawowa roznica w stosunku do f:call i f:sys.call).</li>
+<li>W f:do.call parametry podajemy w liscie bez koniecznosci podawania nazw parametow-nalezy zachowac wtedy kolejnosc. Dostajemy wynik OBLICZONEGO wyrazenia.</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#call a match.call</span>
+
+<span class="kw">call</span>(<span class="st">&#39;rnorm&#39;</span>,  <span class="dt">sd=</span><span class="dv">10</span>, <span class="dt">n=</span><span class="dv">20</span>) <span class="co"># otrzymamy wyrazenie w ktorym kolejnosc jest taka jak podana w funkcji call</span>
+<span class="kw">match.call</span>(rnorm, <span class="kw">call</span>(<span class="st">&#39;rnorm&#39;</span>,  <span class="dt">sd=</span><span class="dv">10</span>, <span class="dt">n=</span><span class="dv">20</span>)) <span class="co"># otrzymane wyrazenie bedzie mialo argumenty zgodne z porzadkiem argumentow w funkcji. </span>
+
+
+<span class="co">#call i quote</span>
+<span class="kw">call</span>(<span class="st">&#39;round&#39;</span>, <span class="kw">quote</span>(<span class="dv">2</span><span class="op">+</span><span class="fl">6.8</span>))
+
+<span class="co"># wersja gdzie pierwszy argument jest jako character</span>
+<span class="kw">match.call</span>(<span class="kw">eval</span>(<span class="kw">as.name</span>(<span class="st">&#39;rnorm&#39;</span>)), <span class="kw">call</span>(<span class="st">&#39;rnorm&#39;</span>, <span class="dt">sd=</span><span class="dv">10</span>, <span class="dt">n=</span><span class="dv">20</span>))</code></pre></div>
+</div>
+<div id="fsubstitute" class="section level4">
+<h4><span class="header-section-number">3.0.9.2</span> f:substitute</h4>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">z &lt;-<span class="st"> </span><span class="kw">substitute</span>(a <span class="op">+</span><span class="st"> </span>b, <span class="kw">list</span>(<span class="dt">a=</span><span class="dv">1</span>, <span class="dt">b=</span><span class="dv">2</span>) )  <span class="co">#zwroci nam call a nie expression!!!</span>
+<span class="kw">class</span>(z)
+<span class="kw">eval</span>(z)
+
+
+<span class="co">#takie cos nie ma sensu:</span>
+z &lt;-<span class="st"> </span><span class="kw">substitute</span>(<span class="kw">expression</span>(a <span class="op">+</span><span class="st"> </span>b), <span class="kw">list</span>(<span class="dt">a=</span><span class="dv">1</span>, <span class="dt">b=</span><span class="dv">2</span>) )
+<span class="kw">class</span>(z)
+<span class="kw">eval</span>(z)  <span class="co">#dostaniemy wyrazenie typu call ktore nie bedzie zinterpretowane tak aby je wyliczyc!!!</span>
+
+
+<span class="co">#uwaga. Cos takiego jest niedozwolone. 1 jest podstawione automatycznie po obu stronach rownania co prowadzi do sprzecznosci!!!</span>
+z &lt;-<span class="st"> </span><span class="kw">substitute</span>(x &lt;-<span class="st"> </span>x <span class="op">+</span><span class="st"> </span><span class="dv">1</span>, <span class="kw">list</span>(<span class="dt">x =</span> <span class="dv">1</span>))
+<span class="kw">eval</span>(z)
+
+
+<span class="co">#nieprawidlowe uzycie substitute</span>
+z &lt;-<span class="st"> </span><span class="kw">expression</span>(a<span class="op">+</span>b)
+a =<span class="st"> </span><span class="dv">3</span>
+b =<span class="st"> </span><span class="dv">4</span>
+<span class="kw">eval</span>(z) <span class="co">#do tego momentu ok</span>
+y &lt;-<span class="st"> </span><span class="kw">substitute</span>(z, <span class="kw">list</span>(<span class="dt">a=</span><span class="dv">1</span>, <span class="dt">b=</span><span class="dv">2</span>) ) <span class="co">#nie zadziala prawidlowo. &#39;z&#39; nie jest widziane jako zmienna</span>
+<span class="kw">eval</span>(y)</code></pre></div>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="syntax.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="functions-and-environemnts.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/01-SYNTAX.Rmd",
+"text": "Edit"
+},
+"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Introduction to R</title>
+  <meta name="description" content="Introduction to R">
+  <meta name="generator" content="bookdown 0.6 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Introduction to R" />
+  <meta property="og:type" content="book" />
+  
+  
+  
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Introduction to R" />
+  
+  
+  
+
+<meta name="author" content="Ewelina Macioł-Huć">
+
+
+<meta name="date" content="2018-02-17">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  
+<link rel="prev" href="uwagi-rozne.html">
+<link rel="next" href="dictionary-pl-en.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Podstawy R-a</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> INTRO</a></li>
+<li class="part"><span><b>I PROGRAMMING</b></span></li>
+<li class="chapter" data-level="2" data-path="syntax.html"><a href="syntax.html"><i class="fa fa-check"></i><b>2</b> SYNTAX</a><ul>
+<li class="chapter" data-level="2.1" data-path="syntax.html"><a href="syntax.html#variables-names"><i class="fa fa-check"></i><b>2.1</b> Variables names</a></li>
+<li class="chapter" data-level="2.2" data-path="syntax.html"><a href="syntax.html#using-quotation-marks-cudzysow"><i class="fa fa-check"></i><b>2.2</b> Using quotation marks [cudzysłów]</a></li>
+<li class="chapter" data-level="2.3" data-path="syntax.html"><a href="syntax.html#sterowanie-przeplywam-control-flow"><i class="fa fa-check"></i><b>2.3</b> Sterowanie przeplywam [control flow]</a><ul>
+<li class="chapter" data-level="2.3.1" data-path="syntax.html"><a href="syntax.html#petla-for"><i class="fa fa-check"></i><b>2.3.1</b> petla for</a></li>
+<li class="chapter" data-level="2.3.2" data-path="syntax.html"><a href="syntax.html#if"><i class="fa fa-check"></i><b>2.3.2</b> if</a></li>
+<li class="chapter" data-level="2.3.3" data-path="syntax.html"><a href="syntax.html#ifelse-czyli-wektorowa-wersja-if"><i class="fa fa-check"></i><b>2.3.3</b> ifelse (czyli wektorowa wersja if)</a></li>
+<li class="chapter" data-level="2.3.4" data-path="syntax.html"><a href="syntax.html#while"><i class="fa fa-check"></i><b>2.3.4</b> while</a></li>
+<li class="chapter" data-level="2.3.5" data-path="syntax.html"><a href="syntax.html#repeat"><i class="fa fa-check"></i><b>2.3.5</b> repeat</a></li>
+<li class="chapter" data-level="2.3.6" data-path="syntax.html"><a href="syntax.html#switch"><i class="fa fa-check"></i><b>2.3.6</b> switch</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="syntax.html"><a href="syntax.html#formulas"><i class="fa fa-check"></i><b>2.4</b> formulas</a><ul>
+<li class="chapter" data-level="2.4.1" data-path="syntax.html"><a href="syntax.html#informacje-wstepne"><i class="fa fa-check"></i><b>2.4.1</b> Informacje wstepne</a></li>
+<li class="chapter" data-level="2.4.2" data-path="syntax.html"><a href="syntax.html#przyklady-stosowania-formul"><i class="fa fa-check"></i><b>2.4.2</b> Przyklady stosowania formul</a></li>
+<li class="chapter" data-level="2.4.3" data-path="syntax.html"><a href="syntax.html#formula-a-tekst"><i class="fa fa-check"></i><b>2.4.3</b> Formula a tekst</a></li>
+<li class="chapter" data-level="2.4.4" data-path="syntax.html"><a href="syntax.html#wyciaganie-elementow-formuly"><i class="fa fa-check"></i><b>2.4.4</b> Wyciaganie elementow formuly</a></li>
+<li class="chapter" data-level="2.4.5" data-path="syntax.html"><a href="syntax.html#modyfikacja-formul"><i class="fa fa-check"></i><b>2.4.5</b> Modyfikacja formul</a></li>
+<li class="chapter" data-level="2.4.6" data-path="syntax.html"><a href="syntax.html#dynamiczne-tworzenie-formuly-liniowej-z-zadanych-elementow"><i class="fa fa-check"></i><b>2.4.6</b> Dynamiczne tworzenie formuly LINIOWEJ z zadanych elementow</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html"><i class="fa fa-check"></i><b>3</b> FUNCTIONS AND ENVIRONEMNTS</a><ul>
+<li class="chapter" data-level="3.1" data-path="functions-and-environemnts.html"><a href="functions-and-environemnts.html#types-of-functions"><i class="fa fa-check"></i><b>3.1</b> Types of functions</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="data-structures.html"><a href="data-structures.html"><i class="fa fa-check"></i><b>4</b> DATA STRUCTURES</a><ul>
+<li class="chapter" data-level="4.1" data-path="data-structures.html"><a href="data-structures.html#podzial-struktur"><i class="fa fa-check"></i><b>4.1</b> Podzial struktur</a></li>
+<li class="chapter" data-level="4.2" data-path="data-structures.html"><a href="data-structures.html#listy-atomowe"><i class="fa fa-check"></i><b>4.2</b> Listy atomowe</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="data-structures.html"><a href="data-structures.html#wektory"><i class="fa fa-check"></i><b>4.2.1</b> wektory</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="data-structures.html"><a href="data-structures.html#matrix"><i class="fa fa-check"></i><b>4.3</b> matrix</a><ul>
+<li class="chapter" data-level="4.3.1" data-path="data-structures.html"><a href="data-structures.html#array-macierz-wielowymiarowa"><i class="fa fa-check"></i><b>4.3.1</b> Array (macierz wielowymiarowa)</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="data-structures.html"><a href="data-structures.html#listy-generyczne"><i class="fa fa-check"></i><b>4.4</b> Listy generyczne</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="data-structures.html"><a href="data-structures.html#list"><i class="fa fa-check"></i><b>4.4.1</b> List</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="data-structures.html"><a href="data-structures.html#data.frames"><i class="fa fa-check"></i><b>4.5</b> data.frames</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="typy-danych.html"><a href="typy-danych.html"><i class="fa fa-check"></i><b>5</b> Typy danych</a><ul>
+<li class="chapter" data-level="5.1" data-path="typy-danych.html"><a href="typy-danych.html#typ-logical"><i class="fa fa-check"></i><b>5.1</b> Typ <em>logical</em></a></li>
+<li class="chapter" data-level="5.2" data-path="typy-danych.html"><a href="typy-danych.html#typ-numeric"><i class="fa fa-check"></i><b>5.2</b> Typ <em>numeric</em></a></li>
+<li class="chapter" data-level="5.3" data-path="typy-danych.html"><a href="typy-danych.html#typ-complex"><i class="fa fa-check"></i><b>5.3</b> Typ <em>complex</em></a></li>
+<li class="chapter" data-level="5.4" data-path="typy-danych.html"><a href="typy-danych.html#typ-character"><i class="fa fa-check"></i><b>5.4</b> Typ <em>character</em></a></li>
+<li class="chapter" data-level="5.5" data-path="typy-danych.html"><a href="typy-danych.html#typ-date"><i class="fa fa-check"></i><b>5.5</b> Typ <em>date</em></a></li>
+<li class="chapter" data-level="5.6" data-path="typy-danych.html"><a href="typy-danych.html#typ-posix"><i class="fa fa-check"></i><b>5.6</b> Typ <em>POSIX</em></a></li>
+<li class="chapter" data-level="5.7" data-path="typy-danych.html"><a href="typy-danych.html#typ-factor"><i class="fa fa-check"></i><b>5.7</b> Typ <em>factor</em></a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="data-types.html"><a href="data-types.html"><i class="fa fa-check"></i><b>6</b> DATA TYPES</a><ul>
+<li class="chapter" data-level="6.1" data-path="data-types.html"><a href="data-types.html#braki-danych"><i class="fa fa-check"></i><b>6.1</b> Braki danych</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="own-data-types-and-structures.html"><a href="own-data-types-and-structures.html"><i class="fa fa-check"></i><b>7</b> OWN DATA TYPES AND STRUCTURES</a></li>
+<li class="chapter" data-level="8" data-path="data-processing-philosopies.html"><a href="data-processing-philosopies.html"><i class="fa fa-check"></i><b>8</b> DATA PROCESSING PHILOSOPIES</a></li>
+<li class="chapter" data-level="9" data-path="data-processing-tricks.html"><a href="data-processing-tricks.html"><i class="fa fa-check"></i><b>9</b> DATA PROCESSING TRICKS</a></li>
+<li class="chapter" data-level="10" data-path="data-import-and-export-fromto-files.html"><a href="data-import-and-export-fromto-files.html"><i class="fa fa-check"></i><b>10</b> DATA IMPORT AND EXPORT FROM/TO FILES</a></li>
+<li class="chapter" data-level="11" data-path="tools-and-tricks.html"><a href="tools-and-tricks.html"><i class="fa fa-check"></i><b>11</b> TOOLS AND TRICKS</a></li>
+<li class="part"><span><b>II VISUALISATION</b></span></li>
+<li class="chapter" data-level="12" data-path="visualisation-philosopies.html"><a href="visualisation-philosopies.html"><i class="fa fa-check"></i><b>12</b> VISUALISATION PHILOSOPIES</a></li>
+<li class="chapter" data-level="13" data-path="plots-graphs.html"><a href="plots-graphs.html"><i class="fa fa-check"></i><b>13</b> PLOTS GRAPHS</a></li>
+<li class="chapter" data-level="14" data-path="plots-maps.html"><a href="plots-maps.html"><i class="fa fa-check"></i><b>14</b> PLOTS MAPS</a></li>
+<li class="chapter" data-level="15" data-path="plots-mont-common.html"><a href="plots-mont-common.html"><i class="fa fa-check"></i><b>15</b> PLOTS MONT COMMON</a></li>
+<li class="chapter" data-level="16" data-path="visualisation-other-issues.html"><a href="visualisation-other-issues.html"><i class="fa fa-check"></i><b>16</b> VISUALISATION OTHER ISSUES</a></li>
+<li class="part"><span><b>III ADDS-ON</b></span></li>
+<li class="chapter" data-level="17" data-path="forking.html"><a href="forking.html"><i class="fa fa-check"></i><b>17</b> FORKING</a></li>
+<li class="chapter" data-level="18" data-path="interactive-apps.html"><a href="interactive-apps.html"><i class="fa fa-check"></i><b>18</b> INTERACTIVE APPS</a></li>
+<li class="chapter" data-level="19" data-path="work-organisation.html"><a href="work-organisation.html"><i class="fa fa-check"></i><b>19</b> WORK ORGANISATION</a></li>
+<li class="chapter" data-level="20" data-path="reports-and-presentations.html"><a href="reports-and-presentations.html"><i class="fa fa-check"></i><b>20</b> REPORTS AND PRESENTATIONS</a></li>
+<li class="appendix"><span><b>APPENDICES</b></span></li>
+<li class="chapter" data-level="A" data-path="oznaczenia.html"><a href="oznaczenia.html"><i class="fa fa-check"></i><b>A</b> Oznaczenia</a><ul>
+<li class="chapter" data-level="A.1" data-path="oznaczenia.html"><a href="oznaczenia.html#oznaczenia-odpisowe"><i class="fa fa-check"></i><b>A.1</b> Oznaczenia odpisowe</a></li>
+<li class="chapter" data-level="A.2" data-path="oznaczenia.html"><a href="oznaczenia.html#oznaczenia-w-kodzie"><i class="fa fa-check"></i><b>A.2</b> Oznaczenia w kodzie</a></li>
+</ul></li>
+<li class="chapter" data-level="B" data-path="materialy-do-nauki.html"><a href="materialy-do-nauki.html"><i class="fa fa-check"></i><b>B</b> Materialy do nauki</a></li>
+<li class="chapter" data-level="C" data-path="skroty-klawiaturowe.html"><a href="skroty-klawiaturowe.html"><i class="fa fa-check"></i><b>C</b> Skroty klawiaturowe</a></li>
+<li class="chapter" data-level="D" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html"><i class="fa fa-check"></i><b>D</b> Dobre nawyki</a><ul>
+<li class="chapter" data-level="D.1" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#skladnia-w-kodzie"><i class="fa fa-check"></i><b>D.1</b> skladnia w kodzie</a></li>
+<li class="chapter" data-level="D.2" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#home-i-end"><i class="fa fa-check"></i><b>D.2</b> Home i End</a></li>
+<li class="chapter" data-level="D.3" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#rozdzialy"><i class="fa fa-check"></i><b>D.3</b> Rozdzialy</a></li>
+<li class="chapter" data-level="D.4" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#snippets"><i class="fa fa-check"></i><b>D.4</b> snippets</a></li>
+<li class="chapter" data-level="D.5" data-path="dobre-nawyki.html"><a href="dobre-nawyki.html#projects"><i class="fa fa-check"></i><b>D.5</b> Projects</a></li>
+</ul></li>
+<li class="chapter" data-level="E" data-path="uwagi-rozne.html"><a href="uwagi-rozne.html"><i class="fa fa-check"></i><b>E</b> Uwagi rozne</a><ul>
+<li class="chapter" data-level="E.1" data-path="uwagi-rozne.html"><a href="uwagi-rozne.html#instalacja-pakietow"><i class="fa fa-check"></i><b>E.1</b> <strong>Instalacja pakietow</strong></a></li>
+</ul></li>
+<li class="chapter" data-level="F" data-path="dictionary-en-pl.html"><a href="dictionary-en-pl.html"><i class="fa fa-check"></i><b>F</b> Dictionary EN-PL</a></li>
+<li class="chapter" data-level="G" data-path="dictionary-pl-en.html"><a href="dictionary-pl-en.html"><i class="fa fa-check"></i><b>G</b> Dictionary PL-EN</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Introduction to R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="dictionary-en-pl" class="section level1">
+<h1><span class="header-section-number">F</span> Dictionary EN-PL</h1>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="uwagi-rozne.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="dictionary-pl-en.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"google": false,
+"weibo": false,
+"instapper": false,
+"vk": false,
+"all": ["facebook", "google", "twitter", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/rstudio/bookdown-demo/edit/master/APPENDICES.Rmd",
+"text": "Edit"
+},
+"download": ["bookdown-demo.pdf", "bookdown-demo.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

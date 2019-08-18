@@ -1,0 +1,694 @@
+# (PART) <lfg>PROGRAMMING</lfg> {-} 
+
+# SYNTAX
+
+
+## Variables names
+
+1. Nie dopuszcza sie rozpoczynania nazw zmiennych od cyfr. Ponadto niedopuszczalne sa znaki takie jak:  / * + - & ^ [ ( { ? : ;
+2. Dopuszczalne jest stosowanie podkreslnikow oraz kropek, rowniez na poczatku. Zmienna z kropka na poczatku maja pewna wlanosc opisana w ksiazce Gagolewskiego. Zmienna taka bedzie tzw zmienna ukryta i nie bedzie np. widziana domyslnie przez f:ls ktora wyswietla liste zmiennych.
+3. W przypadku tworzenia nazw zmiennych warto odwolac sie do regul podanych przez Wickhama w tzw. 'Style Guide' w jego podreczniku do zaawansowanego programowania w R ( http://adv-r.had.co.nz/Style.html ). 
+
+
+## <- vs =
+
+To make things easier for new users familiar with languages like C, R added the capability in 2001 to also allow = be used as an assignment operator, on the basis that the intent (assignment or association) is usually clear by context.  So,
+x = 3
+
+clearly means "assign 3 to x", whereas
+
+f(x = 3)
+
+clearly means "call function f, setting the argument x to 3".
+
+There is one case where ambiguity might occur: if you wanted to assign a variable during a function call. The only way to do this in modern versions of R is:
+f(x <- 3)
+
+which means "assign 3 to x, and call f with the first argument set to the value 3".  This is a contrived example though, and never really occurs in real-world programming.  [UPDATE: In fact, constructs like this are best avoided for reasons given in the comments below.]
+
+
+## Using quotation marks [cudzysłów]
+
+Mozna uzywac pojedynczego ` ' ` i podwojnego ` " `
+Wazne jest pamietanie o tym jak stosuje sie cudzyslow w podawaniu argumentow funkcji. Tutaj moga wystapic rozne sytuacja. W wiekszosci funkcji podawanie nazwy argumentu bez cudzyslowia oznacza albo 
+
+1. odwolanie sie do zdefiniowanej wczesniej zmiennej albo 
+2. uzywamy go gdzie podajac argument definiujemy obiekt
+
+```{r}
+wektor <- c(1,2,3,4) # definiuje zmienna
+
+# ad 1 : tutaj wektor to odwolanie do zmienne ktora zostala wczeniej zdefiniowana
+sum(wektor) 
+
+# ad 2:tworze obiekt w trakcie podawania argumentu 
+sum(c(1,2,3,4))
+
+
+# nastepny przyklad dla f:char
+ciag_tekstowy <- 'ala ma kota'
+
+char(ciag_tekstowy) #zwraca dlugosc tekstu
+
+char('ala ma kota') #dlugosc tekstu stworzonego w trakcie podawania argumentu
+
+
+```
+
+Ale przeanalizujemy teraz ponizszy przypadek:
+```{r}
+#tworze tabela z dwoma kolumnami
+tabela<- data.frame(  kolumna_A = 1:10
+				          	, kolumna_B = 11:20)
+
+
+# celowo jest tak na odwrot ponizej z nazwami
+kolumna_B <- 'kolumna_A'
+
+# ta funkcja wykona nam operacja dodania nowej kolumny o nazwie "suma" to naszej tabeli
+dplyr::mutate( tabela # tutaj podaje nazwe moje tabeli i dziala to jak poprzednio
+							,suma = kolumna_B * 10 ) # chce stworzyc nowa kolumne poprzez pomnozenie wartosci innej kolumny przez 10 i tutaj niestety  zasada dzilania jest juz inna
+
+```
+Powyzej problem polega na tym, ze bedziemy miec zrobiony iloczynu po kolumnie_B a nie kolumnie_A. f:summarise nie traktuje nazwy "kolumna_B" jako odwolania do zdefiniowanej wczesniej zmiennej o nazwie komlumna_B do ktorej przypisalismy nazwe "kolumna_A" !!!.
+
+Takie rozwiazanie jest wprowadzone dla wygody zeby nie meczyc sie z cudzyslowiem. Ale pytanie co zrobic jezli jednak bedziemy chcieli zdefiniowac kolumne potrzebna do iloczyny poprzed odwolanie sie do zdefiniowanej wczesniej zmiennej. To bedzie nam potrzebne np. wtedy kiedy w kodzie nie bedziemy z gory wiedziec jaka kolumne bedziemy chcieli zastosowac i zostanie to okreslone w innym miejsu programu, gdzie wybor przypiszemy wlasnie do zmiennej do ktorej bedzie sie trzeba odwolac.
+Niestety rozwiazania tego problemu jest dosyc skomplikowany zagadnieniem zwiaznanym z manipulowaniem elementami samej skladni jezyka. p:dplyr ma swoj wlasny system rozwiazania tego problemu ktory pokaze wlasnie przy omawianiu tego pakietu. Ponizej natomiast przedstawie jedno z mozliwych uniwersalnych rozwiazan:
+
+```{r}
+
+# jeszcze raz to co w poprzednim chunku ale odwolamy sie do kolumny poprzez zmienna
+
+#tworze tabela z dwoma kolumnami
+tabela<- data.frame(  kolumna_A = 1:10
+				          	, kolumna_B = 11:20)
+
+
+# celowo jest tak na odwrot ponizej z nazwami
+kolumna_B <- 'kolumna_A'
+
+lazyeval::lazy_eval(lazyeval::interp(~dplyr::mutate(tabela, sum = kolumna * 10), kolumna = as.name(kolumna_B)))
+```
+Jak widac powyzej mamy juz zastosowano kolumne_A do wyliczen ale skladnie jest dosyc skomplikowana. Na szczecie wiekszosc funkcji dla ktorych argumenty definiuje sie w taki sposob nalezy do p:dlyr a tam jest inne duzo wygodniejsze rozwiazanie, ktore pokaze pozniej. 
+
+
+
+**Podawanie argumentow funkcji**
+```{r}
+# podajac argujenty mozna podawac ich nazwy
+mean(  x = 1:10
+		 , trim = 0
+		 , na.rm = FALSE)
+
+# ale jezeli zachowujemy kolejnosc jak jest to domyslnie w funkcji mozemy nazwy pominac. 
+mean(  1:10
+		 , 0
+		 , FALSE)
+
+# mozemy podac argumenty w innej kolejnosci ale wtedy musimy uzywac nazw
+mean(  trim = 0
+		 , na.rm = FALSE
+		 , x = 1:10)
+
+
+```
+
+
+
+
+
+## Sterowanie przeplywam [control flow]
+
+
+### petla for
+
+**skladnia**
+
+Licznik petli for moze byc po dowolnym wyrazeniu wektorowym (np. macierz liczb-licznik przebiega wtedy po kolejnych kolumnach) typu liczbowgo (zatem moga to byc rowniez ulamki). Petla moze tez isc po innych typach obiektow niz wektory/macierze liczbowe ale nie jest to rozwiazania zalezane ze wzgledu na slaba wydajnosc
+
+```{r}
+
+#wersja 1 skladni
+np.
+for(i in 1:10){
+	print(i) #wyswietl i w konsoli
+}
+
+#wersja 2 skladni bez nawiasow wasatych
+for(i in 1:10) print(i)
+
+
+
+# petla po obiekie nieliczbowym (po liscie tesktow)
+for(i in list('ala', 'kot') ) print(i)
+
+
+```
+
+
+**break i next w petli for**
+
+W petlach mozna wykorzystywac operacje *break* (przerwij petle) i *next* (przejdź do nastepnej iteracji):
+```{r}
+
+#break
+n<-100
+for(i in 1:n){
+  wyrazenia
+  if(n > 10) break   # przewywam petle przy spelnieniu warunku
+}
+
+#next
+n <-100
+m <- 20
+for(i in 1:n){
+  wyrazenia
+  if(n == m) next # przechodze do nastepnej interacji przy spelnieniu warunku ze n = m.
+}
+```
+
+
+**Reczne sterowanie licznikiem** petli niemozliwe o czym swiadczy ponizszy przyklad
+```{r}
+s <- 0
+
+for(i in 1:10){
+  
+  s <- s+i
+  if(i==2) i <-9 # tutaj chce zeby i zwiekszylo sie przy drugiej iteracji do 9 czyli zeby przeskoczyl do dziewiatej interacji petli
+}
+s # wartosc sumy pokazuje ze nie nastapilo przeskoczenie
+# zmienna s ma ta sama wartosc co suma skumulowana suma liczb od 1 do 9 
+cumsum(1:9)
+```
+
+
+
+### if
+
+
+Skladnia wersja 1
+```{r}
+
+if(3 < 10) print('ok')
+```
+
+
+Skladnia wersja 2
+```{r}
+
+
+if(3 > 10)
+{
+  print('ok')
+}
+```
+
+Skladnia wersja 3
+```{r}
+
+if(3 > 10)
+{
+  print('ok')
+}else{  #nawias wasaty powinien byc za 'else' a nie pod nim !!!
+  print('no ok')
+}
+```
+
+
+
+Skladnia wersja 4
+```{r}
+z <-10
+if(z > 10){
+  print('ok')
+}else if(z < 5){
+  print('ok')
+}else{
+  print('I do not know')
+}
+```
+
+
+
+### ifelse (czyli wektorowa wersja if)
+
+f:ifelse moze dzialal na calym wektorze wartosci logicznych w przeciwieństwie do zwyklego if. f:ifelse mozna zagniezdzac. Niestety czesto wystepuja z nim problemy (np. w pakiecie dplyr).
+
+```{r}
+ifelse(c(1,2,3,4,5) > 3 # tutaj dostaniemy caly wektor wartosci logicznych
+			 , 'ok' # zwraca jezeli TRUE
+			 , 'zle') # zwraca jezeli FALSE
+# wynikiem bedzie wektor wartosci 'ok' i 'zle'
+
+```
+Funkcja `ifelse` ma swoj dobry subsytut o prawie identycznej nazwie: `dplyr::if_else`. Ale tu jest jeden fajny bajer bo funkcja automatycznie obsluguje rowniez sytuacje gdy sa braki danych `NA`
+```{r}
+dplyr::if_else(c(1,2,3,NA,5) > 3 # dla czwartego elementu jest brak danych NA i porownanie z wartoscia 3 nie nastapi i zwroci nam znowu wartosc NA
+							 , 'ok' # zwraca jezeli TRUE
+							 , 'zle' # zwraca jezeli FALSE
+							 , 'wystapil brak danych' ) #zwraca jezeli NA (brak danych)
+
+```
+
+
+
+
+
+### while
+
+```{r}
+
+x <- 1
+while(x < 10){
+  x <- x + 1
+}
+x
+```
+
+
+### repeat
+W f:repeat nie podaje sie ilosci wykonan operacji, ale zagniezdza warunek stopu (przez wyrazenie 'break'), dlatego trzeba na te strukture uwazac. 
+
+```{r}
+sum <- 1
+
+repeat
+{
+  sum <- sum + 2;
+  print(sum);
+  if (sum > 11)
+  break;
+}
+
+```
+
+
+
+### switch
+Switch to taka kompaktowa wersja 'if'
+
+
+
+<br><lfr>Warning!</lfr>
+ 
+<div class="btn-danger">W przypadku f:switch zmienna ktora dostarczamy musi byc typu *character* czyli tekstem. Cos takiego jak ponizej wywali blad </div>:
+```{r}
+# ponizej chce zeby f:switch wyswietlila w konsoli odpowiedni napis w zaleznosci od wartosci zmiennej w. Poniewaz w ma wartosc 3 chcialbym zeby bylo wyswietlone 'ok'
+w <- 3
+switch(w, # w jest liczba a nie tekstem i dostaniemy blad !!!!
+  1 = print('malo'), 
+  2 = print('malo'),
+  3 = print('ok'),
+  4 = print('duzo'),
+  print('lipa')) # 'lipa' ma sie wyswietlac jezeli wartosc zmiennej 'w' jest inna niz 1 ,2, 3, lub  4.
+```
+
+Musimy zrobic niestety tak zeby to dzialo:
+
+```{r}
+
+w <- 3
+switch(as.character(w) # konwertuje liczbe 3 na tekst
+			 , '1'=print('malo')
+			 , '2'=print('malo')
+			 , '3'=print('ok')
+			 , '4'=print('duzo')
+			 , print('lipa'))
+
+```
+
+
+Switch a wykonywanie WIELU operacji jeseli spelniona jest okreslona wartosc
+```{r}
+a <- 70
+
+# jezeli chce aby przy danym warunku bylo wykonanych kilka operacji uzwywam nawiasow wasatych i srenikow
+switch( as.character(a)
+       ,'1'=print('zle')
+       ,'10'=z <- 4444
+				# chce ponizej wykonac az 3 dzialania jezeli zmienna 'a' nie ma wartosci 1 ani 10. 
+       , { w <- 100;     #operacja 1 
+           print('zle'); #operacja 2
+           z <- 10000}   #operacja 3
+       )
+w # sprawdzam czy do w przypisalo sie 100
+z # sprawdzam czy do z przypisalo sie 10000
+```
+
+
+
+## formulas
+
+### Informacje wstepne
+
+Formuly to klasa obiektow ktore mozna uzyc np. jako argument w funkcjach wymagajacych rownania (np. f:lm do obliczania regresji )
+
+```{r}
+# stworzenie formuly i przypisanie do zmiennej
+a <- formula('y ~ x | z')
+class(a)
+
+# uzycie formuly w funkcji do liczenia regresji
+lm( formula = price ~ table + cut # w modelu regresji price to zmienna objasniana a table  i cut objasnaijace
+   , data = diamonds)
+
+
+```
+
+### Przyklady stosowania formul
+
+```{r}
+
+y ~ a  #zaleznosc y od a
+
+y ~ a + b    #zaleznosc y od a i b gdzie a i b sa addytywne
+
+y ~ a + b + a:b  #zaleznosc y od a i b gdzie a i b sa addytywne, oraz zaleznosc od interakcji a i b
+
+y ~ .  #zaleznosc y od wszystkich pozostalych zmiennych (zmienne sa addytywne i nie uwzgledniamy interakcji)
+
+
+#zaleznosc od wszystkich zmiennych ale NIE uwzgledniamy WYRAZU WOLNEGO
+y ~ . - 1  
+#lub   
+y ~ . + 0    
+
+
+y~.-a  #zaleznosc od wszystkich zmiennych z wyjatkiem zmiennej a
+
+
+#Operator I() umozliwia zastosowanie dzialan w ich arytmetycznym sensie:
+y ~ I(a + b * 2)  #zaleznosc od SUMY zmiennych a i b*2 (to nie to samo co y~a+b*2!!!)
+
+y ~ lag(x, 2) #y zalezny od opoznionej zmiennej x o 2 okresy
+
+
+
+#offest-zeby dodac zmienna dla ktorej wspolczynnik nie jest estymowany (jest na sztywko rowny 1). Przyklad dla f:glm liczacej np. regresje logistyczna
+glm(  Y ~ offset(log(N)) + (x1 + x2)
+    , family=poisson)
+
+
+# wprowadzenie warunkowosci - ale interpretacja tutaj zalezy od tego w jakiej metodzie statystycznej to zastosujemy
+response ~ predictor | condition
+
+
+
+#Zastosowania znaku mnozenia
+#Znak mnozenia * zastepuje nam addytywnosc i interakcje w analizie ANOVA. Nie ma to zastosowania przy regresji. (Biecek str 166)
+y ~ a * b #to to samo co:
+y ~ a + b + a : b
+
+
+```
+
+### Formula a tekst
+
+```{r}
+# srpbujemy formule przesztalcic na text funkcja do konwertowania obiektow na tekst
+a1 <- as.character(formula('y ~ x | z'))
+a1 # okazuje sie ze dostlismy 4 elementy tekstowe
+
+# jezeli chcemy formule przeksztalcic w jeden ciag tekstowy ktory wyglada tak jak orryginalna formula stosujemy:
+a2 <- deparse(formula('y ~ x | z')) 
+a2 # teraz mamy jeden ciag tekstowy
+
+```
+
+### Wyciaganie elementow formuly
+
+```{r}
+z <- formula('y ~ x | z')
+#wyciagniecie wszystkich elementow formuly
+terms.formula(z) 
+
+#wyciagam tylko zmienne
+all.vars(z) 
+```
+
+
+
+
+### Modyfikacja formul
+
+
+```{r}
+
+z <- formula(y ~ 1 + x + w^2 + u + i + u:i)
+
+# do formuly z daodaje zmienna 'ze', usuwam zmienna 'x' i usuwam interacje 'u:i'
+update(z,  ~ . + ze - x - u:i) # w formule nie moze byc cyfr mnozacych cale addytywne wyrazenia poza jedynka oznaczajaca wyraz wolny (przyklad bledu: y ~ 1+2*x)
+
+#you can also modify left side of formula
+update(z, log(.) ~ . ) #logarytmuje cala lewa strone formuly (kropka zastepue nam)
+
+# jeszcze raz usuwam zmienna (tym razem 'y')
+update(z, ~ . -y)
+
+#usuwam zmienna 'y' i na jej miejsce dodane 'log(y)'
+update(z, ~ . -y +log(y))
+
+```
+
+### Dynamiczne tworzenie formuly LINIOWEJ z zadanych elementow
+Ponizsz funkcja umozliwia tworzenie z zadanych elementow prostych liniowych formul.
+```{r}
+z <- c('a','b','c') #zmienne objasniajace
+d <- 'y' # zmienna objasniana
+
+reformulate(  termlabels = z #zmienne objasniajace
+            , response   = d #zmienna objasniana
+            , intercept  = TRUE) # czy formula ma miec wyraz wolny
+```
+
+
+
+
+
+
+
+
+## LANGUAGE BRICKS (Expression and call)
+
+
+Basic terms
+
+* *constant*-e.g. 1, 'a', TRUE, FALSE
+* *name* (called also *symbols*)- names of functions, variables and the like
+* *call* - expression which can executed by R. call is recursive, so call can include another call.
+* *expression* - group of calls.
+
+
+
+### evaluating call and expressions
+
+
+```{r}
+eval()
+```
+
+
+### names
+
+
+
+```{r}
+#to get name:
+quote(z)
+as.name('z')
+as.symbol('z')
+
+#to check if name
+z <- as.name(z)
+z # we will get name, not string 'z' are any other value
+is.name(z)
+is.symbol(z)
+```
+
+
+
+### converting call and expression
+
+
+
+```{r}
+#expression (not call!!!) from string
+parse(text='z<-100') #text is not a first parametr so you have to specify it manually.
+
+#call to string
+deparse(quote(z <- 100))
+```
+
+
+
+### creating call
+
+
+```{r}
+#1.
+quote(z <- 100)
+
+#2.
+w <- 100
+bquote(z = b + .(w)) #dynamic substitution with .()
+#warning: problem with '='
+z<-'ble'
+bquote({.(as.name(z)) = w})[[2]] #use paranthesis to solve problem
+
+#3.
+substitute(z <- 100)
+
+#4.
+w<-'price'
+substitute(target <- 100, list(target=as.name(w)))
+#warning: problem with '=' . I have no ide what to do with that.
+
+
+#5.
+substitute(z <- w, list(w=100))
+```
+
+
+### get elements of expression
+
+
+
+```{r}
+p <-parse(text='z<-100')
+p[[1]]
+```
+
+### get elements of call
+
+
+```{r}
+z <- quote(z + w + 200 + 500)
+all.vars(z) #names of variables
+all.names(z) #all names
+z[[1]] #first element
+```
+
+
+### change functions parameters in call expressions
+
+
+```{r}
+z <- quote(mean(x=c(1,2,3,4), trim=.3))
+z$trim <- .6
+z
+```
+
+
+### call vs expression
+
+You should use expression when you want its capacity to hold more than one expression or call. It really returns an "expression list". The usual situation for the casual user of R is in forming arguments to ploting functions where the task is forming symbolic expressions for labels. R expression-lists are lists with potentially many items, while calls never are such. It's interesting that @hadley's Advanced R Programming suggests "you'll never need to use [the expression function]": http://adv-r.had.co.nz/Expressions.html. Parenthetically, the bquote function is highly useful, but has the limitation that it does not act on more than one expression at a time. I recently hacked a response to such a problem about parsing expressions and got the check, but I thought @mnel's answer was better: R selectively style plot axis labels
+
+The strategy of passing an expression to the evaluator with eval( expr, envir= < a named environment or list>) is essentially another route to what function is doing. A big difference between expression and call (the functions) is that the latter expects a character object and will evaluate it by looking for a named function in the symbol table.
+
+When you say that processing both with the eval "works", you are not saying it produces the same results, right? The D function (call) has additional arguments that get substituted and restrict and modify the result. On the other hand evaluation of the expression-object substitutes the values into the symbols.
+
+There seem to be "levels of evaluation":
+
+```{r}
+expression(mean(1:10))
+# expression(mean(1:10))
+ call("mean" , (1:10))
+# mean(1:10)
+ eval(expression(mean(1:10)))
+# [1] 5.5
+ eval(call("mean" , (1:10)))
+# [1] 5.5
+```
+
+
+
+### quote vs expression
+
+* **expression** returns its arguments as a vector of unevaluated expressions.
+* **quote** returns its argument as an unevaluated expression.
+
+
+
+### dynamic formulas
+
+
+```{r}
+y <- 'price'
+as.formula(paste('x~',y,sep=''))
+
+y <- 'price'
+as.formula(bquote(x~.(as.name(y))))
+
+y <- 'price'
+as.formula(substitute(x~target, list(target=as.name(y))))
+```
+
+
+### Functions
+
+#### call, do.call, match.call
+
+
+1. W f:call podajemy elementy ktore nie a przekazywane w postaci listy (w przeciwienstwie do f:do.call). 
+Jezeli nie podajemy nazw parametrow musimy zachowac dobra kolejnosc. Otrzymujemy w wyniku niewyliczone wyrazenie typu call. Kolejnosc argumentow bedzie taka jak podalismy w f:call wiec nie musi sie zgadzac z kolejnoscia argumentow jaka jest domyslnie w funkcjach. Uwaga f:match.call mozna tez uzywac wewnatrz funkcji zeby pobrac wartosc wprowadzonych w funkcji argumentow (wiecej infro patrz w rozdziale o funkcjach).
+2. W f:match.call podajemy parametry i nazwe funkcji call wraz z ich PELNYMI nazwami parametrow. otrzymane wyrazenie bedzie mialo argumenty zgodne z porzadkiem argumentow w funkcji. Otrzymujemy niewyliczone wyrazenie typu call. Kolejnosc argumentow bedzie sie zgadzac z kolejnoscia argumentow jaka jest domyslnie w funkcjach (to podstawowa roznica w stosunku do f:call i f:sys.call).
+3. W f:do.call parametry podajemy w liscie bez koniecznosci podawania nazw parametow-nalezy zachowac wtedy kolejnosc. Dostajemy wynik OBLICZONEGO wyrazenia. 
+
+
+
+
+```{r}
+#call a match.call
+
+call('rnorm',  sd=10, n=20) # otrzymamy wyrazenie w ktorym kolejnosc jest taka jak podana w funkcji call
+match.call(rnorm, call('rnorm',  sd=10, n=20)) # otrzymane wyrazenie bedzie mialo argumenty zgodne z porzadkiem argumentow w funkcji. 
+
+
+#call i quote
+call('round', quote(2+6.8))
+
+# wersja gdzie pierwszy argument jest jako character
+match.call(eval(as.name('rnorm')), call('rnorm', sd=10, n=20))
+
+
+```
+
+
+
+#### f:substitute
+
+
+
+
+```{r}
+z <- substitute(a + b, list(a=1, b=2) )  #zwroci nam call a nie expression!!!
+class(z)
+eval(z)
+
+
+#takie cos nie ma sensu:
+z <- substitute(expression(a + b), list(a=1, b=2) )
+class(z)
+eval(z)  #dostaniemy wyrazenie typu call ktore nie bedzie zinterpretowane tak aby je wyliczyc!!!
+
+
+#uwaga. Cos takiego jest niedozwolone. 1 jest podstawione automatycznie po obu stronach rownania co prowadzi do sprzecznosci!!!
+z <- substitute(x <- x + 1, list(x = 1))
+eval(z)
+
+
+#nieprawidlowe uzycie substitute
+z <- expression(a+b)
+a = 3
+b = 4
+eval(z) #do tego momentu ok
+y <- substitute(z, list(a=1, b=2) ) #nie zadziala prawidlowo. 'z' nie jest widziane jako zmienna
+eval(y)
+```
+
+
+
+
+
+
